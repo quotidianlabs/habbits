@@ -122,7 +122,7 @@ That single test exercises the entire middleware chain end-to-end and gives PR C
 
 From foundation §6, only these are relevant at Day 1:
 
-- **Reliability:** panic-recovery middleware is wired and tested (will be exercised properly in a follow-up step's panic test).
+- **Reliability:** panic-recovery middleware is wired in the chain. A deliberate-panic test (from PRD success criteria) lands in a follow-up step; Day-1's integration test does not exercise the recoverer.
 - **Observability:** `slog` structured logs, request ID propagated in context, logs, and `X-Request-ID` response header.
 - **CI gates:** `go test` blocks deploy.
 
