@@ -29,8 +29,6 @@ Expected: lists the four BMad files in `docs/`, empty listing for `docs/bmad-leg
 
 - [ ] **Step 2: Move all four BMad files**
 
-These files are untracked by git, so a plain `mv` is equivalent to `git mv` — the next `git add docs/bmad-legacy/` picks them up at their new location.
-
 Run:
 ```bash
 mv docs/product-brief-habbits.md docs/bmad-legacy/
@@ -43,6 +41,9 @@ mv docs/architecture.md docs/bmad-legacy/
 
 Run: `ls docs/ && ls docs/bmad-legacy/`
 Expected: `docs/` contains only `bmad-legacy/` and `superpowers/`. `docs/bmad-legacy/` contains all four files.
+
+Run: `git status --short`
+Expected: if the originals were tracked in a prior commit, `git status` shows them as deleted (` D`) and the new files under `docs/bmad-legacy/` as untracked (`??`). Task 3 stages both sides together with `git add -A` so git records renames. If they were untracked, only `??` markers appear. Either is acceptable; Task 3 handles both.
 
 ---
 
@@ -244,26 +245,25 @@ Expected: frontmatter, header paragraph, §1 Identity, start of §2.
 
 - [ ] **Step 1: Verify git sees the expected changes**
 
-Run: `git status`
-Expected output includes:
-```
-Untracked files:
-  docs/bmad-legacy/
-  docs/superpowers/specs/2026-06-05-habbits-foundation.md
-```
-No other untracked files in `docs/` root (BMad originals should no longer be there).
+Run: `git status --short`
+Expected: BMad originals at `docs/*.md` show as deleted (` D`) if they were previously tracked, OR are entirely absent if they were untracked. The new files in `docs/bmad-legacy/` show as untracked (`??`). `docs/superpowers/specs/2026-06-05-habbits-foundation.md` shows as untracked (`??`).
 
 - [ ] **Step 2: Stage the migration files**
 
+Use `git add -A docs/` so that both the deletions of the originals (if previously tracked) and the additions in `docs/bmad-legacy/` and `docs/superpowers/specs/` are staged together. This lets git detect renames in the resulting diff.
+
 Run:
 ```bash
-git add docs/bmad-legacy/ docs/superpowers/specs/2026-06-05-habbits-foundation.md
+git add -A docs/
 ```
 
 - [ ] **Step 3: Verify staging**
 
-Run: `git status`
-Expected: the four `docs/bmad-legacy/*.md` files and `docs/superpowers/specs/2026-06-05-habbits-foundation.md` all appear as "new file" in the staged section. No unstaged changes.
+Run: `git status --short`
+Expected: only staged changes remain. If the BMad originals were previously tracked, the four files appear as renames (`R  docs/...md -> docs/bmad-legacy/...md`); otherwise they appear as new files (`A  docs/bmad-legacy/...md`). The foundation spec appears as a new file (`A  docs/superpowers/specs/2026-06-05-habbits-foundation.md`). No unstaged changes.
+
+Run: `git diff --staged --stat`
+Expected: shows the staged file changes. If renames are detected, they appear with rename arrows; otherwise as adds + deletes. Total: five files changed (four archived + one new foundation spec).
 
 - [ ] **Step 4: Commit**
 
