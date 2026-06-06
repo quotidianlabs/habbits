@@ -5,11 +5,14 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+
+	"habbits/internal/middleware"
 )
 
 // NewHandler returns the http.Handler for the Habbits server.
 func NewHandler() http.Handler {
 	r := chi.NewRouter()
+	r.Use(middleware.RequestID)
 	r.Get("/healthz", healthz)
 	return r
 }
