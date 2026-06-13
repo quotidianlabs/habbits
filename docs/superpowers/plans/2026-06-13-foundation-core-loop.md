@@ -1162,6 +1162,13 @@ void main() {
 }
 ```
 
+> **Implementation note (applied):** the committed `integration_test/critical_flow_test.dart`
+> replaces `pumpAndSettle` after the check-off (and after relaunch) with a
+> `pumpUntilFound(tester, finder)` helper that pumps until the text appears. With the
+> real file-backed SQLite DB, the check-off write → Drift stream re-emit → rebuild
+> happens on the event loop, which `pumpAndSettle` does not wait for; `pumpUntilFound`
+> is the robust pattern for integration tests over an async backend.
+
 - [ ] **Step 2: Run the integration test on a device/emulator**
 
 ```bash
