@@ -8,3 +8,13 @@
 # Local env
 .env
 .env.local
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+build/
+*.g.dart.bak
+.DS_Store
+
+# Generated code is committed (see plan); do NOT ignore *.g.dart

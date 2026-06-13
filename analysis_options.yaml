@@ -1,0 +1,12 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  plugins:
+    - riverpod_lint
+  exclude:
+    - "**/*.g.dart"
+
+linter:
+  rules:
+    prefer_const_constructors: true
+    prefer_final_locals: true
