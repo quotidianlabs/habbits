@@ -41,25 +41,8 @@ void main() {
     expect(find.text('Streak: 1'), findsOneWidget);
   });
 
-  testWidgets('deleting a habit requires confirmation then removes it', (tester) async {
-    final db = AppDatabase(NativeDatabase.memory());
-    addTearDown(db.close);
-    await db.habitDao.createHabit(name: 'Workout', color: 0xFF009688);
-    await tester.pumpWidget(_app(db));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.byType(PopupMenuButton<String>));
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('Delete'));
-    await tester.pumpAndSettle();
-    expect(find.textContaining('permanent'), findsOneWidget);
-    await tester.tap(find.byKey(const Key('confirm-delete')));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Workout'), findsNothing);
-  });
-
-  testWidgets('two habits each render with independent check-off controls', (tester) async {
+  testWidgets('two habits each render with independent check-off controls',
+      (tester) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
     await db.habitDao.createHabit(name: 'Read', color: 0xFF009688);
@@ -69,13 +52,25 @@ void main() {
 
     expect(find.text('Read'), findsOneWidget);
     expect(find.text('Meditate'), findsOneWidget);
-    // Two independent checkboxes, no key collision.
     expect(find.byType(Checkbox), findsNWidgets(2));
 
-    // Toggling the first habit's checkbox only affects that row.
     await tester.tap(find.byType(Checkbox).first);
     await tester.pumpAndSettle();
-    expect(find.text('Streak: 1'), findsOneWidget); // exactly one habit now has a streak
+    expect(find.text('Streak: 1'), findsOneWidget);
     expect(find.text('Streak: 0'), findsOneWidget);
+  });
+
+  testWidgets('tapping a card opens the detail screen', (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await db.habitDao.createHabit(name: 'Workout', color: 0xFF009688);
+    await tester.pumpWidget(_app(db));
+    await tester.pumpAndSettle();
+
+    // Tap the habit name (card body), not the checkbox.
+    await tester.tap(find.text('Workout'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('habit-detail-screen')), findsOneWidget);
   });
 }

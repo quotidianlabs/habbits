@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/dates.dart';
+import '../../domain/heatmap.dart';
 import '../../state/habit_providers.dart';
+import '../habit_detail/habit_detail_screen.dart';
 import '../widgets/habit_dialogs.dart';
+import '../widgets/heatmap_grid.dart';
 
 class HabitListScreen extends ConsumerWidget {
   const HabitListScreen({super.key});
@@ -26,7 +29,7 @@ class HabitListScreen extends ConsumerWidget {
             return const Center(child: Text('No habits yet. Tap + to add one.'));
           }
           return ListView(
-            children: [for (final item in items) _HabitTile(item: item)],
+            children: [for (final item in items) _HabitCard(item: item)],
           );
         },
       ),
@@ -34,36 +37,72 @@ class HabitListScreen extends ConsumerWidget {
   }
 }
 
-class _HabitTile extends ConsumerWidget {
-  const _HabitTile({required this.item});
+class _HabitCard extends ConsumerWidget {
+  const _HabitCard({required this.item});
   final HabitSummary item;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final dao = ref.read(habitDaoProvider);
-    return ListTile(
-      leading: Checkbox(
-        key: ValueKey('checkoff-toggle-${item.habit.id}'),
-        value: item.doneToday,
-        onChanged: (_) =>
-            dao.toggleCompletion(item.habit.id, dateOnly(DateTime.now())),
-      ),
-      title: Text(item.habit.name),
-      subtitle: Text('Streak: ${item.streak}'),
-      trailing: PopupMenuButton<String>(
-        key: ValueKey('habit-menu-${item.habit.id}'),
-        onSelected: (value) {
-          if (value == 'rename') {
-            showHabitNameDialog(context, ref,
-                habitId: item.habit.id, initial: item.habit.name);
-          } else if (value == 'delete') {
-            confirmDeleteHabit(context, ref, item.habit.id, item.habit.name);
-          }
-        },
-        itemBuilder: (_) => const [
-          PopupMenuItem(value: 'rename', child: Text('Rename')),
-          PopupMenuItem(value: 'delete', child: Text('Delete')),
-        ],
+    final today = dateOnly(DateTime.now());
+    final percent = item.completionPercent;
+
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: InkWell(
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => HabitDetailScreen(habitId: item.habit.id),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      item.habit.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  Text('Streak: ${item.streak}'),
+                  Checkbox(
+                    key: ValueKey('checkoff-toggle-${item.habit.id}'),
+                    value: item.doneToday,
+                    onChanged: (_) => dao.toggleCompletion(item.habit.id, today),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  const cellSize = 11.0;
+                  const cellGap = 2.0;
+                  final weeks =
+                      (constraints.maxWidth / (cellSize + cellGap)).floor().clamp(1, 26);
+                  final data = buildHeatmap(
+                    completed: item.dates,
+                    createdAt: item.habit.createdAt,
+                    today: today,
+                    maxWeeks: weeks,
+                  );
+                  return HeatmapGrid(
+                    data: data,
+                    color: Color(item.habit.color),
+                    cellSize: cellSize,
+                    cellGap: cellGap,
+                  );
+                },
+              ),
+              const SizedBox(height: 8),
+              Text('30-day: ${percent == null ? '—' : '$percent%'}'),
+            ],
+          ),
+        ),
       ),
     );
   }
