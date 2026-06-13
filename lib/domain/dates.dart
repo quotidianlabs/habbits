@@ -20,3 +20,19 @@ DateTime parseIsoDate(String s) {
   final parts = s.split('-');
   return DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
 }
+
+/// Number of whole calendar days from [from] to [to] (date-only). Negative if
+/// [to] precedes [from]. Divides hours by 24 and rounds so a single DST
+/// transition inside the span does not shift the count.
+int daysBetween(DateTime from, DateTime to) {
+  final f = DateTime(from.year, from.month, from.day);
+  final t = DateTime(to.year, to.month, to.day);
+  return (t.difference(f).inHours / 24).round();
+}
+
+/// The Monday of the week containing [d] (weeks start Monday). DST-safe via
+/// calendar-date construction.
+DateTime mondayOf(DateTime d) {
+  final date = DateTime(d.year, d.month, d.day);
+  return DateTime(date.year, date.month, date.day - (date.weekday - 1));
+}
