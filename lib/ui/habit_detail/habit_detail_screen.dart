@@ -6,6 +6,7 @@ import '../../domain/heatmap.dart';
 import '../../state/habit_providers.dart';
 import '../widgets/habit_dialogs.dart';
 import '../widgets/heatmap_grid.dart';
+import '../widgets/recent_days_list.dart';
 
 class HabitDetailScreen extends ConsumerWidget {
   const HabitDetailScreen({super.key, required this.habitId});
@@ -73,11 +74,15 @@ class HabitDetailScreen extends ConsumerWidget {
             child: HeatmapGrid(
               data: data,
               color: Color(summary.habit.color),
-              interactive: true,
               cellSize: 18,
               showMonthLabels: true,
-              onToggle: (date) => dao.toggleCompletion(habitId, date),
             ),
+          ),
+          const SizedBox(height: 16),
+          RecentDaysList(
+            completed: summary.dates,
+            today: today,
+            onToggle: (date) => dao.toggleCompletion(habitId, date),
           ),
         ],
       ),

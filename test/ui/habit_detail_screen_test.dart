@@ -40,7 +40,7 @@ void main() {
     expect(find.byType(HeatmapGrid), findsOneWidget);
   });
 
-  testWidgets('tapping a past in-range cell records a completion (retroactive)',
+  testWidgets('tapping a day row records a completion (retroactive)',
       (tester) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
@@ -51,7 +51,7 @@ void main() {
 
     final target = dateOnly(DateTime.now()).subtract(const Duration(days: 3));
     final iso = formatIsoDate(target);
-    await tester.tap(find.byKey(Key('heatmap-cell-$iso')));
+    await tester.tap(find.byKey(Key('daylist-$iso')));
     await tester.pumpAndSettle();
 
     final rows = await (db.select(db.completions)
