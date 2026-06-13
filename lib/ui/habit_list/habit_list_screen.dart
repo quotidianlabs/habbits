@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/dates.dart';
-import '../../domain/heatmap.dart';
 import '../../state/habit_providers.dart';
 import '../habit_detail/habit_detail_screen.dart';
+import '../widgets/day_strip.dart';
 import '../widgets/habit_dialogs.dart';
-import '../widgets/heatmap_grid.dart';
 
 class HabitListScreen extends ConsumerWidget {
   const HabitListScreen({super.key});
@@ -63,42 +62,30 @@ class _HabitCard extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Expanded(
-                    child: Text(
-                      item.habit.name,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ),
-                  Text('Streak: ${item.streak}'),
                   Checkbox(
                     key: ValueKey('checkoff-toggle-${item.habit.id}'),
                     value: item.doneToday,
                     onChanged: (_) => dao.toggleCompletion(item.habit.id, today),
                   ),
+                  Expanded(
+                    child: Text(
+                      item.habit.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ),
+                  Text('Streak: ${item.streak}'),
+                  const SizedBox(width: 12),
+                  Text(percent == null ? '—' : '$percent%'),
                 ],
               ),
-              const SizedBox(height: 8),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  const cellSize = 11.0;
-                  const cellGap = 2.0;
-                  final weeks =
-                      (constraints.maxWidth / (cellSize + cellGap)).floor().clamp(1, 26);
-                  final data = buildHeatmap(
-                    completed: item.dates,
-                    today: today,
-                    weeks: weeks,
-                  );
-                  return HeatmapGrid(
-                    data: data,
-                    color: Color(item.habit.color),
-                    cellSize: cellSize,
-                    cellGap: cellGap,
-                  );
-                },
+              const SizedBox(height: 6),
+              DayStrip(
+                completed: item.dates,
+                today: today,
+                color: Color(item.habit.color),
               ),
-              const SizedBox(height: 8),
-              Text('30-day: ${percent == null ? '—' : '$percent%'}'),
             ],
           ),
         ),

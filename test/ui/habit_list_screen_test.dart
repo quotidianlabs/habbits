@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/database.dart';
 import 'package:habbits/state/habit_providers.dart';
 import 'package:habbits/ui/habit_list/habit_list_screen.dart';
+import 'package:habbits/ui/widgets/day_strip.dart';
 
 Widget _app(AppDatabase db) => ProviderScope(
       overrides: [appDatabaseProvider.overrideWithValue(db)],
@@ -26,6 +27,7 @@ void main() {
 
     expect(find.text('Medicine'), findsOneWidget);
     expect(find.text('Streak: 0'), findsOneWidget);
+    expect(find.byType(DayStrip), findsOneWidget);
   });
 
   testWidgets('checking off today bumps the streak to 1', (tester) async {
