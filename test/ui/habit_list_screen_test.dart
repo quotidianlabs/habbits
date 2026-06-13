@@ -35,7 +35,7 @@ void main() {
     await tester.pumpWidget(_app(db));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const Key('checkoff-toggle')));
+    await tester.tap(find.byType(Checkbox));
     await tester.pumpAndSettle();
 
     expect(find.text('Streak: 1'), findsOneWidget);
@@ -48,7 +48,7 @@ void main() {
     await tester.pumpWidget(_app(db));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const Key('habit-menu')));
+    await tester.tap(find.byType(PopupMenuButton<String>));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Delete'));
     await tester.pumpAndSettle();
@@ -57,5 +57,25 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Workout'), findsNothing);
+  });
+
+  testWidgets('two habits each render with independent check-off controls', (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await db.habitDao.createHabit(name: 'Read', color: 0xFF009688);
+    await db.habitDao.createHabit(name: 'Meditate', color: 0xFF673AB7);
+    await tester.pumpWidget(_app(db));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Read'), findsOneWidget);
+    expect(find.text('Meditate'), findsOneWidget);
+    // Two independent checkboxes, no key collision.
+    expect(find.byType(Checkbox), findsNWidgets(2));
+
+    // Toggling the first habit's checkbox only affects that row.
+    await tester.tap(find.byType(Checkbox).first);
+    await tester.pumpAndSettle();
+    expect(find.text('Streak: 1'), findsOneWidget); // exactly one habit now has a streak
+    expect(find.text('Streak: 0'), findsOneWidget);
   });
 }

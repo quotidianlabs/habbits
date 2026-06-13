@@ -42,7 +42,7 @@ class _HabitTile extends ConsumerWidget {
     final dao = ref.read(habitDaoProvider);
     return ListTile(
       leading: Checkbox(
-        key: const Key('checkoff-toggle'),
+        key: ValueKey('checkoff-toggle-${item.habit.id}'),
         value: item.doneToday,
         onChanged: (_) =>
             dao.toggleCompletion(item.habit.id, dateOnly(DateTime.now())),
@@ -50,7 +50,7 @@ class _HabitTile extends ConsumerWidget {
       title: Text(item.habit.name),
       subtitle: Text('Streak: ${item.streak}'),
       trailing: PopupMenuButton<String>(
-        key: const Key('habit-menu'),
+        key: ValueKey('habit-menu-${item.habit.id}'),
         onSelected: (value) {
           if (value == 'rename') {
             _showNameDialog(
