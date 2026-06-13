@@ -1,4 +1,5 @@
 /// Pure calendar-date helpers. No Flutter, no Drift imports.
+library;
 
 /// Strips the time-of-day, returning a date at local midnight.
 DateTime dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);

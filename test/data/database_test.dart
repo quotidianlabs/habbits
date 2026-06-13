@@ -1,4 +1,3 @@
-import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/database.dart';
@@ -26,7 +25,7 @@ void main() {
     await db.into(db.completions).insert(CompletionsCompanion.insert(
           habitId: habitId, localDate: '2026-06-13', createdAt: DateTime(2026, 6, 13)));
 
-    expect(
+    await expectLater(
       () => db.into(db.completions).insert(CompletionsCompanion.insert(
             habitId: habitId, localDate: '2026-06-13', createdAt: DateTime(2026, 6, 13))),
       throwsA(isA<Exception>()),
