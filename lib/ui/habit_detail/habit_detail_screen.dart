@@ -26,8 +26,8 @@ class HabitDetailScreen extends ConsumerWidget {
     final today = dateOnly(DateTime.now());
     final data = buildHeatmap(
       completed: summary.dates,
-      createdAt: summary.habit.createdAt,
       today: today,
+      weeks: 6,
     );
     final percent = summary.completionPercent;
 

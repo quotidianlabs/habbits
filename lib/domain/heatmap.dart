@@ -1,7 +1,7 @@
 import 'dates.dart';
 
 /// Classification of one heatmap cell.
-enum CellState { completed, notCompleted, future, beforeCreation }
+enum CellState { completed, notCompleted, future }
 
 class HeatmapCell {
   const HeatmapCell(this.date, this.state);
@@ -16,40 +16,31 @@ class HeatmapData {
   final List<List<HeatmapCell>> weeks;
 }
 
-/// Builds the grid from [completed] dates, the habit's [createdAt], and [today].
-/// When [maxWeeks] is non-null, only the most recent [maxWeeks] week-columns are
-/// returned (used by the compact home card); null returns full history from the
-/// creation week.
+/// Builds the most recent [weeks] week-columns ending at the week containing
+/// [today] (Monday..Sunday rows). Every non-future day is editable — there is no
+/// creation-date restriction, so any past day in the window can be backfilled.
+/// Future days (after [today]) are blank and never tappable.
 HeatmapData buildHeatmap({
   required Set<DateTime> completed,
-  required DateTime createdAt,
   required DateTime today,
-  int? maxWeeks,
+  int weeks = 6,
 }) {
   final days = completed.map(dateOnly).toSet();
-  final created = dateOnly(createdAt);
   final t = dateOnly(today);
 
   final lastMonday = mondayOf(t);
-  var firstMonday = mondayOf(created);
-  if (maxWeeks != null) {
-    final byMax = DateTime(
-        lastMonday.year, lastMonday.month, lastMonday.day - 7 * (maxWeeks - 1));
-    if (byMax.isAfter(firstMonday)) firstMonday = byMax;
-  }
+  final firstMonday = DateTime(
+      lastMonday.year, lastMonday.month, lastMonday.day - 7 * (weeks - 1));
 
-  final weeks = <List<HeatmapCell>>[];
+  final result = <List<HeatmapCell>>[];
   var weekStart = firstMonday;
   while (!weekStart.isAfter(lastMonday)) {
     final week = <HeatmapCell>[];
     for (var i = 0; i < 7; i++) {
-      final date =
-          DateTime(weekStart.year, weekStart.month, weekStart.day + i);
+      final date = DateTime(weekStart.year, weekStart.month, weekStart.day + i);
       final CellState state;
       if (date.isAfter(t)) {
         state = CellState.future;
-      } else if (date.isBefore(created)) {
-        state = CellState.beforeCreation;
       } else if (days.contains(date)) {
         state = CellState.completed;
       } else {
@@ -57,8 +48,8 @@ HeatmapData buildHeatmap({
       }
       week.add(HeatmapCell(date, state));
     }
-    weeks.add(week);
+    result.add(week);
     weekStart = DateTime(weekStart.year, weekStart.month, weekStart.day + 7);
   }
-  return HeatmapData(weeks);
+  return HeatmapData(result);
 }

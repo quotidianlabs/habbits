@@ -86,9 +86,8 @@ class _HabitCard extends ConsumerWidget {
                       (constraints.maxWidth / (cellSize + cellGap)).floor().clamp(1, 26);
                   final data = buildHeatmap(
                     completed: item.dates,
-                    createdAt: item.habit.createdAt,
                     today: today,
-                    maxWeeks: weeks,
+                    weeks: weeks,
                   );
                   return HeatmapGrid(
                     data: data,

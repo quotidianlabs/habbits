@@ -11,7 +11,7 @@ HeatmapData _oneWeek() {
     [
       HeatmapCell(d(0), CellState.completed),
       HeatmapCell(d(1), CellState.notCompleted),
-      HeatmapCell(d(2), CellState.beforeCreation),
+      HeatmapCell(d(2), CellState.notCompleted),
       HeatmapCell(d(3), CellState.notCompleted),
       HeatmapCell(d(4), CellState.notCompleted),
       HeatmapCell(d(5), CellState.notCompleted),
@@ -38,7 +38,7 @@ void main() {
     expect(tapped, DateTime(2026, 6, 9));
   });
 
-  testWidgets('interactive: future and beforeCreation cells do not fire onToggle',
+  testWidgets('interactive: future cells do not fire onToggle',
       (tester) async {
     DateTime? tapped;
     await tester.pumpWidget(MaterialApp(
@@ -52,7 +52,6 @@ void main() {
       ),
     ));
     await tester.tap(find.byKey(const Key('heatmap-cell-2026-06-14'))); // future
-    await tester.tap(find.byKey(const Key('heatmap-cell-2026-06-10'))); // beforeCreation
     expect(tapped, isNull);
   });
 

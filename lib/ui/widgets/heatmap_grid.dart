@@ -10,7 +10,7 @@ const _monthAbbr = [
 
 /// Renders a [HeatmapData] as columns of weeks (each 7 cells, Monday..Sunday).
 /// When [interactive] is true, tapping a completed/notCompleted cell calls
-/// [onToggle] with that cell's date; future and before-creation cells never fire.
+/// [onToggle] with that cell's date; future cells never fire.
 class HeatmapGrid extends StatelessWidget {
   const HeatmapGrid({
     super.key,
@@ -41,7 +41,6 @@ class HeatmapGrid extends StatelessWidget {
       case CellState.notCompleted:
         return color.withValues(alpha: 0.15);
       case CellState.future:
-      case CellState.beforeCreation:
         return Colors.transparent;
     }
   }
