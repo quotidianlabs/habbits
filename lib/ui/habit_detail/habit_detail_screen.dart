@@ -75,6 +75,7 @@ class HabitDetailScreen extends ConsumerWidget {
               color: Color(summary.habit.color),
               interactive: true,
               cellSize: 18,
+              showMonthLabels: true,
               onToggle: (date) => dao.toggleCompletion(habitId, date),
             ),
           ),

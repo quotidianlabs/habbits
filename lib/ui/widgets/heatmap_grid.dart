@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import '../../domain/dates.dart';
 import '../../domain/heatmap.dart';
 
+const _monthAbbr = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+];
+
 /// Renders a [HeatmapData] as columns of weeks (each 7 cells, Monday..Sunday).
 /// When [interactive] is true, tapping a completed/notCompleted cell calls
 /// [onToggle] with that cell's date; future and before-creation cells never fire.
@@ -15,6 +20,7 @@ class HeatmapGrid extends StatelessWidget {
     this.onToggle,
     this.cellSize = 14,
     this.cellGap = 3,
+    this.showMonthLabels = false,
   });
 
   final HeatmapData data;
@@ -23,6 +29,7 @@ class HeatmapGrid extends StatelessWidget {
   final void Function(DateTime date)? onToggle;
   final double cellSize;
   final double cellGap;
+  final bool showMonthLabels;
 
   bool _editable(CellState s) =>
       s == CellState.completed || s == CellState.notCompleted;
@@ -39,8 +46,53 @@ class HeatmapGrid extends StatelessWidget {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+  List<String?> _monthLabels() {
+    final labels = <String?>[];
+    int? lastMonth;
+    for (final week in data.weeks) {
+      final m = week.first.date.month;
+      if (m != lastMonth) {
+        labels.add(_monthAbbr[m - 1]);
+        lastMonth = m;
+      } else {
+        labels.add(null);
+      }
+    }
+    return labels;
+  }
+
+  Widget _labelsRow(BuildContext context) {
+    final labels = _monthLabels();
+    final labelHeight = cellSize * 0.75 * 1.4; // approximate line height
+    return Padding(
+      padding: EdgeInsets.only(bottom: cellGap),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final label in labels)
+            SizedBox(
+              width: cellSize + cellGap,
+              height: labelHeight,
+              child: label == null
+                  ? null
+                  : OverflowBox(
+                      maxWidth: double.infinity,
+                      maxHeight: labelHeight,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        label,
+                        softWrap: false,
+                        overflow: TextOverflow.visible,
+                        style: TextStyle(fontSize: cellSize * 0.75),
+                      ),
+                    ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _grid(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,6 +119,16 @@ class HeatmapGrid extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!showMonthLabels) return _grid(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [_labelsRow(context), _grid(context)],
     );
   }
 }
