@@ -1,10 +1,5 @@
 .idea
 
-# Go build outputs
-/bin/
-*.test
-*.out
-
 # Local env
 .env
 .env.local

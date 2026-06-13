@@ -1,17 +1,25 @@
-# habbits
+# Habbits
 
-A new Flutter project.
+A local-first, cross-platform habit tracker. Your data lives on your device —
+no account, no server, no paywall. Habits are fully editable and hard-deletable
+("okay, gone"), and exportable. Open source.
 
-## Getting Started
+## Status
 
-This project is a starting point for a Flutter application.
+MVP in progress. This slice ships the core loop: create / rename / delete habits,
+check off today, and see your current streak — all persisted locally via SQLite.
 
-A few resources to get you started if this is your first Flutter project:
+## Stack
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+Flutter · Drift (SQLite) · Riverpod. Pure-Dart domain layer for streak logic.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Develop
+
+```bash
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs   # after schema/provider changes
+flutter test            # unit + widget tests
+flutter run             # on a simulator/emulator
+```
+
+See `docs/superpowers/specs/2026-06-13-habbits-mobile-local-first-design.md` for the design.
