@@ -849,7 +849,7 @@ void main() {
     await tester.pumpWidget(_app(db));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const Key('checkoff-toggle')));
+    await tester.tap(find.byType(Checkbox));
     await tester.pumpAndSettle();
 
     expect(find.text('Streak: 1'), findsOneWidget);
@@ -1140,7 +1140,7 @@ void main() {
     await tester.tap(find.byKey(const Key('habit-name-confirm')));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const Key('checkoff-toggle')));
+    await tester.tap(find.byType(Checkbox));
     await tester.pumpAndSettle();
 
     expect(find.text('Medicine'), findsOneWidget);
