@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/dates.dart';
 import '../../state/habit_providers.dart';
+import '../widgets/habit_dialogs.dart';
 
 class HabitListScreen extends ConsumerWidget {
   const HabitListScreen({super.key});
@@ -14,7 +15,7 @@ class HabitListScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('Habbits')),
       floatingActionButton: FloatingActionButton(
         key: const Key('add-habit-fab'),
-        onPressed: () => _showNameDialog(context, ref),
+        onPressed: () => showHabitNameDialog(context, ref),
         child: const Icon(Icons.add),
       ),
       body: summaries.when(
@@ -53,14 +54,10 @@ class _HabitTile extends ConsumerWidget {
         key: ValueKey('habit-menu-${item.habit.id}'),
         onSelected: (value) {
           if (value == 'rename') {
-            _showNameDialog(
-              context,
-              ref,
-              habitId: item.habit.id,
-              initial: item.habit.name,
-            );
+            showHabitNameDialog(context, ref,
+                habitId: item.habit.id, initial: item.habit.name);
           } else if (value == 'delete') {
-            _confirmDelete(context, ref, item.habit.id, item.habit.name);
+            confirmDeleteHabit(context, ref, item.habit.id, item.habit.name);
           }
         },
         itemBuilder: (_) => const [
@@ -69,78 +66,5 @@ class _HabitTile extends ConsumerWidget {
         ],
       ),
     );
-  }
-}
-
-Future<void> _showNameDialog(
-  BuildContext context,
-  WidgetRef ref, {
-  int? habitId,
-  String? initial,
-}) async {
-  final dao = ref.read(habitDaoProvider);
-  final controller = TextEditingController(text: initial ?? '');
-  final name = await showDialog<String>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(habitId == null ? 'New habit' : 'Rename habit'),
-      content: TextField(
-        key: const Key('habit-name-field'),
-        controller: controller,
-        autofocus: true,
-        decoration: const InputDecoration(labelText: 'Name'),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          key: const Key('habit-name-confirm'),
-          onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-          child: const Text('Save'),
-        ),
-      ],
-    ),
-  );
-
-  if (name == null || name.isEmpty) return;
-  if (habitId == null) {
-    await dao.createHabit(name: name, color: Colors.teal.toARGB32());
-  } else {
-    await dao.renameHabit(habitId, name);
-  }
-}
-
-Future<void> _confirmDelete(
-  BuildContext context,
-  WidgetRef ref,
-  int habitId,
-  String name,
-) async {
-  final dao = ref.read(habitDaoProvider);
-  final confirmed = await showDialog<bool>(
-    context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text('Delete "$name"?'),
-      content: const Text(
-        'This permanently deletes the habit and all its check-off history. '
-        'This cannot be undone.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx, false),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          key: const Key('confirm-delete'),
-          onPressed: () => Navigator.pop(ctx, true),
-          child: const Text('Delete'),
-        ),
-      ],
-    ),
-  );
-  if (confirmed == true) {
-    await dao.deleteHabit(habitId);
   }
 }
