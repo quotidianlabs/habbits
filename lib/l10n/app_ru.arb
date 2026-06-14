@@ -19,7 +19,7 @@
   "importedHabits": "{count, plural, one{Импортирована {count} привычка} few{Импортированы {count} привычки} many{Импортировано {count} привычек} other{Импортировано {count} привычки}}",
 
   "language": "Язык",
-  "languageSystem": "Системный",
+  "languageSystem": "Системный язык",
 
   "noHabits": "Пока нет привычек. Нажмите +, чтобы добавить.",
   "homeError": "Ошибка: {error}",

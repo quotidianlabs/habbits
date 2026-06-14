@@ -75,7 +75,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get language => 'Язык';
 
   @override
-  String get languageSystem => 'Системный';
+  String get languageSystem => 'Системный язык';
 
   @override
   String get noHabits => 'Пока нет привычек. Нажмите +, чтобы добавить.';
