@@ -294,7 +294,10 @@ class HabitListScreen extends ConsumerWidget {
           return ReorderableListView(
             buildDefaultDragHandles: false,
             padding: const EdgeInsets.symmetric(vertical: 6),
-            onReorder: (oldIndex, newIndex) {
+            // Flutter 3.44 deprecates onReorder in favour of onReorderItem,
+            // which passes an already-adjusted newIndex (no manual decrement).
+            // reorderedIds therefore does a plain move (see Task 1's note).
+            onReorderItem: (oldIndex, newIndex) {
               final ids = [for (final it in items) it.habit.id];
               dao.reorderHabits(reorderedIds(ids, oldIndex, newIndex));
             },

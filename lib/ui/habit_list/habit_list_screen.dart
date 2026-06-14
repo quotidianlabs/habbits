@@ -115,7 +115,8 @@ class _HabitCard extends ConsumerWidget {
                       child: Icon(
                         Icons.drag_handle,
                         key: ValueKey('drag-handle-${item.habit.id}'),
-                        color: Theme.of(context).disabledColor,
+                        semanticLabel: 'Drag to reorder ${item.habit.name}',
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
