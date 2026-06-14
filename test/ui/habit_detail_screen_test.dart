@@ -94,6 +94,51 @@ void main() {
     expect(find.text('30-day: —'), findsOneWidget);
   });
 
+  testWidgets('reminder row shows Off and switch off for a habit with no reminder',
+      (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final id = await seedHabit(db);
+
+    await tester.pumpWidget(app(db, id));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('reminder-row')), findsOneWidget);
+    expect(find.text('Off'), findsOneWidget);
+    final sw = tester.widget<Switch>(find.byKey(const Key('reminder-switch')));
+    expect(sw.value, isFalse);
+  });
+
+  testWidgets('reminder row shows the time and switch on when set', (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final id = await seedHabit(db);
+    await db.habitDao.setReminderTime(id, '08:30');
+
+    await tester.pumpWidget(app(db, id));
+    await tester.pumpAndSettle();
+
+    final sw = tester.widget<Switch>(find.byKey(const Key('reminder-switch')));
+    expect(sw.value, isTrue);
+    expect(find.text('8:30 AM'), findsOneWidget);
+  });
+
+  testWidgets('toggling the switch off clears the reminder', (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final id = await seedHabit(db);
+    await db.habitDao.setReminderTime(id, '08:30');
+
+    await tester.pumpWidget(app(db, id));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('reminder-switch')));
+    await tester.pumpAndSettle();
+
+    final rows = await db.habitDao.getHabitsWithDates();
+    expect(rows.single.habit.reminderTime, isNull);
+  });
+
   testWidgets('deleting from detail confirms, removes the habit, and pops',
       (tester) async {
     final db = AppDatabase(NativeDatabase.memory());

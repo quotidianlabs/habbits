@@ -68,7 +68,25 @@ class HabitDetailScreen extends ConsumerWidget {
           const SizedBox(height: 4),
           Text('30-day: ${percent == null ? '—' : '$percent%'}',
               style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
+          ListTile(
+            key: const Key('reminder-row'),
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.notifications_outlined),
+            title: const Text('Reminder'),
+            subtitle: Text(_reminderLabel(context, summary.habit.reminderTime)),
+            trailing: Switch(
+              key: const Key('reminder-switch'),
+              value: summary.habit.reminderTime != null,
+              onChanged: (on) => _onReminderToggle(
+                  context, ref, habitId, on, summary.habit.reminderTime),
+            ),
+            onTap: summary.habit.reminderTime == null
+                ? null
+                : () => _pickReminderTime(
+                    context, ref, habitId, summary.habit.reminderTime!),
+          ),
+          const SizedBox(height: 8),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: HeatmapGrid(
@@ -87,5 +105,54 @@ class HabitDetailScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+String _reminderLabel(BuildContext context, String? hhmm) {
+  if (hhmm == null) return 'Off';
+  return _toTimeOfDay(hhmm).format(context);
+}
+
+TimeOfDay _toTimeOfDay(String hhmm) {
+  final parts = hhmm.split(':');
+  return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+}
+
+String _toHhmm(TimeOfDay t) =>
+    '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
+
+Future<void> _onReminderToggle(
+  BuildContext context,
+  WidgetRef ref,
+  int habitId,
+  bool on,
+  String? current,
+) async {
+  final dao = ref.read(habitDaoProvider);
+  if (!on) {
+    await dao.setReminderTime(habitId, null);
+    return;
+  }
+  final picked = await showTimePicker(
+    context: context,
+    initialTime: const TimeOfDay(hour: 9, minute: 0),
+  );
+  if (picked != null) {
+    await dao.setReminderTime(habitId, _toHhmm(picked));
+  }
+}
+
+Future<void> _pickReminderTime(
+  BuildContext context,
+  WidgetRef ref,
+  int habitId,
+  String current,
+) async {
+  final picked = await showTimePicker(
+    context: context,
+    initialTime: _toTimeOfDay(current),
+  );
+  if (picked != null && context.mounted) {
+    await ref.read(habitDaoProvider).setReminderTime(habitId, _toHhmm(picked));
   }
 }
