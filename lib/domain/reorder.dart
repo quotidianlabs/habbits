@@ -1,12 +1,13 @@
-/// Returns a new list with the item at [oldIndex] moved to [newIndex], applying
-/// `ReorderableListView`'s index convention: when moving an item downward,
-/// [newIndex] is one past the intended slot, so it is decremented. Does not
-/// mutate [ids].
+/// Returns a new list with the item at [oldIndex] moved to [newIndex].
+///
+/// [newIndex] is the destination index in the list *after* the dragged item is
+/// removed — the convention of `ReorderableListView`'s `onReorderItem` callback,
+/// which already accounts for the removal (unlike the deprecated `onReorder`,
+/// which required the caller to decrement `newIndex` on downward moves). Does
+/// not mutate [ids].
 List<int> reorderedIds(List<int> ids, int oldIndex, int newIndex) {
   final list = [...ids];
-  var target = newIndex;
-  if (target > oldIndex) target -= 1;
   final item = list.removeAt(oldIndex);
-  list.insert(target, item);
+  list.insert(newIndex, item);
   return list;
 }
