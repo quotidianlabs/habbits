@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/dates.dart';
+import '../../domain/reorder.dart';
 import '../../state/habit_providers.dart';
 import '../habit_detail/habit_detail_screen.dart';
 import '../settings/settings_screen.dart';
@@ -41,8 +42,22 @@ class HabitListScreen extends ConsumerWidget {
           if (items.isEmpty) {
             return const Center(child: Text('No habits yet. Tap + to add one.'));
           }
-          return ListView(
-            children: [for (final item in items) _HabitCard(item: item)],
+          final dao = ref.read(habitDaoProvider);
+          return ReorderableListView(
+            buildDefaultDragHandles: false,
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            onReorderItem: (oldIndex, newIndex) {
+              final ids = [for (final it in items) it.habit.id];
+              dao.reorderHabits(reorderedIds(ids, oldIndex, newIndex));
+            },
+            children: [
+              for (var i = 0; i < items.length; i++)
+                _HabitCard(
+                  key: ValueKey('habit-${items[i].habit.id}'),
+                  item: items[i],
+                  index: i,
+                ),
+            ],
           );
         },
       ),
@@ -51,8 +66,9 @@ class HabitListScreen extends ConsumerWidget {
 }
 
 class _HabitCard extends ConsumerWidget {
-  const _HabitCard({required this.item});
+  const _HabitCard({super.key, required this.item, required this.index});
   final HabitSummary item;
+  final int index;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -92,6 +108,18 @@ class _HabitCard extends ConsumerWidget {
                   Text('Streak: ${item.streak}'),
                   const SizedBox(width: 12),
                   Text(percent == null ? '—' : '$percent%'),
+                  ReorderableDragStartListener(
+                    index: index,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Icon(
+                        Icons.drag_handle,
+                        key: ValueKey('drag-handle-${item.habit.id}'),
+                        semanticLabel: 'Drag to reorder ${item.habit.name}',
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 6),

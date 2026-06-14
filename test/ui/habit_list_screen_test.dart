@@ -75,4 +75,17 @@ void main() {
 
     expect(find.byKey(const Key('habit-detail-screen')), findsOneWidget);
   });
+
+  testWidgets('home is a reorderable list with a drag handle per habit',
+      (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await db.habitDao.createHabit(name: 'Read', color: 0xFF009688);
+    await db.habitDao.createHabit(name: 'Meditate', color: 0xFF673AB7);
+    await tester.pumpWidget(_app(db));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(ReorderableListView), findsOneWidget);
+    expect(find.byIcon(Icons.drag_handle), findsNWidgets(2));
+  });
 }
