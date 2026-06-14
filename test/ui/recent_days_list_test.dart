@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/ui/widgets/recent_days_list.dart';
+import 'package:intl/intl.dart';
 
 void main() {
-  final today = DateTime(2026, 6, 13);
+  final defaultToday = DateTime(2026, 6, 13);
 
-  Widget host({required void Function(DateTime) onToggle, Set<DateTime> done = const {}}) =>
+  Widget host({
+    required void Function(DateTime) onToggle,
+    Set<DateTime> done = const {},
+    DateTime? today,
+    Locale? locale,
+  }) =>
       MaterialApp(
+        locale: locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: SingleChildScrollView(
             child: RecentDaysList(
               completed: done,
-              today: today,
+              today: today ?? defaultToday,
               count: 5,
               onToggle: onToggle,
             ),
@@ -32,5 +42,21 @@ void main() {
     await tester.pumpWidget(host(onToggle: (d) => toggled = d));
     await tester.tap(find.byKey(const Key('daylist-2026-06-11')));
     expect(toggled, DateTime(2026, 6, 11));
+  });
+
+  testWidgets('formats the today row in Russian', (tester) async {
+    final today = DateTime(2026, 6, 12); // Friday
+    await tester.pumpWidget(host(
+      onToggle: (_) {},
+      done: const {},
+      today: today,
+      locale: const Locale('ru'),
+    ));
+    await tester.pumpAndSettle();
+    final base = DateFormat.MMMEd('ru').format(today);
+    expect(find.text('Сегодня · $base'), findsOneWidget);
+    // A non-today row renders the bare formatted date, no prefix.
+    final yesterday = DateTime(2026, 6, 11);
+    expect(find.text(DateFormat.MMMEd('ru').format(yesterday)), findsOneWidget);
   });
 }
