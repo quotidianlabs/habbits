@@ -104,7 +104,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reminderTitle => 'Напоминание';
 
   @override
-  String get reminderOff => 'Выкл.';
+  String get reminderOff => 'Отключено';
 
   @override
   String get rename => 'Переименовать';
