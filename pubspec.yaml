@@ -59,6 +59,13 @@ dev_dependencies:
   integration_test:
     sdk: flutter
 
+# Pin flutter_plugin_android_lifecycle to 2.0.22 (v2 embedding, pre-compileSdk-36)
+# — the version file_picker 8.3.7 expects. Avoids the 2.0.35 AAR-metadata demand
+# that all dependents compile against android-36, which file_picker 8.x can't on
+# Flutter 3.44. Remove once file_picker ships a Flutter-3.44-compatible release.
+dependency_overrides:
+  flutter_plugin_android_lifecycle: 2.0.22
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
