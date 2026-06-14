@@ -32,6 +32,11 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
         .write(HabitsCompanion(name: Value(name)));
   }
 
+  Future<void> setReminderTime(int id, String? hhmm) {
+    return (update(habits)..where((h) => h.id.equals(id)))
+        .write(HabitsCompanion(reminderTime: Value(hhmm)));
+  }
+
   Future<void> deleteHabit(int id) {
     return (delete(habits)..where((h) => h.id.equals(id))).go();
   }

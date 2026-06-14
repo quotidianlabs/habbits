@@ -100,4 +100,16 @@ void main() {
     await dao.importReplace(const []);
     expect(await dao.getHabitsWithDates(), isEmpty);
   });
+
+  test('setReminderTime sets and clears a habit reminder', () async {
+    final id = await dao.createHabit(name: 'Read', color: 1);
+
+    await dao.setReminderTime(id, '08:30');
+    var rows = await dao.getHabitsWithDates();
+    expect(rows.single.habit.reminderTime, '08:30');
+
+    await dao.setReminderTime(id, null);
+    rows = await dao.getHabitsWithDates();
+    expect(rows.single.habit.reminderTime, isNull);
+  });
 }
