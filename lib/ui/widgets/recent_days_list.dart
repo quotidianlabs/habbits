@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:habbits/l10n/app_localizations.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/dates.dart';
 import '../../domain/recent_days.dart';
 
