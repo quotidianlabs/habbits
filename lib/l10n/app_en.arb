@@ -1,0 +1,65 @@
+{
+  "@@locale": "en",
+
+  "settings": "Settings",
+
+  "exportTitle": "Export data",
+  "exportSubtitle": "Save all habits and history to a JSON file",
+  "importTitle": "Import data",
+  "importSubtitle": "Replace all data from a JSON backup",
+  "exportFailed": "Export failed.",
+  "couldntReadFile": "Couldn't read that file.",
+  "invalidBackupFile": "That file isn't a valid Habbits backup.",
+
+  "replaceTitle": "Replace all data?",
+  "replaceBody": "This will replace all current habits and history with the file's contents ({count, plural, one{{count} habit} other{{count} habits}}). This cannot be undone.",
+  "@replaceBody": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "cancel": "Cancel",
+  "replace": "Replace",
+  "importFailed": "Import failed. Your existing data was not changed.",
+  "importedHabits": "{count, plural, one{Imported {count} habit} other{Imported {count} habits}}",
+  "@importedHabits": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "language": "Language",
+  "languageSystem": "System default",
+
+  "noHabits": "No habits yet. Tap + to add one.",
+  "homeError": "Error: {error}",
+  "@homeError": {
+    "placeholders": { "error": { "type": "String" } }
+  },
+  "streakLabel": "Streak: {count}",
+  "@streakLabel": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "thirtyDayLabel": "30-day: {value}",
+  "@thirtyDayLabel": {
+    "placeholders": { "value": { "type": "String" } }
+  },
+  "reminderTitle": "Reminder",
+  "reminderOff": "Off",
+  "rename": "Rename",
+  "delete": "Delete",
+
+  "newHabit": "New habit",
+  "renameHabit": "Rename habit",
+  "nameLabel": "Name",
+  "save": "Save",
+  "deleteHabitTitle": "Delete \"{name}\"?",
+  "@deleteHabitTitle": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "deleteHabitBody": "This permanently deletes the habit and all its check-off history. This cannot be undone.",
+
+  "todayPrefix": "Today · {date}",
+  "@todayPrefix": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+
+  "reminderBody": "Time to check in"
+}
