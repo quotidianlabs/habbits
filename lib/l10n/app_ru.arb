@@ -24,6 +24,7 @@
   "noHabits": "Пока нет привычек. Нажмите +, чтобы добавить.",
   "homeError": "Ошибка: {error}",
   "streakLabel": "Серия: {count}",
+  "dragToReorder": "Перетащить для изменения порядка: {name}",
 
   "thirtyDayLabel": "30 дней: {value}",
   "reminderTitle": "Напоминание",

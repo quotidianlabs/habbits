@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../state/habit_providers.dart';
 
 /// Shows the create/rename name dialog. With [habitId] null it creates a new
@@ -15,26 +16,29 @@ Future<void> showHabitNameDialog(
   final controller = TextEditingController(text: initial ?? '');
   final name = await showDialog<String>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text(habitId == null ? 'New habit' : 'Rename habit'),
-      content: TextField(
-        key: const Key('habit-name-field'),
-        controller: controller,
-        autofocus: true,
-        decoration: const InputDecoration(labelText: 'Name'),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx),
-          child: const Text('Cancel'),
+    builder: (ctx) {
+      final l10n = AppLocalizations.of(ctx);
+      return AlertDialog(
+        title: Text(habitId == null ? l10n.newHabit : l10n.renameHabit),
+        content: TextField(
+          key: const Key('habit-name-field'),
+          controller: controller,
+          autofocus: true,
+          decoration: InputDecoration(labelText: l10n.nameLabel),
         ),
-        TextButton(
-          key: const Key('habit-name-confirm'),
-          onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-          child: const Text('Save'),
-        ),
-      ],
-    ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            key: const Key('habit-name-confirm'),
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: Text(l10n.save),
+          ),
+        ],
+      );
+    },
   );
 
   if (name == null || name.isEmpty) return;
@@ -56,24 +60,24 @@ Future<bool> confirmDeleteHabit(
   final dao = ref.read(habitDaoProvider);
   final confirmed = await showDialog<bool>(
     context: context,
-    builder: (ctx) => AlertDialog(
-      title: Text('Delete "$name"?'),
-      content: const Text(
-        'This permanently deletes the habit and all its check-off history. '
-        'This cannot be undone.',
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(ctx, false),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          key: const Key('confirm-delete'),
-          onPressed: () => Navigator.pop(ctx, true),
-          child: const Text('Delete'),
-        ),
-      ],
-    ),
+    builder: (ctx) {
+      final l10n = AppLocalizations.of(ctx);
+      return AlertDialog(
+        title: Text(l10n.deleteHabitTitle(name)),
+        content: Text(l10n.deleteHabitBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            key: const Key('confirm-delete'),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.delete),
+          ),
+        ],
+      );
+    },
   );
   if (confirmed == true) {
     await dao.deleteHabit(habitId);

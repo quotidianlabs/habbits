@@ -36,6 +36,10 @@
   "@streakLabel": {
     "placeholders": { "count": { "type": "int" } }
   },
+  "dragToReorder": "Drag to reorder {name}",
+  "@dragToReorder": {
+    "placeholders": { "name": { "type": "String" } }
+  },
 
   "thirtyDayLabel": "30-day: {value}",
   "@thirtyDayLabel": {

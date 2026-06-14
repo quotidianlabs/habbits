@@ -91,6 +91,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String dragToReorder(String name) {
+    return 'Перетащить для изменения порядка: $name';
+  }
+
+  @override
   String thirtyDayLabel(String value) {
     return '30 дней: $value';
   }

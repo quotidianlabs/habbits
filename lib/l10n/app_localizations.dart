@@ -212,6 +212,12 @@ abstract class AppLocalizations {
   /// **'Streak: {count}'**
   String streakLabel(int count);
 
+  /// No description provided for @dragToReorder.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag to reorder {name}'**
+  String dragToReorder(String name);
+
   /// No description provided for @thirtyDayLabel.
   ///
   /// In en, this message translates to:

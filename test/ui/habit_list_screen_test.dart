@@ -3,13 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/database.dart';
+import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/state/habit_providers.dart';
 import 'package:habbits/ui/habit_list/habit_list_screen.dart';
 import 'package:habbits/ui/widgets/day_strip.dart';
 
-Widget _app(AppDatabase db) => ProviderScope(
+Widget _app(AppDatabase db, {Locale? locale}) => ProviderScope(
       overrides: [appDatabaseProvider.overrideWithValue(db)],
-      child: const MaterialApp(home: HabitListScreen()),
+      child: MaterialApp(
+        locale: locale,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const HabitListScreen(),
+      ),
     );
 
 void main() {
@@ -87,5 +93,23 @@ void main() {
 
     expect(find.byType(ReorderableListView), findsOneWidget);
     expect(find.byIcon(Icons.drag_handle), findsNWidgets(2));
+  });
+
+  testWidgets('renders Russian copy when locale is ru', (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await tester.pumpWidget(_app(db, locale: const Locale('ru')));
+    await tester.pumpAndSettle();
+    expect(find.text('Пока нет привычек. Нажмите +, чтобы добавить.'),
+        findsOneWidget);
+  });
+
+  testWidgets('renders Russian streak label', (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await db.habitDao.createHabit(name: 'Бег', color: 0xFF009688);
+    await tester.pumpWidget(_app(db, locale: const Locale('ru')));
+    await tester.pumpAndSettle();
+    expect(find.text('Серия: 0'), findsOneWidget);
   });
 }

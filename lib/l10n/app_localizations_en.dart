@@ -87,6 +87,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String dragToReorder(String name) {
+    return 'Drag to reorder $name';
+  }
+
+  @override
   String thirtyDayLabel(String value) {
     return '30-day: $value';
   }
