@@ -26,9 +26,8 @@ The home list becomes a **`ReorderableListView`** with
   starts **only** from the handle. Tapping the card still opens the detail screen
   and the check-off `Checkbox` still toggles — no gesture ambiguity.
 
-On drop, `onReorder(oldIndex, newIndex)` computes the new ordering of habit ids
-(via the pure `reorderedIds` helper, which applies `ReorderableListView`'s index
-convention) and calls `dao.reorderHabits(newOrder)`. The reactive
+On drop, `onReorderItem(oldIndex, newIndex)` computes the new ordering of habit ids
+(via the pure `reorderedIds` helper) and calls `dao.reorderHabits(newOrder)`. The reactive
 `watchHabitsWithDates` stream re-emits and the list re-renders in the new order —
 the database is the single source of truth (no separate local ordering state).
 
@@ -50,9 +49,10 @@ the database is the single source of truth (no separate local ordering state).
 ```
 lib/domain/reorder.dart          # NEW (pure): List<int> reorderedIds(
                                  #   List<int> ids, int oldIndex, int newIndex)
-                                 #   — applies ReorderableListView's semantics
-                                 #   (decrement newIndex when newIndex > oldIndex,
-                                 #    then remove-at / insert-at). Unit-tested.
+                                 #   — plain immutable move (remove-at / insert-at)
+                                 #   matching ReorderableListView's onReorderItem
+                                 #   convention (newIndex already adjusted for the
+                                 #   removed item). Unit-tested.
 lib/data/habit_dao.dart          # + Future<void> reorderHabits(List<int> orderedIds)
                                  #   (transactional sortOrder = index);
                                  #   createHabit: sortOrder = max+1 instead of count.
@@ -60,21 +60,23 @@ lib/ui/habit_list/habit_list_screen.dart  # ListView -> ReorderableListView
                                  #   (buildDefaultDragHandles: false); each _HabitCard
                                  #   gets a ValueKey + an index + a trailing
                                  #   ReorderableDragStartListener drag handle;
-                                 #   onReorder -> reorderedIds -> dao.reorderHabits.
+                                 #   onReorderItem -> reorderedIds -> dao.reorderHabits.
 ```
 
-**Decomposition.** The one subtle piece — `ReorderableListView`'s index convention
-(when dragging downward, `newIndex` is one past the target) — is isolated in the
-pure `reorderedIds` and unit-tested. The DAO owns the transactional persistence.
-The screen wires the handle and `onReorder`; it holds no ordering state of its own
-(the stream is authoritative). No one-time hint is needed — the visible handle is
-self-discoverable.
+**Decomposition.** `ReorderableListView`'s reorder callback is isolated behind the
+pure `reorderedIds` helper, which is unit-tested. Flutter 3.44 deprecates the old
+`onReorder` (which required the caller to decrement `newIndex` on downward moves) in
+favour of `onReorderItem`, which reports an already-adjusted `newIndex`; `reorderedIds`
+therefore does a plain remove-at / insert-at with no decrement. The DAO owns the
+transactional persistence. The screen wires the handle and `onReorderItem`; it holds
+no ordering state of its own (the stream is authoritative). No one-time hint is needed
+— the visible handle is self-discoverable.
 
 ## 4. Testing
 
-- **Pure `reorderedIds`** (the tricky part): move down, move up, adjacent swap,
-  single-item list, and a no-op (oldIndex == effective newIndex) — verifying the
-  `newIndex > oldIndex` decrement is applied correctly.
+- **Pure `reorderedIds`**: move first-to-last, last-to-first, down past one
+  neighbour, up by one, single-item list, and a no-mutation guard — encoding the
+  `onReorderItem` convention (no decrement), so reintroducing a decrement fails a test.
 - **DAO `reorderHabits`**: create three habits, reorder their ids, and assert
   `getHabitsWithDates` returns the new order with `sortOrder` values 0, 1, 2.
 - **DAO integrity**: create A, B, C → delete B → create D → assert D lands at the
