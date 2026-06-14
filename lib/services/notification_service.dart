@@ -54,7 +54,10 @@ class NotificationService {
   }
 
   /// Cancels everything and reschedules exactly [reminders].
-  Future<void> syncSchedule(List<ScheduledReminder> reminders) async {
+  Future<void> syncSchedule(
+    List<ScheduledReminder> reminders, {
+    required String body,
+  }) async {
     await _plugin.cancelAll();
     const details = NotificationDetails(
       android: AndroidNotificationDetails(
@@ -71,7 +74,7 @@ class NotificationService {
       await _plugin.zonedSchedule(
         id: i,
         title: r.habitName,
-        body: 'Time to check in',
+        body: body,
         scheduledDate: tz.TZDateTime.from(r.when, tz.local),
         notificationDetails: details,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
