@@ -110,7 +110,7 @@ Future<void> confirmAndImport(
       }
       return;
     }
-    if (context.mounted && Scaffold.maybeOf(context) != null) {
+    if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Imported ${data.habits.length} habits')),
       );

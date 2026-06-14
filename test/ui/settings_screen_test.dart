@@ -42,13 +42,15 @@ void main() {
     await tester.pumpWidget(ProviderScope(
       overrides: [appDatabaseProvider.overrideWithValue(db)],
       child: MaterialApp(
-        home: Consumer(builder: (context, ref, _) {
-          return ElevatedButton(
-            key: const Key('go'),
-            onPressed: () => confirmAndImport(context, ref, data),
-            child: const Text('go'),
-          );
-        }),
+        home: Scaffold(
+          body: Consumer(builder: (context, ref, _) {
+            return ElevatedButton(
+              key: const Key('go'),
+              onPressed: () => confirmAndImport(context, ref, data),
+              child: const Text('go'),
+            );
+          }),
+        ),
       ),
     ));
 
