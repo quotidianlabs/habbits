@@ -5,6 +5,7 @@ import '../data/habit_dao.dart';
 import '../domain/completion_stats.dart';
 import '../domain/dates.dart';
 import '../domain/streak.dart';
+import '../services/notification_service.dart';
 
 part 'habit_providers.g.dart';
 
@@ -27,6 +28,11 @@ class HabitSummary {
   /// All dates this habit was completed on (for the heatmap).
   final Set<DateTime> dates;
 }
+
+@Riverpod(keepAlive: true)
+NotificationService notificationService(Ref ref) =>
+    throw UnimplementedError(
+        'notificationServiceProvider must be overridden in main');
 
 @Riverpod(keepAlive: true)
 AppDatabase appDatabase(Ref ref) {
