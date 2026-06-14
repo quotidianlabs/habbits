@@ -37,10 +37,11 @@ class SettingsScreen extends ConsumerWidget {
   Future<void> _export(BuildContext context, WidgetRef ref) async {
     try {
       await exportAndShare(ref.read(habitDaoProvider));
-    } catch (e) {
+    } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Export failed: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Export failed.')),
+        );
       }
     }
   }
@@ -53,6 +54,13 @@ class SettingsScreen extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(e.message)));
+      }
+      return;
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Couldn't read that file.")),
+        );
       }
       return;
     }
@@ -90,15 +98,22 @@ Future<void> confirmAndImport(
     ),
   );
   if (confirmed == true && context.mounted) {
-    await ref.read(habitDaoProvider).importReplace(data.habits);
-    if (context.mounted) {
-      try {
+    try {
+      await ref.read(habitDaoProvider).importReplace(data.habits);
+    } catch (_) {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Imported ${data.habits.length} habits')),
+          const SnackBar(
+            content: Text('Import failed. Your existing data was not changed.'),
+          ),
         );
-      } catch (_) {
-        // No Scaffold in tree (e.g. in tests without a Scaffold wrapper).
       }
+      return;
+    }
+    if (context.mounted && Scaffold.maybeOf(context) != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Imported ${data.habits.length} habits')),
+      );
     }
   }
 }
