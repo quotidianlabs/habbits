@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/dates.dart';
 import '../../state/habit_providers.dart';
 import '../habit_detail/habit_detail_screen.dart';
+import '../settings/settings_screen.dart';
 import '../widgets/day_strip.dart';
 import '../widgets/habit_dialogs.dart';
 
@@ -14,7 +15,20 @@ class HabitListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final summaries = ref.watch(habitSummariesProvider);
     return Scaffold(
-      appBar: AppBar(title: const Text('Habbits')),
+      appBar: AppBar(
+        title: const Text('Habbits'),
+        actions: [
+          IconButton(
+            key: const Key('open-settings'),
+            icon: const Icon(Icons.settings),
+            tooltip: 'Settings',
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const SettingsScreen()),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         key: const Key('add-habit-fab'),
         onPressed: () => showHabitNameDialog(context, ref),
