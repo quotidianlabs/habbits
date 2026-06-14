@@ -26,11 +26,18 @@ Flutter's official **`gen-l10n`** (ARB → typed `AppLocalizations`):
   template-arb-file: app_en.arb
   output-localization-file: app_localizations.dart
   nullable-getter: false
+  synthetic-package: false
   ```
+  Flutter 3.44 removed the synthetic `flutter_gen` package, so
+  `synthetic-package: false` generates `app_localizations*.dart` into
+  `lib/l10n/`, imported via the relative path `l10n/app_localizations.dart`.
+  These generated files are committed (this project commits generated `*.g.dart`).
 - ARB files: `lib/l10n/app_en.arb` (template) and `lib/l10n/app_ru.arb`.
 - Generated `AppLocalizations` is reached via `AppLocalizations.of(context)`
-  (non-nullable getter) in widgets, and `lookupAppLocalizations(locale)` for the
-  context-free notification path.
+  (non-nullable getter) in widgets. The reminder body is localized in the
+  `ReminderCoordinator` (which has a `BuildContext`) and passed into
+  `NotificationService.syncSchedule`, keeping the service free of any l10n
+  dependency.
 
 Rationale: compile-time-safe keys, built-in ICU plural/placeholder support
 (required for Russian one/few/many), auto-wires `MaterialLocalizations` so
@@ -116,32 +123,34 @@ Example (`app_ru.arb`):
 
 ## Dates
 
-- Delete `lib/domain/calendar_labels.dart` (its only consumer is
-  `recent_days_list.dart`; `DayStrip` renders colored cells only — no text).
+- Delete `lib/domain/calendar_labels.dart`. It has **two** consumers:
+  `recent_days_list.dart` (weekday + month + day) and `heatmap_grid.dart`
+  (`monthAbbr3` for the month-label row). Both move to `intl` `DateFormat`.
+  `DayStrip` renders colored cells only — no text, unchanged.
 - Rewrite `RecentDaysList._label` to use `intl` `DateFormat` with the active
   locale: e.g. `DateFormat('EEE, MMM d', localeName)` for English and the locale
   resolving to `пн, 13 июн` for Russian (ordering and month forms handled by
   `intl`). The "Today ·" prefix becomes an ARB string with the formatted date as
   a placeholder: `todayPrefix(formattedDate)` → "Today · {date}" / "Сегодня ·
   {date}".
+- Rewrite `HeatmapGrid._monthLabels` to format months with
+  `DateFormat.MMM(localeName)`; thread `localeName` in from `build`'s context.
 - `localeName` comes from `Localizations.localeOf(context).toString()`.
 
 ## Notifications (context-free localization)
 
-`NotificationService.syncSchedule` builds reminder bodies outside the widget
-tree, so there is no `BuildContext`:
+`NotificationService.syncSchedule` builds reminder bodies, but the service is a
+pure plugin boundary and should not depend on l10n. The `ReminderCoordinator`
+*is* a widget with a `BuildContext`, so it resolves the string and passes it in:
 
-- `syncSchedule` (or the `reminder_coordinator` that calls it) resolves the
-  localized body via `lookupAppLocalizations(locale)` using the currently
-  selected effective locale.
-- The effective locale is derived from `AppLocale`: if `system`, use
-  `WidgetsBinding.instance.platformDispatcher.locale` resolved against supported
-  locales; else the forced locale.
+- `syncSchedule` gains a `required String body` parameter. The coordinator calls
+  it with `AppLocalizations.of(context).reminderBody`.
 - The notification **title** stays the habit name (user data). The **body**
   "Time to check in" is localized.
-- When the user changes language, the reminder coordinator reschedules so
-  already-queued notifications pick up the new language (it already cancels and
-  re-syncs on relevant changes; language becomes one more trigger).
+- The coordinator additionally `ref.listenManual`s the locale controller and
+  re-syncs on change, so already-queued notifications pick up the new language
+  (it already re-syncs on habit/lifecycle changes; language becomes one more
+  trigger).
 
 ## Testing
 
