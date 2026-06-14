@@ -43,7 +43,7 @@ Future<void> exportAndShare(HabitDao dao) async {
 /// Lets the user pick a file and decodes it. Returns null if cancelled; throws
 /// [BackupFormatException] if the file is not a valid backup.
 Future<BackupData?> pickAndDecode() async {
-  final result = await FilePicker.platform.pickFiles();
+  final result = await FilePicker.platform.pickFiles(allowMultiple: false);
   final path = result?.files.single.path;
   if (path == null) return null;
   return decodeBackup(await File(path).readAsString());
