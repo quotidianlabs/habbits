@@ -19,10 +19,13 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
 
   Future<int> createHabit({required String name, required int color}) async {
     final existing = await select(habits).get();
+    final nextOrder = existing.isEmpty
+        ? 0
+        : existing.map((h) => h.sortOrder).reduce((a, b) => a > b ? a : b) + 1;
     return into(habits).insert(HabitsCompanion.insert(
       name: name,
       color: color,
-      sortOrder: existing.length,
+      sortOrder: nextOrder,
       createdAt: DateTime.now(),
     ));
   }
@@ -30,6 +33,19 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
   Future<void> renameHabit(int id, String name) {
     return (update(habits)..where((h) => h.id.equals(id)))
         .write(HabitsCompanion(name: Value(name)));
+  }
+
+  /// Persists a new ordering: sets each habit's sortOrder to its index in
+  /// [orderedIds], in a single transaction. Callers must pass every habit's id
+  /// exactly once; ids not present in the table are silently skipped, and any
+  /// habit omitted from [orderedIds] keeps its old sortOrder.
+  Future<void> reorderHabits(List<int> orderedIds) async {
+    await transaction(() async {
+      for (var i = 0; i < orderedIds.length; i++) {
+        await (update(habits)..where((h) => h.id.equals(orderedIds[i])))
+            .write(HabitsCompanion(sortOrder: Value(i)));
+      }
+    });
   }
 
   Future<void> setReminderTime(int id, String? hhmm) {

@@ -112,4 +112,33 @@ void main() {
     rows = await dao.getHabitsWithDates();
     expect(rows.single.habit.reminderTime, isNull);
   });
+
+  test('reorderHabits rewrites sortOrder to the new order', () async {
+    final a = await dao.createHabit(name: 'A', color: 1);
+    final b = await dao.createHabit(name: 'B', color: 1);
+    final c = await dao.createHabit(name: 'C', color: 1);
+
+    await dao.reorderHabits([c, a, b]);
+
+    final rows = await dao.getHabitsWithDates();
+    expect(rows.map((r) => r.habit.name), ['C', 'A', 'B']);
+    expect(rows.map((r) => r.habit.sortOrder), [0, 1, 2]);
+  });
+
+  test('createHabit gives a unique trailing sortOrder after a delete', () async {
+    await dao.createHabit(name: 'A', color: 1); // sortOrder 0
+    final b = await dao.createHabit(name: 'B', color: 1); // 1
+    await dao.createHabit(name: 'C', color: 1); // 2
+
+    await dao.deleteHabit(b);
+    final d = await dao.createHabit(name: 'D', color: 1); // must NOT collide with C(2)
+
+    final rows = await dao.getHabitsWithDates();
+    expect(rows.map((r) => r.habit.name), ['A', 'C', 'D']);
+    final dRow = rows.firstWhere((r) => r.habit.id == d);
+    expect(dRow.habit.sortOrder, 3); // max(0,2)+1
+    // sort orders are all distinct
+    final orders = rows.map((r) => r.habit.sortOrder).toList();
+    expect(orders.toSet().length, orders.length);
+  });
 }
