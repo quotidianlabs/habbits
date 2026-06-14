@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 
+import '../domain/backup.dart';
 import '../domain/dates.dart';
 import 'database.dart';
 
@@ -54,29 +55,67 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
     }
   }
 
+  /// Groups [rows] from a habits ⋈ completions join into [HabitWithDates]
+  /// instances, preserving the order in which habits first appear.
+  List<HabitWithDates> _group(List<TypedResult> rows) {
+    final byId = <int, HabitWithDates>{};
+    final order = <int>[];
+    for (final row in rows) {
+      final habit = row.readTable(habits);
+      if (!byId.containsKey(habit.id)) {
+        byId[habit.id] = HabitWithDates(habit, <DateTime>{});
+        order.add(habit.id);
+      }
+      final completion = row.readTableOrNull(completions);
+      if (completion != null) {
+        byId[habit.id]!.dates.add(parseIsoDate(completion.localDate));
+      }
+    }
+    return [for (final id in order) byId[id]!];
+  }
+
   /// Reactive stream of every habit with its completion dates, ordered by
   /// sortOrder. Emits on any change to either table.
   Stream<List<HabitWithDates>> watchHabitsWithDates() {
-    final query = select(habits).join([
+    final q = select(habits).join([
       leftOuterJoin(completions, completions.habitId.equalsExp(habits.id)),
     ])
       ..orderBy([OrderingTerm(expression: habits.sortOrder)]);
+    return q.watch().map(_group);
+  }
 
-    return query.watch().map((rows) {
-      final byId = <int, HabitWithDates>{};
-      final order = <int>[];
-      for (final row in rows) {
-        final habit = row.readTable(habits);
-        if (!byId.containsKey(habit.id)) {
-          byId[habit.id] = HabitWithDates(habit, <DateTime>{});
-          order.add(habit.id);
-        }
-        final completion = row.readTableOrNull(completions);
-        if (completion != null) {
-          byId[habit.id]!.dates.add(parseIsoDate(completion.localDate));
+  /// One-shot read of every habit with its completion dates.
+  Future<List<HabitWithDates>> getHabitsWithDates() async {
+    final q = select(habits).join([
+      leftOuterJoin(completions, completions.habitId.equalsExp(habits.id)),
+    ])
+      ..orderBy([OrderingTerm(expression: habits.sortOrder)]);
+    return _group(await q.get());
+  }
+
+  /// Replaces ALL data with [data] in a single transaction: deletes every
+  /// completion and habit, then inserts each habit and its completions.
+  /// Completion `created_at` is set to now (audit-only).
+  Future<void> importReplace(List<BackupHabit> data) async {
+    await transaction(() async {
+      await delete(completions).go();
+      await delete(habits).go();
+      for (final h in data) {
+        final id = await into(habits).insert(HabitsCompanion.insert(
+          name: h.name,
+          color: h.color,
+          reminderTime: Value(h.reminderTime),
+          sortOrder: h.sortOrder,
+          createdAt: h.createdAt,
+        ));
+        for (final iso in h.completions) {
+          await into(completions).insert(CompletionsCompanion.insert(
+            habitId: id,
+            localDate: iso,
+            createdAt: DateTime.now(),
+          ));
         }
       }
-      return [for (final id in order) byId[id]!];
     });
   }
 }
