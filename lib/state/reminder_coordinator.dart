@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/reminder_schedule.dart';
 import '../l10n/app_localizations.dart';
+import '../ui/habit_list/habit_list_view_model.dart';
 import 'habit_providers.dart';
 import 'locale_controller.dart';
 
@@ -26,7 +27,7 @@ class _ReminderCoordinatorState extends ConsumerState<ReminderCoordinator> {
     super.initState();
     _lifecycle = AppLifecycleListener(onResume: _sync);
     // Resync whenever habits/completions change.
-    ref.listenManual(habitSummariesProvider, (_, _) => _sync());
+    ref.listenManual(habitListViewModelProvider, (_, _) => _sync());
     ref.listenManual(localeControllerProvider, (_, _) => _sync());
     WidgetsBinding.instance.addPostFrameCallback((_) => _sync());
   }
@@ -38,7 +39,7 @@ class _ReminderCoordinatorState extends ConsumerState<ReminderCoordinator> {
   }
 
   Future<void> _sync() async {
-    final summaries = ref.read(habitSummariesProvider).value;
+    final summaries = ref.read(habitListViewModelProvider).value;
     if (summaries == null) return;
 
     final enabled = [

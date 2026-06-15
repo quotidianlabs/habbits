@@ -2,12 +2,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/database.dart';
 import '../data/habit_dao.dart';
-import '../data/repositories/habit_repository.dart';
-import '../domain/completion_stats.dart';
-import '../domain/dates.dart';
 import '../domain/models/habit_summary.dart';
-import '../domain/streak.dart';
 import '../services/notification_service.dart';
+import '../ui/habit_list/habit_list_view_model.dart';
 
 part 'habit_providers.g.dart';
 
@@ -26,30 +23,11 @@ AppDatabase appDatabase(Ref ref) {
 @riverpod
 HabitDao habitDao(Ref ref) => ref.watch(appDatabaseProvider).habitDao;
 
-@riverpod
-Stream<List<HabitSummary>> habitSummaries(Ref ref) {
-  final repo = ref.watch(habitRepositoryProvider);
-  return repo.watchHabits().map((rows) {
-    final today = dateOnly(DateTime.now());
-    return [
-      for (final row in rows)
-        HabitSummary(
-          habit: row.habit,
-          streak: currentStreak(row.dates, today),
-          doneToday: row.dates.contains(today),
-          completionPercent:
-              completionPercent(row.dates, row.habit.createdAt, today),
-          dates: row.dates,
-        ),
-    ];
-  });
-}
-
-/// A single habit's summary, derived from [habitSummariesProvider]. Returns null
-/// while loading or after the habit has been deleted.
+/// A single habit's summary, derived from [habitListViewModelProvider]. Returns
+/// null while loading or after the habit has been deleted.
 @riverpod
 HabitSummary? habitDetail(Ref ref, int habitId) {
-  final summaries = ref.watch(habitSummariesProvider).value;
+  final summaries = ref.watch(habitListViewModelProvider).value;
   if (summaries == null) return null;
   for (final s in summaries) {
     if (s.habit.id == habitId) return s;

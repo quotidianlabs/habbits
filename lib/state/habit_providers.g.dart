@@ -139,61 +139,20 @@ final class HabitDaoProvider
 
 String _$habitDaoHash() => r'892f73680ea3bb12c9a457b8bbe7a4bb7e01b1ac';
 
-@ProviderFor(habitSummaries)
-final habitSummariesProvider = HabitSummariesProvider._();
-
-final class HabitSummariesProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<HabitSummary>>,
-          List<HabitSummary>,
-          Stream<List<HabitSummary>>
-        >
-    with
-        $FutureModifier<List<HabitSummary>>,
-        $StreamProvider<List<HabitSummary>> {
-  HabitSummariesProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'habitSummariesProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$habitSummariesHash();
-
-  @$internal
-  @override
-  $StreamProviderElement<List<HabitSummary>> $createElement(
-    $ProviderPointer pointer,
-  ) => $StreamProviderElement(pointer);
-
-  @override
-  Stream<List<HabitSummary>> create(Ref ref) {
-    return habitSummaries(ref);
-  }
-}
-
-String _$habitSummariesHash() => r'f7b4c77eb623fdb4dec085ca1eccaa107c79054a';
-
-/// A single habit's summary, derived from [habitSummariesProvider]. Returns null
-/// while loading or after the habit has been deleted.
+/// A single habit's summary, derived from [habitListViewModelProvider]. Returns
+/// null while loading or after the habit has been deleted.
 
 @ProviderFor(habitDetail)
 final habitDetailProvider = HabitDetailFamily._();
 
-/// A single habit's summary, derived from [habitSummariesProvider]. Returns null
-/// while loading or after the habit has been deleted.
+/// A single habit's summary, derived from [habitListViewModelProvider]. Returns
+/// null while loading or after the habit has been deleted.
 
 final class HabitDetailProvider
     extends $FunctionalProvider<HabitSummary?, HabitSummary?, HabitSummary?>
     with $Provider<HabitSummary?> {
-  /// A single habit's summary, derived from [habitSummariesProvider]. Returns null
-  /// while loading or after the habit has been deleted.
+  /// A single habit's summary, derived from [habitListViewModelProvider]. Returns
+  /// null while loading or after the habit has been deleted.
   HabitDetailProvider._({
     required HabitDetailFamily super.from,
     required int super.argument,
@@ -245,10 +204,10 @@ final class HabitDetailProvider
   }
 }
 
-String _$habitDetailHash() => r'454d42bf7d6d831e396fba3d40eea71aabe5558b';
+String _$habitDetailHash() => r'bb145620b88be621f660485ec1c186d3f41b4d6f';
 
-/// A single habit's summary, derived from [habitSummariesProvider]. Returns null
-/// while loading or after the habit has been deleted.
+/// A single habit's summary, derived from [habitListViewModelProvider]. Returns
+/// null while loading or after the habit has been deleted.
 
 final class HabitDetailFamily extends $Family
     with $FunctionalFamilyOverride<HabitSummary?, int> {
@@ -261,8 +220,8 @@ final class HabitDetailFamily extends $Family
         isAutoDispose: true,
       );
 
-  /// A single habit's summary, derived from [habitSummariesProvider]. Returns null
-  /// while loading or after the habit has been deleted.
+  /// A single habit's summary, derived from [habitListViewModelProvider]. Returns
+  /// null while loading or after the habit has been deleted.
 
   HabitDetailProvider call(int habitId) =>
       HabitDetailProvider._(argument: habitId, from: this);

@@ -5,18 +5,18 @@ import '../../domain/dates.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/reorder.dart';
 import '../../domain/models/habit_summary.dart';
-import '../../state/habit_providers.dart';
 import '../habit_detail/habit_detail_screen.dart';
 import '../settings/settings_screen.dart';
 import '../widgets/day_strip.dart';
 import '../widgets/habit_dialogs.dart';
+import 'habit_list_view_model.dart';
 
 class HabitListScreen extends ConsumerWidget {
   const HabitListScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final summaries = ref.watch(habitSummariesProvider);
+    final summaries = ref.watch(habitListViewModelProvider);
     final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
@@ -45,13 +45,12 @@ class HabitListScreen extends ConsumerWidget {
           if (items.isEmpty) {
             return Center(child: Text(l10n.noHabits));
           }
-          final dao = ref.read(habitDaoProvider);
           return ReorderableListView(
             buildDefaultDragHandles: false,
             padding: const EdgeInsets.symmetric(vertical: 6),
             onReorderItem: (oldIndex, newIndex) {
               final ids = [for (final it in items) it.habit.id];
-              dao.reorderHabits(reorderedIds(ids, oldIndex, newIndex));
+              ref.read(habitListViewModelProvider.notifier).reorder(reorderedIds(ids, oldIndex, newIndex));
             },
             children: [
               for (var i = 0; i < items.length; i++)
@@ -76,7 +75,6 @@ class _HabitCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final dao = ref.read(habitDaoProvider);
     final today = dateOnly(DateTime.now());
     final percent = item.completionPercent;
 
@@ -99,7 +97,7 @@ class _HabitCard extends ConsumerWidget {
                   Checkbox(
                     key: ValueKey('checkoff-toggle-${item.habit.id}'),
                     value: item.doneToday,
-                    onChanged: (_) => dao.toggleCompletion(item.habit.id, today),
+                    onChanged: (_) => ref.read(habitListViewModelProvider.notifier).toggleToday(item.habit.id),
                   ),
                   Expanded(
                     child: Text(

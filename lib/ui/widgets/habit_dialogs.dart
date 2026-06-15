@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/repositories/habit_repository.dart';
 import '../../l10n/app_localizations.dart';
-import '../../state/habit_providers.dart';
+import '../habit_list/habit_list_view_model.dart';
 
 /// Shows the create/rename name dialog. With [habitId] null it creates a new
 /// habit; otherwise it renames the given habit.
@@ -12,7 +13,6 @@ Future<void> showHabitNameDialog(
   int? habitId,
   String? initial,
 }) async {
-  final dao = ref.read(habitDaoProvider);
   final controller = TextEditingController(text: initial ?? '');
   final name = await showDialog<String>(
     context: context,
@@ -43,9 +43,9 @@ Future<void> showHabitNameDialog(
 
   if (name == null || name.isEmpty) return;
   if (habitId == null) {
-    await dao.createHabit(name: name, color: Colors.teal.toARGB32());
+    await ref.read(habitListViewModelProvider.notifier).createHabit(name, color: Colors.teal.toARGB32());
   } else {
-    await dao.renameHabit(habitId, name);
+    await ref.read(habitRepositoryProvider).renameHabit(habitId, name);
   }
 }
 
@@ -57,7 +57,6 @@ Future<bool> confirmDeleteHabit(
   int habitId,
   String name,
 ) async {
-  final dao = ref.read(habitDaoProvider);
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (ctx) {
@@ -80,7 +79,7 @@ Future<bool> confirmDeleteHabit(
     },
   );
   if (confirmed == true) {
-    await dao.deleteHabit(habitId);
+    await ref.read(habitRepositoryProvider).deleteHabit(habitId);
     return true;
   }
   return false;

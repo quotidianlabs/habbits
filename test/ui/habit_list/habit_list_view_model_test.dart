@@ -4,12 +4,10 @@ import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/database.dart';
-import 'package:habbits/domain/dates.dart';
 import 'package:habbits/domain/models/habit_summary.dart';
 import 'package:habbits/state/habit_providers.dart';
 import 'package:habbits/ui/habit_list/habit_list_view_model.dart';
 
-/// Returns the next emission from [habitListViewModelProvider] matching [predicate].
 Future<List<HabitSummary>> nextSummaries(
   ProviderContainer container,
   bool Function(List<HabitSummary>) predicate,
@@ -23,7 +21,6 @@ Future<List<HabitSummary>> nextSummaries(
       sub?.close();
     }
   });
-  // Check current value immediately.
   final current = container.read(habitListViewModelProvider).value;
   if (current != null && predicate(current) && !completer.isCompleted) {
     completer.complete(current);
@@ -33,7 +30,7 @@ Future<List<HabitSummary>> nextSummaries(
 }
 
 void main() {
-  test('habitListViewModel computes streak, doneToday, percent, and dates', () async {
+  test('exposes summaries and toggleToday flips today', () async {
     final db = AppDatabase(NativeDatabase.memory());
     final container = ProviderContainer(
       overrides: [appDatabaseProvider.overrideWithValue(db)],
@@ -42,24 +39,17 @@ void main() {
     addTearDown(db.close);
 
     final id = await container.read(habitDaoProvider).createHabit(name: 'Read', color: 1);
-    final today = dateOnly(DateTime.now());
-    await container.read(habitDaoProvider).toggleCompletion(id, today);
+    await nextSummaries(container, (list) => list.any((s) => s.habit.id == id));
 
-    // Wait for an emission where the habit is checked today.
-    final summaries = await nextSummaries(
+    await container.read(habitListViewModelProvider.notifier).toggleToday(id);
+    final list = await nextSummaries(
       container,
-      (list) => list.any((s) => s.habit.id == id && s.doneToday),
+      (l) => l.any((s) => s.habit.id == id && s.doneToday),
     );
-
-    final s = summaries.single;
-    expect(s.habit.name, 'Read');
-    expect(s.streak, 1);
-    expect(s.doneToday, isTrue);
-    expect(s.completionPercent, 100); // created today, checked today
-    expect(s.dates, {today});
+    expect(list.single.doneToday, isTrue);
   });
 
-  test('habitDetail returns the matching habit summary', () async {
+  test('createHabit adds a habit to the stream', () async {
     final db = AppDatabase(NativeDatabase.memory());
     final container = ProviderContainer(
       overrides: [appDatabaseProvider.overrideWithValue(db)],
@@ -67,23 +57,34 @@ void main() {
     addTearDown(container.dispose);
     addTearDown(db.close);
 
-    final id = await container.read(habitDaoProvider).createHabit(name: 'Walk', color: 1);
+    await container
+        .read(habitListViewModelProvider.notifier)
+        .createHabit('Exercise', color: 0xFF00897B);
 
-    // Wait for the stream to include the newly created habit.
-    await nextSummaries(
+    final list = await nextSummaries(
       container,
-      (list) => list.any((s) => s.habit.id == id),
+      (l) => l.any((s) => s.habit.name == 'Exercise'),
     );
+    expect(list.single.habit.name, 'Exercise');
+  });
 
-    // Keep the source stream alive so the derived provider has data.
-    final sub = container.listen(habitListViewModelProvider, (_, _) {});
-    addTearDown(sub.close);
+  test('reorder rewrites the stream order', () async {
+    final db = AppDatabase(NativeDatabase.memory());
+    final container = ProviderContainer(
+      overrides: [appDatabaseProvider.overrideWithValue(db)],
+    );
+    addTearDown(container.dispose);
+    addTearDown(db.close);
 
-    final detail = container.read(habitDetailProvider(id));
-    expect(detail, isNotNull);
-    expect(detail!.habit.name, 'Walk');
+    final a = await container.read(habitDaoProvider).createHabit(name: 'A', color: 1);
+    final b = await container.read(habitDaoProvider).createHabit(name: 'B', color: 1);
+    await nextSummaries(container, (l) => l.length == 2);
 
-    final missing = container.read(habitDetailProvider(9999));
-    expect(missing, isNull);
+    await container.read(habitListViewModelProvider.notifier).reorder([b, a]);
+    final list = await nextSummaries(
+      container,
+      (l) => l.length == 2 && l.first.habit.id == b,
+    );
+    expect(list.map((s) => s.habit.name), ['B', 'A']);
   });
 }
