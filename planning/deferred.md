@@ -17,6 +17,10 @@ change bundle when its trigger fires.
 - **`TextEditingController` not disposed** in `habit_dialogs.dart`
   (pre-existing). *Revisit when* the dialogs move to a `StatefulWidget` or on a
   lint sweep.
+- **Color picker in the create/edit dialog** — `habit_dialogs.dart` collects
+  only the habit name; the color is defaulted in the view model. Add a color
+  picker so the user can choose a habit's color on create/edit. *Revisit when*
+  `habit_dialogs.dart` is next touched or on a UI polish pass.
 - **Backup test-file naming inversion** — `test/domain/backup_test.dart` covers
   the pure codec while `backup_codec_test.dart` covers DB-backed `buildBackup`;
   the names are swapped. *Revisit when* either file is next edited.
