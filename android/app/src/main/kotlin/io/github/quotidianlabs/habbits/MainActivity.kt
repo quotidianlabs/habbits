@@ -1,4 +1,4 @@
-package com.example.habbits
+package io.github.quotidianlabs.habbits
 
 import io.flutter.embedding.android.FlutterActivity
 

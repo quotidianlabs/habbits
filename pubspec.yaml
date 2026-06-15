@@ -63,6 +63,7 @@ dev_dependencies:
   drift_dev: ^2.34.0
   riverpod_generator: ^4.0.4
   riverpod_lint: ^3.1.4
+  flutter_launcher_icons: ^0.14.0
   integration_test:
     sdk: flutter
 
@@ -116,3 +117,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  adaptive_icon_background: "#009688"
+  adaptive_icon_foreground: "assets/icon/icon_foreground.png"
+  min_sdk_android: 21
