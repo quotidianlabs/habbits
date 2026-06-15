@@ -61,7 +61,10 @@ Templates live in [`_templates/`](_templates/).
 
 ### Active
 
-_None._
+- **[dark-theme-and-color-picker](changes/active/2026-06-15.07-dark-theme-and-color-picker/design.md)**
+  (2026-06-15) — App-wide dark theme with a System/Light/Dark selector +
+  dark-adaptive activity grids, and a curated per-habit color picker on
+  create/edit.
 
 ### Archived (shipped)
 
