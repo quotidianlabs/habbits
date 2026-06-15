@@ -1,13 +1,13 @@
 ---
-title: "Habbits — mobile, local-first MVP design"
+status: shipped
 date: 2026-06-13
-status: approved
-type: design
-supersedes:
-  - docs/bmad-legacy/prd.md (product layer distilled here; tech layer abandoned)
-  - docs/bmad-legacy/product-brief-habbits.md (thesis distilled here)
-  - docs/bmad-legacy/product-brief-habbits-distillate.md (thesis distilled here)
+slug: foundation
+supersedes: null
+superseded_by: null
+pr: merged to main locally
+outcome: Initial local-first core loop: Drift schema, daily check-off, streaks, home list.
 ---
+
 
 # Habbits — mobile, local-first MVP
 

@@ -1,11 +1,13 @@
 ---
-title: "Habbits — heatmap + retroactive editing (Plan 2) design"
+status: shipped
 date: 2026-06-13
-status: approved
-type: design
-references:
-  - docs/superpowers/specs/2026-06-13-habbits-mobile-local-first-design.md
+slug: heatmap-retroactive-editing
+supersedes: null
+superseded_by: null
+pr: merged to main locally
+outcome: Detail-screen heatmap + retroactive check-off via the recent-days list.
 ---
+
 
 # Habbits — heatmap + retroactive editing (Plan 2)
 

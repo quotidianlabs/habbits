@@ -1,11 +1,13 @@
 ---
-title: "Habbits — JSON export / import design"
+status: shipped
 date: 2026-06-14
-status: approved
-type: design
-references:
-  - docs/superpowers/specs/2026-06-13-habbits-mobile-local-first-design.md
+slug: export-import
+supersedes: null
+superseded_by: null
+pr: merged to main locally
+outcome: JSON export/import (share + file picker) with strict backup validation.
 ---
+
 
 # Habbits — JSON export / import
 

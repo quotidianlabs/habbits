@@ -1,11 +1,13 @@
 ---
-title: "Habbits — local reminders design"
+status: shipped
 date: 2026-06-14
-status: approved
-type: design
-references:
-  - docs/superpowers/specs/2026-06-13-habbits-mobile-local-first-design.md
+slug: reminders
+supersedes: null
+superseded_by: null
+pr: merged to main locally
+outcome: Per-habit local-notification reminders (flutter_local_notifications + timezone).
 ---
+
 
 # Habbits — local reminders
 
