@@ -68,6 +68,9 @@ _None._
 
 ### Archived (shipped)
 
+- **[readme-and-license](changes/archive/2026-06-15.05-readme-and-license/design.md)**
+  (#4, 2026-06-15) — Project README (badges, en/ru screenshots, features,
+  architecture) + MIT LICENSE.
 - **[ci-and-justfile](changes/archive/2026-06-15.04-ci-and-justfile/design.md)**
   (#3, 2026-06-15) — GitHub Actions CI + Justfile (lint/test) with a repo-wide
   dart-format pass.

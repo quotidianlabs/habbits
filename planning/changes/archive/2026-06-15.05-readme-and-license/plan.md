@@ -1,9 +1,9 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-15
 slug: readme-and-license
 spec: readme-and-license
-pr: null
+pr: "#4"
 ---
 
 # readme-and-license — implementation plan

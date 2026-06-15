@@ -1,11 +1,11 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-15
 slug: readme-and-license
 supersedes: null
 superseded_by: null
-pr: null
-outcome: null
+pr: "#4"
+outcome: Project README (badges, en/ru screenshots, features, architecture) + MIT LICENSE.
 ---
 
 # Design: README + MIT LICENSE (with en/ru screenshots)
