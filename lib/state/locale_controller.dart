@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import '../data/repositories/settings_repository.dart';
 
 part 'locale_controller.g.dart';
 
@@ -22,23 +23,15 @@ enum AppLocale {
       .firstWhere((e) => e.storage == value, orElse: () => AppLocale.system);
 }
 
-/// The loaded SharedPreferences instance. Overridden in `main()` after the async
-/// load, mirroring how `notificationServiceProvider` is overridden.
-@Riverpod(keepAlive: true)
-SharedPreferences sharedPreferences(Ref ref) => throw UnimplementedError(
-    'sharedPreferencesProvider must be overridden in main');
-
 /// Holds the selected [AppLocale], backed by shared_preferences.
 @Riverpod(keepAlive: true)
 class LocaleController extends _$LocaleController {
-  static const _key = 'locale';
-
   @override
   AppLocale build() => AppLocale.fromStorage(
-      ref.watch(sharedPreferencesProvider).getString(_key));
+      ref.watch(settingsRepositoryProvider).readLocaleToken());
 
   Future<void> set(AppLocale value) async {
-    await ref.read(sharedPreferencesProvider).setString(_key, value.storage);
+    await ref.read(settingsRepositoryProvider).writeLocaleToken(value.storage);
     state = value;
   }
 }

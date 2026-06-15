@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'data/repositories/settings_repository.dart';
 import 'l10n/app_localizations.dart';
 import 'services/notification_service.dart';
 import 'state/habit_providers.dart';

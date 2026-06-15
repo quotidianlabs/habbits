@@ -8,61 +8,6 @@ part of 'locale_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The loaded SharedPreferences instance. Overridden in `main()` after the async
-/// load, mirroring how `notificationServiceProvider` is overridden.
-
-@ProviderFor(sharedPreferences)
-final sharedPreferencesProvider = SharedPreferencesProvider._();
-
-/// The loaded SharedPreferences instance. Overridden in `main()` after the async
-/// load, mirroring how `notificationServiceProvider` is overridden.
-
-final class SharedPreferencesProvider
-    extends
-        $FunctionalProvider<
-          SharedPreferences,
-          SharedPreferences,
-          SharedPreferences
-        >
-    with $Provider<SharedPreferences> {
-  /// The loaded SharedPreferences instance. Overridden in `main()` after the async
-  /// load, mirroring how `notificationServiceProvider` is overridden.
-  SharedPreferencesProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'sharedPreferencesProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$sharedPreferencesHash();
-
-  @$internal
-  @override
-  $ProviderElement<SharedPreferences> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  SharedPreferences create(Ref ref) {
-    return sharedPreferences(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SharedPreferences value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<SharedPreferences>(value),
-    );
-  }
-}
-
-String _$sharedPreferencesHash() => r'8b8609a69f8bca672db9335195daeb53193372ec';
-
 /// Holds the selected [AppLocale], backed by shared_preferences.
 
 @ProviderFor(LocaleController)
@@ -99,7 +44,7 @@ final class LocaleControllerProvider
   }
 }
 
-String _$localeControllerHash() => r'57ada211e14c3b81d3291e12d8d3d383d4b4a5ca';
+String _$localeControllerHash() => r'84faab7803163486b678973988f2d6502e64cf9d';
 
 /// Holds the selected [AppLocale], backed by shared_preferences.
 
