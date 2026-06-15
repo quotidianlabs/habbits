@@ -64,7 +64,9 @@ Templates live in [`_templates/`](_templates/).
 
 ### Active
 
-_None._
+- **[architecture-capability-docs](changes/active/2026-06-15.06-architecture-capability-docs/design.md)**
+  (draft, 2026-06-15) — Bootstrap the `architecture/` truth-home: six capability
+  docs + an index, written from live code and archived bundles.
 
 ### Archived (shipped)
 
