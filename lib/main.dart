@@ -35,7 +35,8 @@ class HabbitsApp extends ConsumerWidget {
     return MaterialApp(
       title: 'Habbits',
       debugShowCheckedModeBanner: false,
-      theme: habbitsTheme(),
+      theme: habbitsLightTheme(),
+      darkTheme: habbitsDarkTheme(),
       locale: appLocale.locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
