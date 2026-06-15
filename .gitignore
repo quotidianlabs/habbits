@@ -13,3 +13,6 @@ build/
 .DS_Store
 
 # Generated code is committed (see plan); do NOT ignore *.g.dart
+
+# Visual-companion brainstorm scratch
+.superpowers/
