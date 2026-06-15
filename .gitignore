@@ -16,3 +16,6 @@ build/
 
 # Visual-companion brainstorm scratch
 .superpowers/
+
+# Claude Code local session/config
+.claude/
