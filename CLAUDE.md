@@ -18,7 +18,7 @@ Design + plan for every non-trivial change live in `planning/`. Read
 
 ## Commands
 
-`flutter analyze` and `flutter test` (115 tests) — a `Justfile` (`just lint` /
-`just test`) is forthcoming. Generated `*.g.dart` is committed; run
-`dart run build_runner build --delete-conflicting-outputs` after touching
-`@riverpod`/Drift code.
+`just lint` (`dart format` + `flutter analyze`) and `just test` (`flutter test`,
+115 tests) — see the `Justfile`; CI uses `just lint-ci`. Generated `*.g.dart` is
+committed; run `dart run build_runner build --delete-conflicting-outputs` after
+touching `@riverpod`/Drift code.
