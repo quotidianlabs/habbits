@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habbits/state/locale_controller.dart';
+import 'package:habbits/data/repositories/settings_repository.dart';
+import 'package:habbits/ui/core/locale_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<ProviderContainer> _container(Map<String, Object> initial) async {

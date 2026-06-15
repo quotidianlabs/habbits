@@ -2,11 +2,12 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habbits/data/database.dart';
-import 'package:habbits/domain/backup.dart';
+import 'package:habbits/data/services/database/database.dart';
+import 'package:habbits/data/services/database/database_providers.dart';
+import 'package:habbits/data/repositories/settings_repository.dart';
+import 'package:habbits/domain/models/backup_data.dart';
 import 'package:habbits/l10n/app_localizations.dart';
-import 'package:habbits/state/habit_providers.dart';
-import 'package:habbits/state/locale_controller.dart';
+import 'package:habbits/ui/core/locale_controller.dart';
 import 'package:habbits/ui/settings/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,8 +1,8 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habbits/data/database.dart';
-import 'package:habbits/data/habit_dao.dart';
-import 'package:habbits/domain/backup.dart';
+import 'package:habbits/data/services/database/database.dart';
+import 'package:habbits/data/services/database/habit_dao.dart';
+import 'package:habbits/domain/models/backup_data.dart';
 
 void main() {
   late AppDatabase db;

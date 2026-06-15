@@ -1,17 +1,11 @@
 import 'package:drift/drift.dart';
 
-import '../domain/backup.dart';
-import '../domain/dates.dart';
+import '../../../domain/dates.dart';
+import '../../../domain/models/backup_data.dart';
+import '../../../domain/models/habit_with_dates.dart';
 import 'database.dart';
 
 part 'habit_dao.g.dart';
-
-/// A habit paired with the set of dates it was completed on.
-class HabitWithDates {
-  HabitWithDates(this.habit, this.dates);
-  final Habit habit;
-  final Set<DateTime> dates;
-}
 
 @DriftAccessor(tables: [Habits, Completions])
 class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {

@@ -1,9 +1,12 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:timezone/data/latest.dart' as tzdata;
 import 'package:timezone/timezone.dart' as tz;
 
-import '../domain/reminder_schedule.dart';
+import '../../domain/reminder_schedule.dart';
+
+part 'notification_service.g.dart';
 
 /// Wraps flutter_local_notifications + timezone for on-device habit reminders.
 /// The plugin boundary; all decision logic lives in computeReminderSchedule.
@@ -84,3 +87,7 @@ class NotificationService {
 
   Future<void> cancelAll() => _plugin.cancelAll();
 }
+
+@Riverpod(keepAlive: true)
+NotificationService notificationService(Ref ref) => throw UnimplementedError(
+    'notificationServiceProvider must be overridden in main');

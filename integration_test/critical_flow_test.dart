@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:habbits/data/database.dart';
-import 'package:habbits/state/habit_providers.dart';
+import 'package:habbits/data/services/database/database.dart';
+import 'package:habbits/data/services/database/database_providers.dart';
 import 'package:habbits/ui/habit_list/habit_list_screen.dart';
 
 /// Pumps frames until [finder] matches at least one widget, or [timeout]

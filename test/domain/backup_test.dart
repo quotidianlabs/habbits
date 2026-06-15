@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habbits/domain/backup.dart';
+import 'package:habbits/domain/backup_codec.dart';
+import 'package:habbits/domain/models/backup_data.dart';
 
 void main() {
   test('encode -> decode round-trips a backup', () {

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'locale_controller.dart';
+part of 'settings_repository.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -8,14 +8,12 @@ part of 'locale_controller.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The loaded SharedPreferences instance. Overridden in `main()` after the async
-/// load, mirroring how `notificationServiceProvider` is overridden.
+/// The loaded SharedPreferences instance; overridden in `main()`.
 
 @ProviderFor(sharedPreferences)
 final sharedPreferencesProvider = SharedPreferencesProvider._();
 
-/// The loaded SharedPreferences instance. Overridden in `main()` after the async
-/// load, mirroring how `notificationServiceProvider` is overridden.
+/// The loaded SharedPreferences instance; overridden in `main()`.
 
 final class SharedPreferencesProvider
     extends
@@ -25,8 +23,7 @@ final class SharedPreferencesProvider
           SharedPreferences
         >
     with $Provider<SharedPreferences> {
-  /// The loaded SharedPreferences instance. Overridden in `main()` after the async
-  /// load, mirroring how `notificationServiceProvider` is overridden.
+  /// The loaded SharedPreferences instance; overridden in `main()`.
   SharedPreferencesProvider._()
     : super(
         from: null,
@@ -63,60 +60,50 @@ final class SharedPreferencesProvider
 
 String _$sharedPreferencesHash() => r'8b8609a69f8bca672db9335195daeb53193372ec';
 
-/// Holds the selected [AppLocale], backed by shared_preferences.
+@ProviderFor(settingsRepository)
+final settingsRepositoryProvider = SettingsRepositoryProvider._();
 
-@ProviderFor(LocaleController)
-final localeControllerProvider = LocaleControllerProvider._();
-
-/// Holds the selected [AppLocale], backed by shared_preferences.
-final class LocaleControllerProvider
-    extends $NotifierProvider<LocaleController, AppLocale> {
-  /// Holds the selected [AppLocale], backed by shared_preferences.
-  LocaleControllerProvider._()
+final class SettingsRepositoryProvider
+    extends
+        $FunctionalProvider<
+          SettingsRepository,
+          SettingsRepository,
+          SettingsRepository
+        >
+    with $Provider<SettingsRepository> {
+  SettingsRepositoryProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'localeControllerProvider',
+        name: r'settingsRepositoryProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$localeControllerHash();
+  String debugGetCreateSourceHash() => _$settingsRepositoryHash();
 
   @$internal
   @override
-  LocaleController create() => LocaleController();
+  $ProviderElement<SettingsRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  SettingsRepository create(Ref ref) {
+    return settingsRepository(ref);
+  }
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AppLocale value) {
+  Override overrideWithValue(SettingsRepository value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<AppLocale>(value),
+      providerOverride: $SyncValueProvider<SettingsRepository>(value),
     );
   }
 }
 
-String _$localeControllerHash() => r'57ada211e14c3b81d3291e12d8d3d383d4b4a5ca';
-
-/// Holds the selected [AppLocale], backed by shared_preferences.
-
-abstract class _$LocaleController extends $Notifier<AppLocale> {
-  AppLocale build();
-  @$mustCallSuper
-  @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<AppLocale, AppLocale>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AppLocale, AppLocale>,
-              AppLocale,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
-  }
-}
+String _$settingsRepositoryHash() =>
+    r'cb57457244062d3bd9be73a1a3ee43a55e76dd3d';
