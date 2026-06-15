@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/repositories/backup_repository.dart';
+import '../../data/repositories/habit_repository.dart';
 import '../../domain/models/backup_data.dart';
 import '../../l10n/app_localizations.dart';
-import '../../services/backup_service.dart';
-import '../../state/habit_providers.dart';
 import '../../state/locale_controller.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -52,7 +52,7 @@ class SettingsScreen extends ConsumerWidget {
   Future<void> _export(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context);
     try {
-      await exportAndShare(ref.read(habitDaoProvider));
+      await ref.read(backupRepositoryProvider).exportAndShare();
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -66,7 +66,7 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final BackupData? data;
     try {
-      data = await pickAndDecode();
+      data = await ref.read(backupRepositoryProvider).pickAndDecode();
     } on BackupFormatException catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context)
@@ -114,7 +114,7 @@ Future<void> confirmAndImport(
   );
   if (confirmed == true && context.mounted) {
     try {
-      await ref.read(habitDaoProvider).importReplace(data.habits);
+      await ref.read(habitRepositoryProvider).importReplace(data.habits);
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

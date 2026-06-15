@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'dates.dart';
 import 'models/backup_data.dart';
+import 'models/habit_with_dates.dart';
 
 const int _currentVersion = 1;
 
@@ -112,4 +114,24 @@ bool _isValidIsoDate(String s) {
   if (m < 1 || m > 12 || d < 1 || d > 31) return false;
   final dt = DateTime(y, m, d);
   return dt.year == y && dt.month == m && dt.day == d; // rejects e.g. 2026-02-30
+}
+
+/// Builds a [BackupData] snapshot from DAO rows. Pure (no I/O). Completion dates
+/// are sorted ascending for a stable file.
+BackupData buildBackup(List<HabitWithDates> rows, DateTime now) {
+  return BackupData(
+    version: _currentVersion,
+    exportedAt: now,
+    habits: [
+      for (final r in rows)
+        BackupHabit(
+          name: r.habit.name,
+          color: r.habit.color,
+          reminderTime: r.habit.reminderTime,
+          sortOrder: r.habit.sortOrder,
+          createdAt: r.habit.createdAt,
+          completions: (r.dates.toList()..sort()).map(formatIsoDate).toList(),
+        ),
+    ],
+  );
 }

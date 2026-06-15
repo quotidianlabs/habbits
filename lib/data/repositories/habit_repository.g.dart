@@ -8,14 +8,18 @@ part of 'habit_repository.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
+/// Provides the singleton [HabitRepository] for the app.
 
 @ProviderFor(habitRepository)
 final habitRepositoryProvider = HabitRepositoryProvider._();
+
+/// Provides the singleton [HabitRepository] for the app.
 
 final class HabitRepositoryProvider
     extends
         $FunctionalProvider<HabitRepository, HabitRepository, HabitRepository>
     with $Provider<HabitRepository> {
+  /// Provides the singleton [HabitRepository] for the app.
   HabitRepositoryProvider._()
     : super(
         from: null,
