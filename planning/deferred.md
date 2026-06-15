@@ -21,6 +21,15 @@ change bundle when its trigger fires.
   only the habit name; the color is defaulted in the view model. Add a color
   picker so the user can choose a habit's color on create/edit. *Revisit when*
   `habit_dialogs.dart` is next touched or on a UI polish pass.
+- **No dark theme** — `MaterialApp` sets `theme` only (`lib/main.dart:38`); with
+  no `darkTheme`/`themeMode`, the light teal Material 3 palette renders regardless
+  of device brightness, so the app has no dark mode. Add a dark `ThemeData` (and,
+  if wanted, a theme-mode selector + persistence mirroring the locale store).
+  *Revisit when* dark mode is requested or on a theming pass.
+- **Heatmap/day-strip colors not dark-surface adaptive** — per-habit
+  `Color(habit.color)` and inactive cells at `withValues(alpha: 0.15)`
+  (`heatmap_grid.dart`, `day_strip.dart`) are drawn directly and assume a light
+  surface. *Revisit with* dark-theme support (depends on it).
 - **Backup test-file naming inversion** — `test/domain/backup_test.dart` covers
   the pure codec while `backup_codec_test.dart` covers DB-backed `buildBackup`;
   the names are swapped. *Revisit when* either file is next edited.
