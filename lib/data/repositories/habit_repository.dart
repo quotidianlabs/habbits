@@ -18,6 +18,7 @@ class HabitRepository {
   Future<int> createHabit({required String name, required int color}) =>
       _dao.createHabit(name: name, color: color);
   Future<void> renameHabit(int id, String name) => _dao.renameHabit(id, name);
+  Future<void> setColor(int id, int color) => _dao.setColor(id, color);
   Future<void> deleteHabit(int id) => _dao.deleteHabit(id);
   Future<void> toggleCompletion(int habitId, DateTime date) =>
       _dao.toggleCompletion(habitId, date);

@@ -150,4 +150,14 @@ void main() {
       expect(orders.toSet().length, orders.length);
     },
   );
+
+  test('setColor updates only the color', () async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final id = await db.habitDao.createHabit(name: 'Read', color: 0xFF009688);
+    await db.habitDao.setColor(id, 0xFFE53935);
+    final rows = await db.habitDao.getHabitsWithDates();
+    expect(rows.single.habit.color, 0xFFE53935);
+    expect(rows.single.habit.name, 'Read');
+  });
 }
