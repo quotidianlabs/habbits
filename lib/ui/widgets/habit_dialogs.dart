@@ -44,8 +44,9 @@ class _HabitFormDialog extends StatefulWidget {
 }
 
 class _HabitFormDialogState extends State<_HabitFormDialog> {
-  late final TextEditingController _controller =
-      TextEditingController(text: widget.initialName);
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.initialName,
+  );
   late int _color = widget.initialColor;
 
   @override

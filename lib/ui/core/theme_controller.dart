@@ -19,11 +19,8 @@ enum AppThemeMode {
   /// The Flutter [ThemeMode] this choice maps to.
   final ThemeMode themeMode;
 
-  static AppThemeMode fromStorage(String? value) =>
-      AppThemeMode.values.firstWhere(
-        (e) => e.storage == value,
-        orElse: () => AppThemeMode.system,
-      );
+  static AppThemeMode fromStorage(String? value) => AppThemeMode.values
+      .firstWhere((e) => e.storage == value, orElse: () => AppThemeMode.system);
 }
 
 /// Holds the selected [AppThemeMode], backed by shared_preferences.

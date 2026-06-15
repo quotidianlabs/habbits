@@ -27,6 +27,7 @@ class HabitDetailViewModel extends _$HabitDetailViewModel {
     await repo.renameHabit(habitId, name);
     await repo.setColor(habitId, color);
   }
+
   Future<void> delete() =>
       ref.read(habitRepositoryProvider).deleteHabit(habitId);
   Future<void> setReminder(String? hhmm) =>
