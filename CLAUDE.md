@@ -13,12 +13,12 @@ Design + plan for every non-trivial change live in `planning/`. Read
   `design.md` + `plan.md` (Full lane) or `change.md` (Lightweight); on merge it
   moves to `planning/changes/archive/`.
 - Real-but-unscheduled items live in `planning/deferred.md`.
-- The `architecture/` truth-home capability docs are forthcoming (tracked in
-  `planning/deferred.md`).
+- The `architecture/` capability docs live at the repo root (one file per
+  capability) and are the living truth-home for what the system does now.
 
 ## Commands
 
-`flutter analyze` and `flutter test` (115 tests) — a `Justfile` (`just lint` /
-`just test`) is forthcoming. Generated `*.g.dart` is committed; run
-`dart run build_runner build --delete-conflicting-outputs` after touching
-`@riverpod`/Drift code.
+`just lint` (`dart format` + `flutter analyze`) and `just test` (`flutter test`,
+115 tests) — see the `Justfile`; CI uses `just lint-ci`. Generated `*.g.dart` is
+committed; run `dart run build_runner build --delete-conflicting-outputs` after
+touching `@riverpod`/Drift code.

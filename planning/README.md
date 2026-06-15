@@ -1,9 +1,8 @@
 # Planning
 
 Specs, plans, and change history for Habbits. This directory records *how the
-system got to where it is*. The living truth about *what it does now* will live
-in `architecture/` at the repo root (forthcoming — see
-[`deferred.md`](deferred.md)).
+system got to where it is*. The living truth about *what it does now* lives in
+[`architecture/`](../architecture/README.md) at the repo root.
 
 ## Conventions
 
@@ -14,8 +13,7 @@ in `architecture/` at the repo root (forthcoming — see
 ### Two axes, never mixed
 
 - **`architecture/` (repo root) — the present.** One file per capability,
-  living prose, updated whenever a change ships. The truth home. *(Forthcoming
-  for this repo.)*
+  living prose, updated whenever a change ships. The truth home.
 - **`planning/changes/` — the past-and-pending.** One folder per change, frozen
   once shipped.
 
@@ -50,7 +48,6 @@ Heavier lane wins on ambiguity. A `change.md` that outgrows its lane splits into
 - **`plan.md`** — the plan: the *sequencing* (the executor's task checklist).
 - **`change.md`** — both, condensed, for the lightweight lane.
 - **`deferred.md`** — real-but-unscheduled items, each with a revisit trigger.
-- **`legacy/`** — pre-history product briefs (BMAD), kept for provenance.
 
 Templates live in [`_templates/`](_templates/).
 
@@ -68,6 +65,9 @@ _None._
 
 ### Archived (shipped)
 
+- **[architecture-capability-docs](changes/archive/2026-06-15.06-architecture-capability-docs/design.md)**
+  (#5, 2026-06-15) — Bootstrap the `architecture/` truth-home: six capability
+  docs + an index, written from live code and archived bundles.
 - **[readme-and-license](changes/archive/2026-06-15.05-readme-and-license/design.md)**
   (#4, 2026-06-15) — Project README (badges, en/ru screenshots, features,
   architecture) + MIT LICENSE.

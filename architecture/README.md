@@ -1,0 +1,28 @@
+# Architecture
+
+Habbits is a local-first habit tracker built with Flutter, targeting iOS and Android, with English and Russian localization. State is managed with Riverpod and persisted in a Drift (SQLite) database on device — there is no backend or cloud sync. The app follows a layered MVVM pattern with a strict dependency direction: `ui/` depends on `domain/` and `data/`; `domain/` has no Flutter or Drift imports and is independently unit-testable.
+
+## Layer map
+
+| Layer | Path | Role |
+|-------|------|------|
+| UI | `lib/ui/` | Screens, view models (Riverpod notifiers), and widgets |
+| Domain | `lib/domain/` | Pure logic and models — no Flutter, no Drift; independently unit-testable |
+| Data | `lib/data/` | Repositories over a Drift DAO plus platform services (notifications, file I/O) |
+
+`ui/` imports from both `domain/` and `data/`. `domain/` imports from neither. `data/` imports `domain/` models; nothing imports from `ui/`.
+
+## Capabilities
+
+| Capability | What it covers |
+|------------|----------------|
+| [Habit tracking](habit-tracking.md) | Create / edit / check-off / reorder habits, persisted in Drift |
+| [Streaks & stats](streaks-and-stats.md) | Current streak, completion %, heatmap, recent-days strip |
+| [Reminders](reminders.md) | Per-habit local notifications scheduled on device |
+| [Backup I/O](backup-io.md) | JSON export / import with strict validation |
+| [i18n](i18n.md) | English + Russian localization (live switch, no restart required) |
+| [Theming](theming.md) | Single teal Material 3 theme + brand color (no dark mode yet) |
+
+## History and rationale
+
+Decision history and rationale live in [`planning/`](../planning/README.md); these docs describe the present state of the system.
