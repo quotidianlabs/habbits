@@ -47,7 +47,7 @@ class HabitDetailScreen extends ConsumerWidget {
               if (name != null) {
                 await ref
                     .read(habitDetailViewModelProvider(habitId).notifier)
-                    .rename(name);
+                    .editHabit(name, summary.habit.color);
               }
             },
           ),

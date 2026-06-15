@@ -22,8 +22,11 @@ class HabitDetailViewModel extends _$HabitDetailViewModel {
 
   Future<void> toggle(DateTime date) =>
       ref.read(habitRepositoryProvider).toggleCompletion(habitId, date);
-  Future<void> rename(String name) =>
-      ref.read(habitRepositoryProvider).renameHabit(habitId, name);
+  Future<void> editHabit(String name, int color) async {
+    final repo = ref.read(habitRepositoryProvider);
+    await repo.renameHabit(habitId, name);
+    await repo.setColor(habitId, color);
+  }
   Future<void> delete() =>
       ref.read(habitRepositoryProvider).deleteHabit(habitId);
   Future<void> setReminder(String? hhmm) =>
