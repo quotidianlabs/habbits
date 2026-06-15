@@ -68,6 +68,9 @@ _None._
 
 ### Archived (shipped)
 
+- **[adopt-planning-convention](changes/archive/2026-06-15.03-adopt-planning-convention/design.md)**
+  (#2, 2026-06-15) — Adopt the portable planning convention; migrate 9 shipped
+  specs/plans into archive bundles.
 - **[app-icon-branding](changes/archive/2026-06-15.02-app-icon-branding/design.md)**
   (#1, 2026-06-15) — Activity-grid app icon + bundle id
   `io.github.quotidianlabs.habbits`.
@@ -89,6 +92,3 @@ _None._
   (local, 2026-06-13) — Detail-screen heatmap + retroactive check-off.
 - **[foundation](changes/archive/2026-06-13.01-foundation/design.md)**
   (local, 2026-06-13) — Initial local-first core loop.
-
-> `adopt-planning-convention` (this change) is in **Active** until it ships, then
-> moves here.
