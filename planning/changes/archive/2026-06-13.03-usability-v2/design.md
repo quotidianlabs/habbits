@@ -1,12 +1,13 @@
 ---
-title: "Habbits — home/detail usability v2 design"
+status: shipped
 date: 2026-06-13
-status: approved
-type: design
-references:
-  - docs/superpowers/specs/2026-06-13-habbits-mobile-local-first-design.md
-  - docs/superpowers/specs/2026-06-13-heatmap-retroactive-editing-design.md
+slug: usability-v2
+supersedes: null
+superseded_by: null
+pr: merged to main locally
+outcome: Usability pass across home, detail, and dialogs.
 ---
+
 
 # Habbits — home/detail usability v2
 

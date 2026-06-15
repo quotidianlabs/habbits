@@ -1,9 +1,9 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-15
 slug: adopt-planning-convention
 spec: adopt-planning-convention
-pr: null
+pr: "#2"
 ---
 
 # adopt-planning-convention — implementation plan
@@ -45,12 +45,12 @@ git switch -c chore/planning-convention
 - [ ] **Step 1: Create `planning/_templates/design.md`** (verbatim convention template):
 ```markdown
 ---
-status: draft
+status: shipped
 date: YYYY-MM-DD
 slug: my-change
 supersedes: null
 superseded_by: null
-pr: null
+pr: "#2"
 outcome: null
 ---
 
@@ -103,11 +103,11 @@ What could go wrong, ranked by likelihood × impact. Mitigations.
 - [ ] **Step 2: Create `planning/_templates/plan.md`** (convention template; note the `Co-Authored-By` trailer uses Opus 4.8 to match this repo):
 ```markdown
 ---
-status: draft
+status: shipped
 date: YYYY-MM-DD
 slug: my-change
 spec: my-change
-pr: null
+pr: "#2"
 ---
 
 # <slug> — implementation plan
@@ -163,12 +163,12 @@ in the spec.
 - [ ] **Step 3: Create `planning/_templates/change.md`** (verbatim convention template; adapt the example commands to this repo's `just`/`flutter`):
 ```markdown
 ---
-status: draft
+status: shipped
 date: YYYY-MM-DD
 slug: my-change
 supersedes: null
 superseded_by: null
-pr: null
+pr: "#2"
 outcome: null
 ---
 

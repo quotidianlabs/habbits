@@ -1,11 +1,11 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-15
 slug: adopt-planning-convention
 supersedes: null
 superseded_by: null
-pr: null
-outcome: null
+pr: "#2"
+outcome: Adopt the portable planning convention; migrate 9 shipped specs/plans into archive bundles.
 ---
 
 # Design: Adopt the portable planning convention + migrate docs

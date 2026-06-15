@@ -1,3 +1,13 @@
+---
+status: shipped
+date: 2026-06-14
+slug: russian-language
+supersedes: null
+superseded_by: null
+pr: aff47ab
+outcome: Full en/ru i18n: gen-l10n, locale controller, locale-aware dates, Russian plurals.
+---
+
 # Russian language support — design
 
 **Date:** 2026-06-14

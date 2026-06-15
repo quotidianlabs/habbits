@@ -1,11 +1,13 @@
 ---
-title: "Habbits — reorder habits design"
+status: shipped
 date: 2026-06-14
-status: approved
-type: design
-references:
-  - docs/superpowers/specs/2026-06-13-habbits-mobile-local-first-design.md
+slug: reorder-habits
+supersedes: null
+superseded_by: null
+pr: 2c197d1
+outcome: Drag-to-reorder the home list via a per-card handle with persisted sortOrder.
 ---
+
 
 # Habbits — reorder habits
 

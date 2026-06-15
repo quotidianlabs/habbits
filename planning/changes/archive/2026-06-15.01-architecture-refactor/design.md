@@ -1,3 +1,13 @@
+---
+status: shipped
+date: 2026-06-15
+slug: architecture-refactor
+supersedes: null
+superseded_by: null
+pr: 86f0a38
+outcome: Layered MVVM with Riverpod: repositories, per-feature view models, feature-first tree.
+---
+
 # Layered architecture refactor (Riverpod MVVM) — design
 
 **Date:** 2026-06-15
