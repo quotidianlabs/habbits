@@ -8,6 +8,7 @@ import 'package:habbits/data/repositories/settings_repository.dart';
 import 'package:habbits/domain/models/backup_data.dart';
 import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/ui/core/locale_controller.dart';
+import 'package:habbits/ui/core/theme_controller.dart';
 import 'package:habbits/ui/settings/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -157,5 +158,37 @@ void main() {
     await tester.pumpAndSettle();
     expect(prefs.getString('locale'), 'ru');
     expect(find.text('Настройки'), findsOneWidget);
+  });
+
+  testWidgets('theme picker switches to dark and persists', (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    SharedPreferences.setMockInitialValues({});
+    final prefs = await SharedPreferences.getInstance();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          appDatabaseProvider.overrideWithValue(db),
+          sharedPreferencesProvider.overrideWithValue(prefs),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: SettingsScreen(),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const Key('theme-tile')));
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byKey(const Key('theme-option-system')),
+        matching: find.byIcon(Icons.check),
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const Key('theme-option-dark')));
+    await tester.pumpAndSettle();
+    expect(prefs.getString('theme'), 'dark');
   });
 }

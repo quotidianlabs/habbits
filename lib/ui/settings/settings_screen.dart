@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/backup_data.dart';
 import '../../l10n/app_localizations.dart';
 import '../core/locale_controller.dart';
+import '../core/theme_controller.dart';
 import 'settings_view_model.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -40,6 +41,18 @@ class SettingsScreen extends ConsumerWidget {
                 title: Text(l10n.language),
                 subtitle: Text(_localeName(l10n, current)),
                 onTap: () => _pickLanguage(context, ref, current),
+              );
+            },
+          ),
+          Consumer(
+            builder: (context, ref, _) {
+              final current = ref.watch(themeControllerProvider);
+              return ListTile(
+                key: const Key('theme-tile'),
+                leading: const Icon(Icons.brightness_6),
+                title: Text(l10n.theme),
+                subtitle: Text(_themeName(l10n, current)),
+                onTap: () => _pickTheme(context, ref, current),
               );
             },
           ),
@@ -160,5 +173,37 @@ Future<void> _pickLanguage(
   );
   if (chosen != null) {
     await ref.read(localeControllerProvider.notifier).set(chosen);
+  }
+}
+
+String _themeName(AppLocalizations l10n, AppThemeMode mode) => switch (mode) {
+  AppThemeMode.system => l10n.themeSystem,
+  AppThemeMode.light => l10n.themeLight,
+  AppThemeMode.dark => l10n.themeDark,
+};
+
+Future<void> _pickTheme(
+  BuildContext context,
+  WidgetRef ref,
+  AppThemeMode current,
+) async {
+  final l10n = AppLocalizations.of(context);
+  final chosen = await showDialog<AppThemeMode>(
+    context: context,
+    builder: (ctx) => SimpleDialog(
+      title: Text(l10n.theme),
+      children: [
+        for (final option in AppThemeMode.values)
+          ListTile(
+            key: Key('theme-option-${option.storage}'),
+            title: Text(_themeName(l10n, option)),
+            trailing: option == current ? const Icon(Icons.check) : null,
+            onTap: () => Navigator.pop(ctx, option),
+          ),
+      ],
+    ),
+  );
+  if (chosen != null) {
+    await ref.read(themeControllerProvider.notifier).set(chosen);
   }
 }
