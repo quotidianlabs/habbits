@@ -26,11 +26,7 @@ class HabitDetailScreen extends ConsumerWidget {
 
     final l10n = AppLocalizations.of(context);
     final today = dateOnly(DateTime.now());
-    final data = buildHeatmap(
-      completed: summary.dates,
-      today: today,
-      weeks: 6,
-    );
+    final data = buildHeatmap(completed: summary.dates, today: today, weeks: 6);
     final percent = summary.completionPercent;
 
     return Scaffold(
@@ -49,7 +45,9 @@ class HabitDetailScreen extends ConsumerWidget {
                 isRename: true,
               );
               if (name != null) {
-                await ref.read(habitDetailViewModelProvider(habitId).notifier).rename(name);
+                await ref
+                    .read(habitDetailViewModelProvider(habitId).notifier)
+                    .rename(name);
               }
             },
           ),
@@ -60,7 +58,9 @@ class HabitDetailScreen extends ConsumerWidget {
             onPressed: () async {
               final ok = await confirmDeleteHabit(context, summary.habit.name);
               if (!ok) return;
-              await ref.read(habitDetailViewModelProvider(habitId).notifier).delete();
+              await ref
+                  .read(habitDetailViewModelProvider(habitId).notifier)
+                  .delete();
               if (context.mounted) Navigator.pop(context);
             },
           ),
@@ -69,11 +69,15 @@ class HabitDetailScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(l10n.streakLabel(summary.streak),
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            l10n.streakLabel(summary.streak),
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 4),
-          Text(l10n.thirtyDayLabel(percent == null ? '—' : '$percent%'),
-              style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            l10n.thirtyDayLabel(percent == null ? '—' : '$percent%'),
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
           const SizedBox(height: 8),
           ListTile(
             key: const Key('reminder-row'),
@@ -85,12 +89,21 @@ class HabitDetailScreen extends ConsumerWidget {
               key: const Key('reminder-switch'),
               value: summary.habit.reminderTime != null,
               onChanged: (on) => _onReminderToggle(
-                  context, ref, habitId, on, summary.habit.reminderTime),
+                context,
+                ref,
+                habitId,
+                on,
+                summary.habit.reminderTime,
+              ),
             ),
             onTap: summary.habit.reminderTime == null
                 ? null
                 : () => _pickReminderTime(
-                    context, ref, habitId, summary.habit.reminderTime!),
+                    context,
+                    ref,
+                    habitId,
+                    summary.habit.reminderTime!,
+                  ),
           ),
           const SizedBox(height: 8),
           SingleChildScrollView(
@@ -106,7 +119,9 @@ class HabitDetailScreen extends ConsumerWidget {
           RecentDaysList(
             completed: summary.dates,
             today: today,
-            onToggle: (date) => ref.read(habitDetailViewModelProvider(habitId).notifier).toggle(date),
+            onToggle: (date) => ref
+                .read(habitDetailViewModelProvider(habitId).notifier)
+                .toggle(date),
           ),
         ],
       ),
@@ -159,6 +174,8 @@ Future<void> _pickReminderTime(
     initialTime: _toTimeOfDay(current),
   );
   if (picked != null && context.mounted) {
-    await ref.read(habitDetailViewModelProvider(habitId).notifier).setReminder(_toHhmm(picked));
+    await ref
+        .read(habitDetailViewModelProvider(habitId).notifier)
+        .setReminder(_toHhmm(picked));
   }
 }

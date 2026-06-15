@@ -44,10 +44,14 @@ BackupData decodeBackup(String source) {
   }
   final version = root['version'];
   if (version is! int || version != _currentVersion) {
-    throw BackupFormatException('Unsupported backup version: ${root['version']}.');
+    throw BackupFormatException(
+      'Unsupported backup version: ${root['version']}.',
+    );
   }
   final exportedRaw = root['exportedAt'];
-  final exportedAt = exportedRaw is String ? DateTime.tryParse(exportedRaw) : null;
+  final exportedAt = exportedRaw is String
+      ? DateTime.tryParse(exportedRaw)
+      : null;
   if (exportedAt == null) {
     throw const BackupFormatException('Missing or invalid exportedAt.');
   }
@@ -86,12 +90,16 @@ BackupHabit _decodeHabit(Object? item) {
   }
   final completionsRaw = item['completions'];
   if (completionsRaw is! List) {
-    throw BackupFormatException('Habit "$name" has an invalid completions list.');
+    throw BackupFormatException(
+      'Habit "$name" has an invalid completions list.',
+    );
   }
   final completions = <String>[];
   for (final c in completionsRaw) {
     if (c is! String || !_isValidIsoDate(c)) {
-      throw BackupFormatException('Habit "$name" has an invalid completion date: $c.');
+      throw BackupFormatException(
+        'Habit "$name" has an invalid completion date: $c.',
+      );
     }
     completions.add(c);
   }
@@ -113,7 +121,9 @@ bool _isValidIsoDate(String s) {
   final d = int.parse(parts[2]);
   if (m < 1 || m > 12 || d < 1 || d > 31) return false;
   final dt = DateTime(y, m, d);
-  return dt.year == y && dt.month == m && dt.day == d; // rejects e.g. 2026-02-30
+  return dt.year == y &&
+      dt.month == m &&
+      dt.day == d; // rejects e.g. 2026-02-30
 }
 
 /// Builds a [BackupData] snapshot from DAO rows. Pure (no I/O). Completion dates

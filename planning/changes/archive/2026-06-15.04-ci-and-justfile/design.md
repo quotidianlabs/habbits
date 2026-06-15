@@ -1,11 +1,11 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-15
 slug: ci-and-justfile
 supersedes: null
 superseded_by: null
-pr: null
-outcome: null
+pr: "#3"
+outcome: GitHub Actions CI + Justfile (lint/test) with a repo-wide dart-format pass.
 ---
 
 # Design: CI + Justfile (lint/test) with a dart-format pass

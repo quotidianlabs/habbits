@@ -16,17 +16,20 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
     final nextOrder = existing.isEmpty
         ? 0
         : existing.map((h) => h.sortOrder).reduce((a, b) => a > b ? a : b) + 1;
-    return into(habits).insert(HabitsCompanion.insert(
-      name: name,
-      color: color,
-      sortOrder: nextOrder,
-      createdAt: DateTime.now(),
-    ));
+    return into(habits).insert(
+      HabitsCompanion.insert(
+        name: name,
+        color: color,
+        sortOrder: nextOrder,
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   Future<void> renameHabit(int id, String name) {
-    return (update(habits)..where((h) => h.id.equals(id)))
-        .write(HabitsCompanion(name: Value(name)));
+    return (update(
+      habits,
+    )..where((h) => h.id.equals(id))).write(HabitsCompanion(name: Value(name)));
   }
 
   /// Persists a new ordering: sets each habit's sortOrder to its index in
@@ -36,15 +39,17 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
   Future<void> reorderHabits(List<int> orderedIds) async {
     await transaction(() async {
       for (var i = 0; i < orderedIds.length; i++) {
-        await (update(habits)..where((h) => h.id.equals(orderedIds[i])))
-            .write(HabitsCompanion(sortOrder: Value(i)));
+        await (update(habits)..where((h) => h.id.equals(orderedIds[i]))).write(
+          HabitsCompanion(sortOrder: Value(i)),
+        );
       }
     });
   }
 
   Future<void> setReminderTime(int id, String? hhmm) {
-    return (update(habits)..where((h) => h.id.equals(id)))
-        .write(HabitsCompanion(reminderTime: Value(hhmm)));
+    return (update(habits)..where((h) => h.id.equals(id))).write(
+      HabitsCompanion(reminderTime: Value(hhmm)),
+    );
   }
 
   Future<void> deleteHabit(int id) {
@@ -55,18 +60,22 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
   /// present. Idempotent with respect to the displayed state.
   Future<void> toggleCompletion(int habitId, DateTime date) async {
     final iso = formatIsoDate(date);
-    final existing = await (select(completions)
-          ..where((c) => c.habitId.equals(habitId) & c.localDate.equals(iso)))
-        .getSingleOrNull();
+    final existing =
+        await (select(completions)..where(
+              (c) => c.habitId.equals(habitId) & c.localDate.equals(iso),
+            ))
+            .getSingleOrNull();
 
     if (existing != null) {
       await (delete(completions)..where((c) => c.id.equals(existing.id))).go();
     } else {
-      await into(completions).insert(CompletionsCompanion.insert(
-        habitId: habitId,
-        localDate: iso,
-        createdAt: DateTime.now(),
-      ));
+      await into(completions).insert(
+        CompletionsCompanion.insert(
+          habitId: habitId,
+          localDate: iso,
+          createdAt: DateTime.now(),
+        ),
+      );
     }
   }
 
@@ -94,8 +103,7 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
   Stream<List<HabitWithDates>> watchHabitsWithDates() {
     final q = select(habits).join([
       leftOuterJoin(completions, completions.habitId.equalsExp(habits.id)),
-    ])
-      ..orderBy([OrderingTerm(expression: habits.sortOrder)]);
+    ])..orderBy([OrderingTerm(expression: habits.sortOrder)]);
     return q.watch().map(_group);
   }
 
@@ -103,8 +111,7 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
   Future<List<HabitWithDates>> getHabitsWithDates() async {
     final q = select(habits).join([
       leftOuterJoin(completions, completions.habitId.equalsExp(habits.id)),
-    ])
-      ..orderBy([OrderingTerm(expression: habits.sortOrder)]);
+    ])..orderBy([OrderingTerm(expression: habits.sortOrder)]);
     return _group(await q.get());
   }
 
@@ -116,19 +123,23 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
       await delete(completions).go();
       await delete(habits).go();
       for (final h in data) {
-        final id = await into(habits).insert(HabitsCompanion.insert(
-          name: h.name,
-          color: h.color,
-          reminderTime: Value(h.reminderTime),
-          sortOrder: h.sortOrder,
-          createdAt: h.createdAt,
-        ));
+        final id = await into(habits).insert(
+          HabitsCompanion.insert(
+            name: h.name,
+            color: h.color,
+            reminderTime: Value(h.reminderTime),
+            sortOrder: h.sortOrder,
+            createdAt: h.createdAt,
+          ),
+        );
         for (final iso in h.completions) {
-          await into(completions).insert(CompletionsCompanion.insert(
-            habitId: id,
-            localDate: iso,
-            createdAt: DateTime.now(),
-          ));
+          await into(completions).insert(
+            CompletionsCompanion.insert(
+              habitId: id,
+              localDate: iso,
+              createdAt: DateTime.now(),
+            ),
+          );
         }
       }
     });

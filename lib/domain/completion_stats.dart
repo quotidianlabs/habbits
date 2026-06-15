@@ -6,7 +6,11 @@ import 'dates.dart';
 /// not yet checked. Returns `null` when there is no eligible window yet (e.g.
 /// the habit was created today and today is not checked) — the UI renders that
 /// as "—". All inputs are normalized to date-only.
-int? completionPercent(Set<DateTime> completed, DateTime createdAt, DateTime today) {
+int? completionPercent(
+  Set<DateTime> completed,
+  DateTime createdAt,
+  DateTime today,
+) {
   final days = completed.map(dateOnly).toSet();
   final created = dateOnly(createdAt);
   final t = dateOnly(today);
@@ -18,8 +22,11 @@ int? completionPercent(Set<DateTime> completed, DateTime createdAt, DateTime tod
   if (spanDays <= 0) return null;
 
   final windowDays = spanDays < 30 ? spanDays : 30;
-  final windowStart =
-      DateTime(lastDay.year, lastDay.month, lastDay.day - (windowDays - 1));
+  final windowStart = DateTime(
+    lastDay.year,
+    lastDay.month,
+    lastDay.day - (windowDays - 1),
+  );
 
   var count = 0;
   for (final d in days) {

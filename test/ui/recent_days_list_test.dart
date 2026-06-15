@@ -12,29 +12,41 @@ void main() {
     Set<DateTime> done = const {},
     DateTime? today,
     Locale? locale,
-  }) =>
-      MaterialApp(
-        locale: locale,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: RecentDaysList(
-              completed: done,
-              today: today ?? defaultToday,
-              count: 5,
-              onToggle: onToggle,
-            ),
-          ),
+  }) => MaterialApp(
+    locale: locale,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: Scaffold(
+      body: SingleChildScrollView(
+        child: RecentDaysList(
+          completed: done,
+          today: today ?? defaultToday,
+          count: 5,
+          onToggle: onToggle,
         ),
-      );
+      ),
+    ),
+  );
 
-  testWidgets('lists the last N days newest-first with today labeled', (tester) async {
-    await tester.pumpWidget(host(onToggle: (_) {}, done: {DateTime(2026, 6, 12)}));
+  testWidgets('lists the last N days newest-first with today labeled', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      host(onToggle: (_) {}, done: {DateTime(2026, 6, 12)}),
+    );
     expect(find.textContaining('Today'), findsOneWidget);
-    expect(find.byKey(const Key('daylist-2026-06-13')), findsOneWidget); // today
-    expect(find.byKey(const Key('daylist-2026-06-09')), findsOneWidget); // today-4
-    expect(find.byKey(const Key('daylist-2026-06-08')), findsNothing);   // outside window
+    expect(
+      find.byKey(const Key('daylist-2026-06-13')),
+      findsOneWidget,
+    ); // today
+    expect(
+      find.byKey(const Key('daylist-2026-06-09')),
+      findsOneWidget,
+    ); // today-4
+    expect(
+      find.byKey(const Key('daylist-2026-06-08')),
+      findsNothing,
+    ); // outside window
   });
 
   testWidgets('tapping a row calls onToggle with that date', (tester) async {
@@ -46,12 +58,14 @@ void main() {
 
   testWidgets('formats the today row in Russian', (tester) async {
     final today = DateTime(2026, 6, 12); // Friday
-    await tester.pumpWidget(host(
-      onToggle: (_) {},
-      done: const {},
-      today: today,
-      locale: const Locale('ru'),
-    ));
+    await tester.pumpWidget(
+      host(
+        onToggle: (_) {},
+        done: const {},
+        today: today,
+        locale: const Locale('ru'),
+      ),
+    );
     await tester.pumpAndSettle();
     final base = DateFormat.MMMEd('ru').format(today);
     expect(find.text('Сегодня · $base'), findsOneWidget);

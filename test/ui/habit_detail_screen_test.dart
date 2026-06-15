@@ -13,23 +13,27 @@ void main() {
   // Insert a habit created 10 days ago so there are past in-range cells to tap.
   Future<int> seedHabit(AppDatabase db) {
     final created = dateOnly(DateTime.now()).subtract(const Duration(days: 10));
-    return db.into(db.habits).insert(HabitsCompanion.insert(
-          name: 'Medicine',
-          color: 0xFF009688,
-          sortOrder: 0,
-          createdAt: created,
-        ));
+    return db
+        .into(db.habits)
+        .insert(
+          HabitsCompanion.insert(
+            name: 'Medicine',
+            color: 0xFF009688,
+            sortOrder: 0,
+            createdAt: created,
+          ),
+        );
   }
 
   Widget app(AppDatabase db, int id, {Locale? locale}) => ProviderScope(
-        overrides: [appDatabaseProvider.overrideWithValue(db)],
-        child: MaterialApp(
-          locale: locale,
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: HabitDetailScreen(habitId: id),
-        ),
-      );
+    overrides: [appDatabaseProvider.overrideWithValue(db)],
+    child: MaterialApp(
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: HabitDetailScreen(habitId: id),
+    ),
+  );
 
   testWidgets('renders name, streak, percent, and the heatmap', (tester) async {
     final db = AppDatabase(NativeDatabase.memory());
@@ -46,8 +50,9 @@ void main() {
     expect(find.byType(HeatmapGrid), findsOneWidget);
   });
 
-  testWidgets('tapping a day row records a completion (retroactive)',
-      (tester) async {
+  testWidgets('tapping a day row records a completion (retroactive)', (
+    tester,
+  ) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
     final id = await seedHabit(db);
@@ -60,9 +65,9 @@ void main() {
     await tester.tap(find.byKey(Key('daylist-$iso')));
     await tester.pumpAndSettle();
 
-    final rows = await (db.select(db.completions)
-          ..where((c) => c.localDate.equals(iso)))
-        .get();
+    final rows = await (db.select(
+      db.completions,
+    )..where((c) => c.localDate.equals(iso))).get();
     expect(rows, hasLength(1));
   });
 
@@ -76,23 +81,33 @@ void main() {
 
     await tester.tap(find.byKey(const Key('detail-rename')));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('habit-name-field')), 'Vitamins');
+    await tester.enterText(
+      find.byKey(const Key('habit-name-field')),
+      'Vitamins',
+    );
     await tester.tap(find.byKey(const Key('habit-name-confirm')));
     await tester.pumpAndSettle();
 
     expect(find.text('Vitamins'), findsOneWidget);
   });
 
-  testWidgets('shows "—" for a brand-new habit with no eligible window',
-      (tester) async {
+  testWidgets('shows "—" for a brand-new habit with no eligible window', (
+    tester,
+  ) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
-    final id = await db.into(db.habits).insert(HabitsCompanion.insert(
-          name: 'New',
-          color: 0xFF009688,
-          sortOrder: 0,
-          createdAt: dateOnly(DateTime.now()), // created today, nothing checked
-        ));
+    final id = await db
+        .into(db.habits)
+        .insert(
+          HabitsCompanion.insert(
+            name: 'New',
+            color: 0xFF009688,
+            sortOrder: 0,
+            createdAt: dateOnly(
+              DateTime.now(),
+            ), // created today, nothing checked
+          ),
+        );
 
     await tester.pumpWidget(app(db, id));
     await tester.pumpAndSettle();
@@ -100,22 +115,28 @@ void main() {
     expect(find.text('30-day: —'), findsOneWidget);
   });
 
-  testWidgets('reminder row shows Off and switch off for a habit with no reminder',
-      (tester) async {
-    final db = AppDatabase(NativeDatabase.memory());
-    addTearDown(db.close);
-    final id = await seedHabit(db);
+  testWidgets(
+    'reminder row shows Off and switch off for a habit with no reminder',
+    (tester) async {
+      final db = AppDatabase(NativeDatabase.memory());
+      addTearDown(db.close);
+      final id = await seedHabit(db);
 
-    await tester.pumpWidget(app(db, id));
-    await tester.pumpAndSettle();
+      await tester.pumpWidget(app(db, id));
+      await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('reminder-row')), findsOneWidget);
-    expect(find.text('Off'), findsOneWidget);
-    final sw = tester.widget<Switch>(find.byKey(const Key('reminder-switch')));
-    expect(sw.value, isFalse);
-  });
+      expect(find.byKey(const Key('reminder-row')), findsOneWidget);
+      expect(find.text('Off'), findsOneWidget);
+      final sw = tester.widget<Switch>(
+        find.byKey(const Key('reminder-switch')),
+      );
+      expect(sw.value, isFalse);
+    },
+  );
 
-  testWidgets('reminder row shows the time and switch on when set', (tester) async {
+  testWidgets('reminder row shows the time and switch on when set', (
+    tester,
+  ) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
     final id = await seedHabit(db);
@@ -145,35 +166,38 @@ void main() {
     expect(rows.single.habit.reminderTime, isNull);
   });
 
-  testWidgets('deleting from detail confirms, removes the habit, and pops',
-      (tester) async {
+  testWidgets('deleting from detail confirms, removes the habit, and pops', (
+    tester,
+  ) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
     final id = await seedHabit(db);
 
-    await tester.pumpWidget(ProviderScope(
-      overrides: [appDatabaseProvider.overrideWithValue(db)],
-      child: MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: Builder(
-          builder: (context) => Scaffold(
-            body: Center(
-              child: ElevatedButton(
-                key: const Key('open-detail'),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => HabitDetailScreen(habitId: id),
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [appDatabaseProvider.overrideWithValue(db)],
+        child: MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: Center(
+                child: ElevatedButton(
+                  key: const Key('open-detail'),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => HabitDetailScreen(habitId: id),
+                    ),
                   ),
+                  child: const Text('open'),
                 ),
-                child: const Text('open'),
               ),
             ),
           ),
         ),
       ),
-    ));
+    );
 
     await tester.tap(find.byKey(const Key('open-detail')));
     await tester.pumpAndSettle();

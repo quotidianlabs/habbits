@@ -38,7 +38,9 @@ class HabitCard extends ConsumerWidget {
                   Checkbox(
                     key: ValueKey('checkoff-toggle-${item.habit.id}'),
                     value: item.doneToday,
-                    onChanged: (_) => ref.read(habitListViewModelProvider.notifier).toggleToday(item.habit.id),
+                    onChanged: (_) => ref
+                        .read(habitListViewModelProvider.notifier)
+                        .toggleToday(item.habit.id),
                   ),
                   Expanded(
                     child: Text(

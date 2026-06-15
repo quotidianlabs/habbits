@@ -68,6 +68,9 @@ _None._
 
 ### Archived (shipped)
 
+- **[ci-and-justfile](changes/archive/2026-06-15.04-ci-and-justfile/design.md)**
+  (#3, 2026-06-15) — GitHub Actions CI + Justfile (lint/test) with a repo-wide
+  dart-format pass.
 - **[adopt-planning-convention](changes/archive/2026-06-15.03-adopt-planning-convention/design.md)**
   (#2, 2026-06-15) — Adopt the portable planning convention; migrate 9 shipped
   specs/plans into archive bundles.

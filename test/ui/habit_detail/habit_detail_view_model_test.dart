@@ -39,7 +39,9 @@ void main() {
     addTearDown(container.dispose);
     addTearDown(db.close);
 
-    final id = await container.read(habitDaoProvider).createHabit(name: 'Old', color: 1);
+    final id = await container
+        .read(habitDaoProvider)
+        .createHabit(name: 'Old', color: 1);
     // keep list stream alive for the derived detail VM
     final keep = container.listen(habitListViewModelProvider, (_, next) {});
     addTearDown(keep.close);
@@ -47,8 +49,13 @@ void main() {
 
     expect(container.read(habitDetailViewModelProvider(id))?.habit.name, 'Old');
 
-    await container.read(habitDetailViewModelProvider(id).notifier).rename('New');
-    await nextWhere(container, (l) => l.any((s) => s.habit.id == id && s.habit.name == 'New'));
+    await container
+        .read(habitDetailViewModelProvider(id).notifier)
+        .rename('New');
+    await nextWhere(
+      container,
+      (l) => l.any((s) => s.habit.id == id && s.habit.name == 'New'),
+    );
     expect(container.read(habitDetailViewModelProvider(id))?.habit.name, 'New');
   });
 
@@ -60,12 +67,17 @@ void main() {
     addTearDown(container.dispose);
     addTearDown(db.close);
 
-    final id = await container.read(habitDaoProvider).createHabit(name: 'Walk', color: 1);
+    final id = await container
+        .read(habitDaoProvider)
+        .createHabit(name: 'Walk', color: 1);
     final keep = container.listen(habitListViewModelProvider, (_, _) {});
     addTearDown(keep.close);
     await nextWhere(container, (l) => l.any((s) => s.habit.id == id));
 
-    expect(container.read(habitDetailViewModelProvider(id))?.habit.name, 'Walk');
+    expect(
+      container.read(habitDetailViewModelProvider(id))?.habit.name,
+      'Walk',
+    );
     expect(container.read(habitDetailViewModelProvider(9999)), isNull);
   });
 }

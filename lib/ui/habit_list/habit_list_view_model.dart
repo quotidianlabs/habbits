@@ -26,8 +26,11 @@ class HabitListViewModel extends _$HabitListViewModel {
             habit: row.habit,
             streak: currentStreak(row.dates, today),
             doneToday: row.dates.contains(today),
-            completionPercent:
-                completionPercent(row.dates, row.habit.createdAt, today),
+            completionPercent: completionPercent(
+              row.dates,
+              row.habit.createdAt,
+              today,
+            ),
             dates: row.dates,
           ),
       ];

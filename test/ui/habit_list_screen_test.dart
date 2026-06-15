@@ -9,14 +9,14 @@ import 'package:habbits/ui/habit_list/habit_list_screen.dart';
 import 'package:habbits/ui/widgets/day_strip.dart';
 
 Widget _app(AppDatabase db, {Locale? locale}) => ProviderScope(
-      overrides: [appDatabaseProvider.overrideWithValue(db)],
-      child: MaterialApp(
-        locale: locale,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const HabitListScreen(),
-      ),
-    );
+  overrides: [appDatabaseProvider.overrideWithValue(db)],
+  child: MaterialApp(
+    locale: locale,
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: const HabitListScreen(),
+  ),
+);
 
 void main() {
   testWidgets('adding a habit shows it in the list', (tester) async {
@@ -27,7 +27,10 @@ void main() {
 
     await tester.tap(find.byKey(const Key('add-habit-fab')));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('habit-name-field')), 'Medicine');
+    await tester.enterText(
+      find.byKey(const Key('habit-name-field')),
+      'Medicine',
+    );
     await tester.tap(find.byKey(const Key('habit-name-confirm')));
     await tester.pumpAndSettle();
 
@@ -49,8 +52,9 @@ void main() {
     expect(find.text('Streak: 1'), findsOneWidget);
   });
 
-  testWidgets('two habits each render with independent check-off controls',
-      (tester) async {
+  testWidgets('two habits each render with independent check-off controls', (
+    tester,
+  ) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
     await db.habitDao.createHabit(name: 'Read', color: 0xFF009688);
@@ -82,8 +86,9 @@ void main() {
     expect(find.byKey(const Key('habit-detail-screen')), findsOneWidget);
   });
 
-  testWidgets('home is a reorderable list with a drag handle per habit',
-      (tester) async {
+  testWidgets('home is a reorderable list with a drag handle per habit', (
+    tester,
+  ) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
     await db.habitDao.createHabit(name: 'Read', color: 0xFF009688);
@@ -100,8 +105,10 @@ void main() {
     addTearDown(db.close);
     await tester.pumpWidget(_app(db, locale: const Locale('ru')));
     await tester.pumpAndSettle();
-    expect(find.text('Пока нет привычек. Нажмите +, чтобы добавить.'),
-        findsOneWidget);
+    expect(
+      find.text('Пока нет привычек. Нажмите +, чтобы добавить.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('renders Russian streak label', (tester) async {

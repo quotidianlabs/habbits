@@ -12,7 +12,7 @@ part 'notification_service.g.dart';
 /// The plugin boundary; all decision logic lives in computeReminderSchedule.
 class NotificationService {
   NotificationService([FlutterLocalNotificationsPlugin? plugin])
-      : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
+    : _plugin = plugin ?? FlutterLocalNotificationsPlugin();
 
   final FlutterLocalNotificationsPlugin _plugin;
   static const _channelId = 'habit_reminders';
@@ -37,7 +37,8 @@ class NotificationService {
 
     await _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(
           const AndroidNotificationChannel(_channelId, _channelName),
         );
@@ -47,11 +48,13 @@ class NotificationService {
   Future<bool> requestPermission() async {
     final ios = await _plugin
         .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
+          IOSFlutterLocalNotificationsPlugin
+        >()
         ?.requestPermissions(alert: true, badge: true, sound: true);
     final android = await _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.requestNotificationsPermission();
     return ios ?? android ?? false;
   }
@@ -90,4 +93,5 @@ class NotificationService {
 
 @Riverpod(keepAlive: true)
 NotificationService notificationService(Ref ref) => throw UnimplementedError(
-    'notificationServiceProvider must be overridden in main');
+  'notificationServiceProvider must be overridden in main',
+);

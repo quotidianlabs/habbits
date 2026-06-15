@@ -14,12 +14,16 @@ void main() {
   test('marks completed days', () {
     final r = recentDays({DateTime(2026, 6, 12)}, today, 3);
     expect(r[0].completed, isFalse); // Jun 11
-    expect(r[1].completed, isTrue);  // Jun 12
+    expect(r[1].completed, isTrue); // Jun 12
     expect(r[2].completed, isFalse); // Jun 13
   });
 
   test('normalizes time components in inputs', () {
-    final r = recentDays({DateTime(2026, 6, 13, 9)}, DateTime(2026, 6, 13, 23), 1);
+    final r = recentDays(
+      {DateTime(2026, 6, 13, 9)},
+      DateTime(2026, 6, 13, 23),
+      1,
+    );
     expect(r.single.date, DateTime(2026, 6, 13));
     expect(r.single.completed, isTrue);
   });

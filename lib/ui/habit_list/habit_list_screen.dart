@@ -35,7 +35,9 @@ class HabitListScreen extends ConsumerWidget {
         onPressed: () async {
           final name = await showHabitNameDialog(context);
           if (name != null) {
-            await ref.read(habitListViewModelProvider.notifier).createHabit(name);
+            await ref
+                .read(habitListViewModelProvider.notifier)
+                .createHabit(name);
           }
         },
         child: const Icon(Icons.add),
@@ -52,7 +54,9 @@ class HabitListScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(vertical: 6),
             onReorderItem: (oldIndex, newIndex) {
               final ids = [for (final it in items) it.habit.id];
-              ref.read(habitListViewModelProvider.notifier).reorder(reorderedIds(ids, oldIndex, newIndex));
+              ref
+                  .read(habitListViewModelProvider.notifier)
+                  .reorder(reorderedIds(ids, oldIndex, newIndex));
             },
             children: [
               for (var i = 0; i < items.length; i++)

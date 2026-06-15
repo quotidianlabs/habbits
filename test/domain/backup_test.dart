@@ -46,21 +46,42 @@ void main() {
 
     test('non-JSON text', () => expectReject('not json at all'));
     test('a JSON array, not an object', () => expectReject('[]'));
-    test('wrong app marker', () =>
-        expectReject('{"app":"other","version":1,"exportedAt":"2026-06-14T00:00:00.000","habits":[]}'));
-    test('unsupported version', () =>
-        expectReject('{"app":"habbits","version":2,"exportedAt":"2026-06-14T00:00:00.000","habits":[]}'));
-    test('missing habits list', () =>
-        expectReject('{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000"}'));
-    test('habit missing name', () => expectReject(
-        '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000","habits":[{"color":1,"sortOrder":0,"createdAt":"2026-06-01T00:00:00.000","completions":[]}]}'));
-    test('habit with a malformed completion date', () => expectReject(
-        '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000","habits":[{"name":"X","color":1,"sortOrder":0,"createdAt":"2026-06-01T00:00:00.000","completions":["2026-13-40"]}]}'));
+    test(
+      'wrong app marker',
+      () => expectReject(
+        '{"app":"other","version":1,"exportedAt":"2026-06-14T00:00:00.000","habits":[]}',
+      ),
+    );
+    test(
+      'unsupported version',
+      () => expectReject(
+        '{"app":"habbits","version":2,"exportedAt":"2026-06-14T00:00:00.000","habits":[]}',
+      ),
+    );
+    test(
+      'missing habits list',
+      () => expectReject(
+        '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000"}',
+      ),
+    );
+    test(
+      'habit missing name',
+      () => expectReject(
+        '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000","habits":[{"color":1,"sortOrder":0,"createdAt":"2026-06-01T00:00:00.000","completions":[]}]}',
+      ),
+    );
+    test(
+      'habit with a malformed completion date',
+      () => expectReject(
+        '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000","habits":[{"name":"X","color":1,"sortOrder":0,"createdAt":"2026-06-01T00:00:00.000","completions":["2026-13-40"]}]}',
+      ),
+    );
   });
 
   test('decodes an empty-habits backup', () {
     final decoded = decodeBackup(
-        '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000","habits":[]}');
+      '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000","habits":[]}',
+    );
     expect(decoded.habits, isEmpty);
   });
 }

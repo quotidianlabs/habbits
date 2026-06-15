@@ -18,7 +18,11 @@ String formatIsoDate(DateTime d) {
 /// Parses a `YYYY-MM-DD` string into a date-only [DateTime].
 DateTime parseIsoDate(String s) {
   final parts = s.split('-');
-  return DateTime(int.parse(parts[0]), int.parse(parts[1]), int.parse(parts[2]));
+  return DateTime(
+    int.parse(parts[0]),
+    int.parse(parts[1]),
+    int.parse(parts[2]),
+  );
 }
 
 /// Number of whole calendar days from [from] to [to] (date-only). Negative if

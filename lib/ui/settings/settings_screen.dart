@@ -54,9 +54,9 @@ class SettingsScreen extends ConsumerWidget {
       await ref.read(settingsViewModelProvider.notifier).export();
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.exportFailed)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.exportFailed)));
       }
     }
   }
@@ -68,15 +68,16 @@ class SettingsScreen extends ConsumerWidget {
       data = await ref.read(settingsViewModelProvider.notifier).pickImport();
     } on BackupFormatException catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(l10n.invalidBackupFile)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.invalidBackupFile)));
       }
       return;
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.couldntReadFile)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.couldntReadFile)));
       }
       return;
     }
@@ -116,9 +117,9 @@ Future<void> confirmAndImport(
       await ref.read(settingsViewModelProvider.notifier).applyImport(data);
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.importFailed)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.importFailed)));
       }
       return;
     }
@@ -130,12 +131,11 @@ Future<void> confirmAndImport(
   }
 }
 
-String _localeName(AppLocalizations l10n, AppLocale locale) =>
-    switch (locale) {
-      AppLocale.system => l10n.languageSystem,
-      AppLocale.en => 'English',
-      AppLocale.ru => 'Русский',
-    };
+String _localeName(AppLocalizations l10n, AppLocale locale) => switch (locale) {
+  AppLocale.system => l10n.languageSystem,
+  AppLocale.en => 'English',
+  AppLocale.ru => 'Русский',
+};
 
 Future<void> _pickLanguage(
   BuildContext context,

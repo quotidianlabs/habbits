@@ -1,9 +1,9 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-15
 slug: ci-and-justfile
 spec: ci-and-justfile
-pr: null
+pr: "#3"
 ---
 
 # ci-and-justfile — implementation plan

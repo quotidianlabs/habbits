@@ -47,11 +47,9 @@ List<ScheduledReminder> computeReminderSchedule(
         if (h.doneToday) continue; // already done today
         if (!when.isAfter(now)) continue; // time already passed today
       }
-      result.add(ScheduledReminder(
-        habitId: h.id,
-        habitName: h.name,
-        when: when,
-      ));
+      result.add(
+        ScheduledReminder(habitId: h.id, habitName: h.name, when: when),
+      );
     }
   }
   return result;
