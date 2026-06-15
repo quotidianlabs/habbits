@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/heatmap.dart';
+import '../../l10n/app_localizations.dart';
 import '../../state/habit_providers.dart';
 import '../widgets/habit_dialogs.dart';
 import '../widgets/heatmap_grid.dart';
@@ -23,6 +24,7 @@ class HabitDetailScreen extends ConsumerWidget {
       );
     }
 
+    final l10n = AppLocalizations.of(context);
     final dao = ref.read(habitDaoProvider);
     final today = dateOnly(DateTime.now());
     final data = buildHeatmap(
@@ -40,7 +42,7 @@ class HabitDetailScreen extends ConsumerWidget {
           IconButton(
             key: const Key('detail-rename'),
             icon: const Icon(Icons.edit),
-            tooltip: 'Rename',
+            tooltip: l10n.rename,
             onPressed: () => showHabitNameDialog(
               context,
               ref,
@@ -51,7 +53,7 @@ class HabitDetailScreen extends ConsumerWidget {
           IconButton(
             key: const Key('detail-delete'),
             icon: const Icon(Icons.delete_outline),
-            tooltip: 'Delete',
+            tooltip: l10n.delete,
             onPressed: () async {
               final deleted = await confirmDeleteHabit(
                   context, ref, habitId, summary.habit.name);
@@ -63,17 +65,17 @@ class HabitDetailScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Streak: ${summary.streak}',
+          Text(l10n.streakLabel(summary.streak),
               style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 4),
-          Text('30-day: ${percent == null ? '—' : '$percent%'}',
+          Text(l10n.thirtyDayLabel(percent == null ? '—' : '$percent%'),
               style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           ListTile(
             key: const Key('reminder-row'),
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.notifications_outlined),
-            title: const Text('Reminder'),
+            title: Text(l10n.reminderTitle),
             subtitle: Text(_reminderLabel(context, summary.habit.reminderTime)),
             trailing: Switch(
               key: const Key('reminder-switch'),
@@ -109,7 +111,7 @@ class HabitDetailScreen extends ConsumerWidget {
 }
 
 String _reminderLabel(BuildContext context, String? hhmm) {
-  if (hhmm == null) return 'Off';
+  if (hhmm == null) return AppLocalizations.of(context).reminderOff;
   return _toTimeOfDay(hhmm).format(context);
 }
 

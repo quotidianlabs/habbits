@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'l10n/app_localizations.dart';
 import 'services/notification_service.dart';
 import 'state/habit_providers.dart';
+import 'state/locale_controller.dart';
 import 'state/reminder_coordinator.dart';
 import 'ui/habit_list/habit_list_screen.dart';
 
@@ -10,22 +13,30 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final notifications = NotificationService();
   await notifications.init();
+  final prefs = await SharedPreferences.getInstance();
   runApp(
     ProviderScope(
-      overrides: [notificationServiceProvider.overrideWithValue(notifications)],
+      overrides: [
+        notificationServiceProvider.overrideWithValue(notifications),
+        sharedPreferencesProvider.overrideWithValue(prefs),
+      ],
       child: const HabbitsApp(),
     ),
   );
 }
 
-class HabbitsApp extends StatelessWidget {
+class HabbitsApp extends ConsumerWidget {
   const HabbitsApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appLocale = ref.watch(localeControllerProvider);
     return MaterialApp(
       title: 'Habbits',
       theme: ThemeData(colorSchemeSeed: Colors.teal, useMaterial3: true),
+      locale: appLocale.locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       home: const ReminderCoordinator(child: HabitListScreen()),
     );
   }

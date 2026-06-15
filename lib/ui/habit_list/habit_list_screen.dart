@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/dates.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/reorder.dart';
 import '../../state/habit_providers.dart';
 import '../habit_detail/habit_detail_screen.dart';
@@ -15,6 +16,7 @@ class HabitListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summaries = ref.watch(habitSummariesProvider);
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Habbits'),
@@ -22,7 +24,7 @@ class HabitListScreen extends ConsumerWidget {
           IconButton(
             key: const Key('open-settings'),
             icon: const Icon(Icons.settings),
-            tooltip: 'Settings',
+            tooltip: l10n.settings,
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const SettingsScreen()),
@@ -37,10 +39,10 @@ class HabitListScreen extends ConsumerWidget {
       ),
       body: summaries.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, _) => Center(child: Text(l10n.homeError(e.toString()))),
         data: (items) {
           if (items.isEmpty) {
-            return const Center(child: Text('No habits yet. Tap + to add one.'));
+            return Center(child: Text(l10n.noHabits));
           }
           final dao = ref.read(habitDaoProvider);
           return ReorderableListView(
@@ -72,6 +74,7 @@ class _HabitCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final dao = ref.read(habitDaoProvider);
     final today = dateOnly(DateTime.now());
     final percent = item.completionPercent;
@@ -105,7 +108,7 @@ class _HabitCard extends ConsumerWidget {
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                   ),
-                  Text('Streak: ${item.streak}'),
+                  Text(l10n.streakLabel(item.streak)),
                   const SizedBox(width: 12),
                   Text(percent == null ? '—' : '$percent%'),
                   ReorderableDragStartListener(
@@ -115,7 +118,7 @@ class _HabitCard extends ConsumerWidget {
                       child: Icon(
                         Icons.drag_handle,
                         key: ValueKey('drag-handle-${item.habit.id}'),
-                        semanticLabel: 'Drag to reorder ${item.habit.name}',
+                        semanticLabel: l10n.dragToReorder(item.habit.name),
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),

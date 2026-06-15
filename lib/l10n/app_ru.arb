@@ -1,0 +1,45 @@
+{
+  "@@locale": "ru",
+
+  "settings": "Настройки",
+
+  "exportTitle": "Экспорт данных",
+  "exportSubtitle": "Сохранить все привычки и историю в JSON-файл",
+  "importTitle": "Импорт данных",
+  "importSubtitle": "Заменить все данные из резервной копии JSON",
+  "exportFailed": "Не удалось выполнить экспорт.",
+  "couldntReadFile": "Не удалось прочитать файл.",
+  "invalidBackupFile": "Это не похоже на резервную копию Habbits.",
+
+  "replaceTitle": "Заменить все данные?",
+  "replaceBody": "Все текущие привычки и история будут заменены содержимым файла ({count, plural, one{{count} привычка} few{{count} привычки} many{{count} привычек} other{{count} привычки}}). Это действие необратимо.",
+  "cancel": "Отмена",
+  "replace": "Заменить",
+  "importFailed": "Не удалось импортировать. Ваши данные не изменены.",
+  "importedHabits": "{count, plural, one{Импортирована {count} привычка} few{Импортированы {count} привычки} many{Импортировано {count} привычек} other{Импортировано {count} привычки}}",
+
+  "language": "Язык",
+  "languageSystem": "Системный язык",
+
+  "noHabits": "Пока нет привычек. Нажмите +, чтобы добавить.",
+  "homeError": "Ошибка: {error}",
+  "streakLabel": "Серия: {count}",
+  "dragToReorder": "Перетащить для изменения порядка: {name}",
+
+  "thirtyDayLabel": "30 дней: {value}",
+  "reminderTitle": "Напоминание",
+  "reminderOff": "Отключено",
+  "rename": "Переименовать",
+  "delete": "Удалить",
+
+  "newHabit": "Новая привычка",
+  "renameHabit": "Переименовать привычку",
+  "nameLabel": "Название",
+  "save": "Сохранить",
+  "deleteHabitTitle": "Удалить «{name}»?",
+  "deleteHabitBody": "Привычка и вся история отметок будут удалены без возможности восстановления.",
+
+  "todayPrefix": "Сегодня · {date}",
+
+  "reminderBody": "Пора отметиться"
+}

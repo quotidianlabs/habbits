@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import '../../domain/calendar_labels.dart';
+import '../../l10n/app_localizations.dart';
 import '../../domain/dates.dart';
 import '../../domain/recent_days.dart';
 
@@ -20,9 +21,15 @@ class RecentDaysList extends StatelessWidget {
   final void Function(DateTime date) onToggle;
   final int count;
 
-  String _label(DateTime date) {
-    final base = '${weekdayAbbr3(date.weekday)}, ${monthAbbr3(date.month)} ${date.day}';
-    return date == dateOnly(today) ? 'Today · $base' : base;
+  String _label(BuildContext context, DateTime date) {
+    // Full locale tag (e.g. "en_US"/"ru"); intl date symbols for it are loaded
+    // by GlobalMaterialLocalizations.delegate, and "en_US" is intl's built-in
+    // default, so DateFormat needs no explicit initializeDateFormatting here.
+    final localeName = Localizations.localeOf(context).toString();
+    final base = DateFormat.MMMEd(localeName).format(date);
+    return date == dateOnly(today)
+        ? AppLocalizations.of(context).todayPrefix(base)
+        : base;
   }
 
   @override
@@ -34,7 +41,7 @@ class RecentDaysList extends StatelessWidget {
           ListTile(
             key: ValueKey('daylist-${formatIsoDate(day.date)}'),
             dense: true,
-            title: Text(_label(day.date)),
+            title: Text(_label(context, day.date)),
             trailing: Checkbox(
               value: day.completed,
               onChanged: (_) => onToggle(day.date),

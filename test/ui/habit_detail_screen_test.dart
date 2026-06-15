@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/database.dart';
 import 'package:habbits/domain/dates.dart';
+import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/state/habit_providers.dart';
 import 'package:habbits/ui/habit_detail/habit_detail_screen.dart';
 import 'package:habbits/ui/widgets/heatmap_grid.dart';
@@ -20,9 +21,14 @@ void main() {
         ));
   }
 
-  Widget app(AppDatabase db, int id) => ProviderScope(
+  Widget app(AppDatabase db, int id, {Locale? locale}) => ProviderScope(
         overrides: [appDatabaseProvider.overrideWithValue(db)],
-        child: MaterialApp(home: HabitDetailScreen(habitId: id)),
+        child: MaterialApp(
+          locale: locale,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: HabitDetailScreen(habitId: id),
+        ),
       );
 
   testWidgets('renders name, streak, percent, and the heatmap', (tester) async {
@@ -148,6 +154,8 @@ void main() {
     await tester.pumpWidget(ProviderScope(
       overrides: [appDatabaseProvider.overrideWithValue(db)],
       child: MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Builder(
           builder: (context) => Scaffold(
             body: Center(
@@ -181,5 +189,14 @@ void main() {
     expect(find.byKey(const Key('habit-detail-screen')), findsNothing);
     final habits = await db.select(db.habits).get();
     expect(habits, isEmpty);
+  });
+
+  testWidgets('detail shows Russian labels under ru locale', (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final id = await db.habitDao.createHabit(name: 'Читать', color: 1);
+    await tester.pumpWidget(app(db, id, locale: const Locale('ru')));
+    await tester.pumpAndSettle();
+    expect(find.text('Напоминание'), findsOneWidget);
   });
 }

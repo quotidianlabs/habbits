@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-import '../../domain/calendar_labels.dart';
 import '../../domain/dates.dart';
 import '../../domain/heatmap.dart';
 
@@ -33,13 +33,14 @@ class HeatmapGrid extends StatelessWidget {
     }
   }
 
-  List<String?> _monthLabels() {
+  List<String?> _monthLabels(String localeName) {
+    final fmt = DateFormat.MMM(localeName);
     final labels = <String?>[];
     int? lastMonth;
     for (final week in data.weeks) {
       final m = week.first.date.month;
       if (m != lastMonth) {
-        labels.add(monthAbbr3(m));
+        labels.add(fmt.format(DateTime(2000, m)));
         lastMonth = m;
       } else {
         labels.add(null);
@@ -48,8 +49,8 @@ class HeatmapGrid extends StatelessWidget {
     return labels;
   }
 
-  Widget _labelsRow() {
-    final labels = _monthLabels();
+  Widget _labelsRow(String localeName) {
+    final labels = _monthLabels(localeName);
     final labelHeight = cellSize * 0.75 * 1.4;
     return Padding(
       padding: EdgeInsets.only(bottom: cellGap),
@@ -113,10 +114,13 @@ class HeatmapGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!showMonthLabels) return _grid();
+    // Full locale tag; "en_US" is intl's built-in default and other supported
+    // locales are loaded by GlobalMaterialLocalizations.delegate.
+    final localeName = Localizations.localeOf(context).toString();
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [_labelsRow(), _grid()],
+      children: [_labelsRow(localeName), _grid()],
     );
   }
 }

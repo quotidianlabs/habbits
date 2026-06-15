@@ -2,7 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/reminder_schedule.dart';
+import '../l10n/app_localizations.dart';
 import 'habit_providers.dart';
+import 'locale_controller.dart';
 
 /// Watches habits + app lifecycle and keeps the OS notification schedule in
 /// sync. Renders [child] unchanged.
@@ -25,6 +27,7 @@ class _ReminderCoordinatorState extends ConsumerState<ReminderCoordinator> {
     _lifecycle = AppLifecycleListener(onResume: _sync);
     // Resync whenever habits/completions change.
     ref.listenManual(habitSummariesProvider, (_, _) => _sync());
+    ref.listenManual(localeControllerProvider, (_, _) => _sync());
     WidgetsBinding.instance.addPostFrameCallback((_) => _sync());
   }
 
@@ -54,7 +57,12 @@ class _ReminderCoordinatorState extends ConsumerState<ReminderCoordinator> {
       _permissionAsked = true;
       await service.requestPermission();
     }
-    await service.syncSchedule(computeReminderSchedule(enabled, DateTime.now()));
+    if (!mounted) return;
+    final body = AppLocalizations.of(context).reminderBody;
+    await service.syncSchedule(
+      computeReminderSchedule(enabled, DateTime.now()),
+      body: body,
+    );
   }
 
   @override
