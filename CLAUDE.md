@@ -13,8 +13,8 @@ Design + plan for every non-trivial change live in `planning/`. Read
   `design.md` + `plan.md` (Full lane) or `change.md` (Lightweight); on merge it
   moves to `planning/changes/archive/`.
 - Real-but-unscheduled items live in `planning/deferred.md`.
-- The `architecture/` truth-home capability docs are forthcoming (tracked in
-  `planning/deferred.md`).
+- The `architecture/` capability docs live at the repo root (one file per
+  capability) and are the living truth-home for what the system does now.
 
 ## Commands
 

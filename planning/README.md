@@ -1,9 +1,8 @@
 # Planning
 
 Specs, plans, and change history for Habbits. This directory records *how the
-system got to where it is*. The living truth about *what it does now* will live
-in `architecture/` at the repo root (forthcoming — see
-[`deferred.md`](deferred.md)).
+system got to where it is*. The living truth about *what it does now* lives in
+[`architecture/`](../architecture/README.md) at the repo root.
 
 ## Conventions
 
@@ -14,8 +13,7 @@ in `architecture/` at the repo root (forthcoming — see
 ### Two axes, never mixed
 
 - **`architecture/` (repo root) — the present.** One file per capability,
-  living prose, updated whenever a change ships. The truth home. *(Forthcoming
-  for this repo.)*
+  living prose, updated whenever a change ships. The truth home.
 - **`planning/changes/` — the past-and-pending.** One folder per change, frozen
   once shipped.
 

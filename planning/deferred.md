@@ -3,10 +3,6 @@
 Real-but-unscheduled items. Each has a revisit trigger. Promote one into a
 change bundle when its trigger fires.
 
-- **`architecture/` truth-home capability docs** — living, frontmatter-free
-  capability docs at the repo root (habit tracking, streaks/stats, reminders,
-  backup I/O, i18n, theming). *Revisit when* the next feature needs a stable
-  capability contract to point at, or on the next docs pass.
 - **Android notification channel name not localized** —
   `NotificationService._channelName = 'Habit reminders'` is hard-coded English
   (no `BuildContext` at the `const` site). *Revisit when* notification copy is
