@@ -46,14 +46,16 @@ Future<void> pumpApp(WidgetTester tester, Map<String, Object> prefs) async {
   SharedPreferences.setMockInitialValues(prefs);
   final sp = await SharedPreferences.getInstance();
   final db = await seededDb();
-  await tester.pumpWidget(ProviderScope(
-    overrides: [
-      appDatabaseProvider.overrideWithValue(db),
-      notificationServiceProvider.overrideWithValue(_NoopNotifications()),
-      sharedPreferencesProvider.overrideWithValue(sp),
-    ],
-    child: const HabbitsApp(),
-  ));
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        appDatabaseProvider.overrideWithValue(db),
+        notificationServiceProvider.overrideWithValue(_NoopNotifications()),
+        sharedPreferencesProvider.overrideWithValue(sp),
+      ],
+      child: const HabbitsApp(),
+    ),
+  );
   await tester.pumpAndSettle();
 }
 
