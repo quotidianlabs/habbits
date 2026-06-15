@@ -2,8 +2,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/models/backup_data.dart';
 import '../../domain/models/habit_with_dates.dart';
-import '../habit_dao.dart';
-import '../../state/habit_providers.dart' show habitDaoProvider;
+import '../services/database/habit_dao.dart';
+import '../services/database/database_providers.dart' show habitDaoProvider;
 
 part 'habit_repository.g.dart';
 

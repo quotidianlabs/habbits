@@ -3,9 +3,10 @@ import 'dart:async';
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habbits/data/database.dart';
+import 'package:habbits/data/services/database/database.dart';
+import 'package:habbits/data/services/database/database_providers.dart';
+import 'package:habbits/domain/dates.dart';
 import 'package:habbits/domain/models/habit_summary.dart';
-import 'package:habbits/state/habit_providers.dart';
 import 'package:habbits/ui/habit_list/habit_list_view_model.dart';
 
 Future<List<HabitSummary>> nextSummaries(
@@ -86,5 +87,29 @@ void main() {
       (l) => l.length == 2 && l.first.habit.id == b,
     );
     expect(list.map((s) => s.habit.name), ['B', 'A']);
+  });
+
+  test('computes streak, doneToday, percent, and dates', () async {
+    final db = AppDatabase(NativeDatabase.memory());
+    final container = ProviderContainer(
+      overrides: [appDatabaseProvider.overrideWithValue(db)],
+    );
+    addTearDown(container.dispose);
+    addTearDown(db.close);
+
+    final id = await container.read(habitDaoProvider).createHabit(name: 'Read', color: 1);
+    final today = dateOnly(DateTime.now());
+    await container.read(habitDaoProvider).toggleCompletion(id, today);
+
+    final summaries = await nextSummaries(
+      container,
+      (l) => l.any((s) => s.habit.id == id && s.doneToday),
+    );
+    final s = summaries.single;
+    expect(s.habit.name, 'Read');
+    expect(s.streak, 1);
+    expect(s.doneToday, isTrue);
+    expect(s.completionPercent, 100); // created today, checked today
+    expect(s.dates, {today});
   });
 }

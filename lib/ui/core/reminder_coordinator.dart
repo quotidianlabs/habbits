@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../domain/reminder_schedule.dart';
-import '../l10n/app_localizations.dart';
-import '../ui/habit_list/habit_list_view_model.dart';
-import 'habit_providers.dart';
+import '../../data/services/notification_service.dart';
+import '../../domain/reminder_schedule.dart';
+import '../../l10n/app_localizations.dart';
+import '../habit_list/habit_list_view_model.dart';
 import 'locale_controller.dart';
 
 /// Watches habits + app lifecycle and keeps the OS notification schedule in

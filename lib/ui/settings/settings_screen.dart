@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/models/backup_data.dart';
 import '../../l10n/app_localizations.dart';
-import '../../state/locale_controller.dart';
+import '../core/locale_controller.dart';
 import 'settings_view_model.dart';
 
 class SettingsScreen extends ConsumerWidget {

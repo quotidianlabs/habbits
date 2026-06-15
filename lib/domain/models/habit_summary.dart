@@ -1,4 +1,4 @@
-import '../../data/database.dart';
+import '../../data/services/database/database.dart';
 
 /// View-model value for one habit (home card and detail screen).
 class HabitSummary {

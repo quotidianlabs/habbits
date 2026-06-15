@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habbits/data/database.dart';
+import 'package:habbits/data/services/database/database.dart';
+import 'package:habbits/data/services/database/database_providers.dart';
 import 'package:habbits/domain/models/habit_summary.dart';
-import 'package:habbits/state/habit_providers.dart';
 import 'package:habbits/ui/habit_detail/habit_detail_view_model.dart';
 import 'package:habbits/ui/habit_list/habit_list_view_model.dart';
 
@@ -50,5 +50,22 @@ void main() {
     await container.read(habitDetailViewModelProvider(id).notifier).rename('New');
     await nextWhere(container, (l) => l.any((s) => s.habit.id == id && s.habit.name == 'New'));
     expect(container.read(habitDetailViewModelProvider(id))?.habit.name, 'New');
+  });
+
+  test('returns the matching summary and null for a missing id', () async {
+    final db = AppDatabase(NativeDatabase.memory());
+    final container = ProviderContainer(
+      overrides: [appDatabaseProvider.overrideWithValue(db)],
+    );
+    addTearDown(container.dispose);
+    addTearDown(db.close);
+
+    final id = await container.read(habitDaoProvider).createHabit(name: 'Walk', color: 1);
+    final keep = container.listen(habitListViewModelProvider, (_, _) {});
+    addTearDown(keep.close);
+    await nextWhere(container, (l) => l.any((s) => s.habit.id == id));
+
+    expect(container.read(habitDetailViewModelProvider(id))?.habit.name, 'Walk');
+    expect(container.read(habitDetailViewModelProvider(9999)), isNull);
   });
 }

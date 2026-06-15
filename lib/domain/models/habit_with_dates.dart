@@ -1,4 +1,4 @@
-import '../../data/database.dart';
+import '../../data/services/database/database.dart';
 
 /// A habit paired with the set of dates it was completed on.
 class HabitWithDates {

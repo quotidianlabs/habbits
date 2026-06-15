@@ -1,6 +1,6 @@
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:habbits/data/database.dart';
+import 'package:habbits/data/services/database/database.dart';
 import 'package:habbits/data/repositories/habit_repository.dart';
 import 'package:habbits/domain/models/backup_data.dart';
 
