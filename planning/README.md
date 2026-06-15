@@ -50,7 +50,6 @@ Heavier lane wins on ambiguity. A `change.md` that outgrows its lane splits into
 - **`plan.md`** — the plan: the *sequencing* (the executor's task checklist).
 - **`change.md`** — both, condensed, for the lightweight lane.
 - **`deferred.md`** — real-but-unscheduled items, each with a revisit trigger.
-- **`legacy/`** — pre-history product briefs (BMAD), kept for provenance.
 
 Templates live in [`_templates/`](_templates/).
 

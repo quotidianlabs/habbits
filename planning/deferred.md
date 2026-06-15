@@ -38,3 +38,11 @@ change bundle when its trigger fires.
   *Revisit on* the next test-organization pass.
 - **Codecov coverage upload** — `flutter test --coverage` + `codecov-action`,
   matching the sibling repos. *Revisit when* the CI sub-project lands.
+- **Longest/best-streak metric** — show each habit's best-ever streak alongside
+  the current streak; a natural extension of `streak.dart` / the stats surface
+  (from the legacy product briefs). *Revisit when* streaks-and-stats next gains
+  a feature.
+- **Non-daily cadence** — habits with weekly or custom frequency rather than the
+  current daily-only model; touches the completion data model and the
+  streak/completion math (from the legacy product briefs). *Revisit when* a
+  non-daily habit is actually needed.
