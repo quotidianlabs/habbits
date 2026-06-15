@@ -1,11 +1,16 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-15
 slug: architecture-capability-docs
 supersedes: null
 superseded_by: null
-pr: null
-outcome: null
+pr: 5
+outcome: >
+  Shipped the architecture/ truth-home: an index plus six capability docs
+  written from live code. Also processed planning/legacy/ (removed the BMAD
+  briefs, distilled best-streak + non-daily cadence to deferred.md) and added
+  the color-picker and dark-theme deferred items. Docs-only; no code touched;
+  115 tests still pass.
 ---
 
 # Design: Bootstrap the `architecture/` truth-home capability docs

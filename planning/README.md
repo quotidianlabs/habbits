@@ -61,12 +61,13 @@ Templates live in [`_templates/`](_templates/).
 
 ### Active
 
-- **[architecture-capability-docs](changes/active/2026-06-15.06-architecture-capability-docs/design.md)**
-  (draft, 2026-06-15) — Bootstrap the `architecture/` truth-home: six capability
-  docs + an index, written from live code and archived bundles.
+_None._
 
 ### Archived (shipped)
 
+- **[architecture-capability-docs](changes/archive/2026-06-15.06-architecture-capability-docs/design.md)**
+  (#5, 2026-06-15) — Bootstrap the `architecture/` truth-home: six capability
+  docs + an index, written from live code and archived bundles.
 - **[readme-and-license](changes/archive/2026-06-15.05-readme-and-license/design.md)**
   (#4, 2026-06-15) — Project README (badges, en/ru screenshots, features,
   architecture) + MIT LICENSE.

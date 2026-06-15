@@ -1,9 +1,9 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-15
 slug: architecture-capability-docs
 spec: architecture-capability-docs
-pr: null
+pr: 5
 ---
 
 # architecture-capability-docs — implementation plan
