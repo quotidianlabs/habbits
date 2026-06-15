@@ -19,8 +19,10 @@ enum AppLocale {
   /// The forced locale, or null for [system] (let Flutter resolve the device).
   final Locale? locale;
 
-  static AppLocale fromStorage(String? value) => AppLocale.values
-      .firstWhere((e) => e.storage == value, orElse: () => AppLocale.system);
+  static AppLocale fromStorage(String? value) => AppLocale.values.firstWhere(
+    (e) => e.storage == value,
+    orElse: () => AppLocale.system,
+  );
 }
 
 /// Holds the selected [AppLocale], backed by shared_preferences.
@@ -28,7 +30,8 @@ enum AppLocale {
 class LocaleController extends _$LocaleController {
   @override
   AppLocale build() => AppLocale.fromStorage(
-      ref.watch(settingsRepositoryProvider).readLocaleToken());
+    ref.watch(settingsRepositoryProvider).readLocaleToken(),
+  );
 
   Future<void> set(AppLocale value) async {
     await ref.read(settingsRepositoryProvider).writeLocaleToken(value.storage);

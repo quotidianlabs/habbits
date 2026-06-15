@@ -34,7 +34,11 @@ class RecentDaysList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final days = recentDays(completed, today, count).reversed.toList(); // newest first
+    final days = recentDays(
+      completed,
+      today,
+      count,
+    ).reversed.toList(); // newest first
     return Column(
       children: [
         for (final day in days)

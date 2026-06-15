@@ -10,13 +10,22 @@ void main() {
     'empty set is 0': (completed: <DateTime>{}, expected: 0),
     'only today is 1': (completed: daysBack([0]), expected: 1),
     'today + yesterday is 2': (completed: daysBack([0, 1]), expected: 2),
-    'yesterday only (today unchecked) keeps streak alive at 1':
-        (completed: daysBack([1]), expected: 1),
-    'two days ago only (yesterday missing) is 0':
-        (completed: daysBack([2]), expected: 0),
-    'today + yesterday, gap at 2 days ago is 2':
-        (completed: daysBack([0, 1, 3]), expected: 2),
-    'ten-day run is 10': (completed: daysBack([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), expected: 10),
+    'yesterday only (today unchecked) keeps streak alive at 1': (
+      completed: daysBack([1]),
+      expected: 1,
+    ),
+    'two days ago only (yesterday missing) is 0': (
+      completed: daysBack([2]),
+      expected: 0,
+    ),
+    'today + yesterday, gap at 2 days ago is 2': (
+      completed: daysBack([0, 1, 3]),
+      expected: 2,
+    ),
+    'ten-day run is 10': (
+      completed: daysBack([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+      expected: 10,
+    ),
   };
 
   cases.forEach((name, c) {
@@ -36,7 +45,10 @@ void main() {
   });
 
   test('normalizes inputs that carry a time component', () {
-    final completed = {DateTime(2026, 6, 13, 9, 0), DateTime(2026, 6, 12, 23, 59)};
+    final completed = {
+      DateTime(2026, 6, 13, 9, 0),
+      DateTime(2026, 6, 12, 23, 59),
+    };
     expect(currentStreak(completed, DateTime(2026, 6, 13, 14, 0)), 2);
   });
 }

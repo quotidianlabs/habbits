@@ -6,7 +6,8 @@ part 'settings_repository.g.dart';
 /// The loaded SharedPreferences instance; overridden in `main()`.
 @Riverpod(keepAlive: true)
 SharedPreferences sharedPreferences(Ref ref) => throw UnimplementedError(
-    'sharedPreferencesProvider must be overridden in main');
+  'sharedPreferencesProvider must be overridden in main',
+);
 
 /// Persists app preferences (currently just the selected locale).
 class SettingsRepository {

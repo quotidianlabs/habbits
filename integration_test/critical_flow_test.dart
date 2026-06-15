@@ -29,11 +29,13 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   Widget appWith(AppDatabase db) => ProviderScope(
-        overrides: [appDatabaseProvider.overrideWithValue(db)],
-        child: const MaterialApp(home: HabitListScreen()),
-      );
+    overrides: [appDatabaseProvider.overrideWithValue(db)],
+    child: const MaterialApp(home: HabitListScreen()),
+  );
 
-  testWidgets('create, check off, streak=1, persists across relaunch', (tester) async {
+  testWidgets('create, check off, streak=1, persists across relaunch', (
+    tester,
+  ) async {
     // A single file-backed (on-device) database, shared across two "launches".
     final db = AppDatabase();
     // Start clean in case a prior run left data.
@@ -45,7 +47,10 @@ void main() {
 
     await tester.tap(find.byKey(const Key('add-habit-fab')));
     await tester.pumpAndSettle();
-    await tester.enterText(find.byKey(const Key('habit-name-field')), 'Medicine');
+    await tester.enterText(
+      find.byKey(const Key('habit-name-field')),
+      'Medicine',
+    );
     await tester.tap(find.byKey(const Key('habit-name-confirm')));
     await pumpUntilFound(tester, find.text('Medicine'));
 

@@ -39,7 +39,9 @@ void main() {
     addTearDown(container.dispose);
     addTearDown(db.close);
 
-    final id = await container.read(habitDaoProvider).createHabit(name: 'Read', color: 1);
+    final id = await container
+        .read(habitDaoProvider)
+        .createHabit(name: 'Read', color: 1);
     await nextSummaries(container, (list) => list.any((s) => s.habit.id == id));
 
     await container.read(habitListViewModelProvider.notifier).toggleToday(id);
@@ -77,8 +79,12 @@ void main() {
     addTearDown(container.dispose);
     addTearDown(db.close);
 
-    final a = await container.read(habitDaoProvider).createHabit(name: 'A', color: 1);
-    final b = await container.read(habitDaoProvider).createHabit(name: 'B', color: 1);
+    final a = await container
+        .read(habitDaoProvider)
+        .createHabit(name: 'A', color: 1);
+    final b = await container
+        .read(habitDaoProvider)
+        .createHabit(name: 'B', color: 1);
     await nextSummaries(container, (l) => l.length == 2);
 
     await container.read(habitListViewModelProvider.notifier).reorder([b, a]);
@@ -97,7 +103,9 @@ void main() {
     addTearDown(container.dispose);
     addTearDown(db.close);
 
-    final id = await container.read(habitDaoProvider).createHabit(name: 'Read', color: 1);
+    final id = await container
+        .read(habitDaoProvider)
+        .createHabit(name: 'Read', color: 1);
     final today = dateOnly(DateTime.now());
     await container.read(habitDaoProvider).toggleCompletion(id, today);
 

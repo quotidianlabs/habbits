@@ -30,7 +30,10 @@ HeatmapData buildHeatmap({
 
   final lastMonday = mondayOf(t);
   final firstMonday = DateTime(
-      lastMonday.year, lastMonday.month, lastMonday.day - 7 * (weeks - 1));
+    lastMonday.year,
+    lastMonday.month,
+    lastMonday.day - 7 * (weeks - 1),
+  );
 
   final result = <List<HeatmapCell>>[];
   var weekStart = firstMonday;

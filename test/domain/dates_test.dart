@@ -14,10 +14,13 @@ void main() {
     expect(previousDay(DateTime(2026, 1, 1)), DateTime(2025, 12, 31));
   });
 
-  test('previousDay is correct across a DST spring-forward date (US 2026-03-08)', () {
-    expect(previousDay(DateTime(2026, 3, 9)), DateTime(2026, 3, 8));
-    expect(previousDay(DateTime(2026, 3, 8)), DateTime(2026, 3, 7));
-  });
+  test(
+    'previousDay is correct across a DST spring-forward date (US 2026-03-08)',
+    () {
+      expect(previousDay(DateTime(2026, 3, 9)), DateTime(2026, 3, 8));
+      expect(previousDay(DateTime(2026, 3, 8)), DateTime(2026, 3, 7));
+    },
+  );
 
   test('formatIsoDate and parseIsoDate round-trip', () {
     final d = DateTime(2026, 6, 13);

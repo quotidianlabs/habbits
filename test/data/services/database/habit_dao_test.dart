@@ -63,15 +63,18 @@ void main() {
     expect(completions, isEmpty);
   });
 
-  test('getHabitsWithDates returns all habits with their dates (one-shot)', () async {
-    final id = await dao.createHabit(name: 'Read', color: 1);
-    await dao.toggleCompletion(id, DateTime(2026, 6, 13));
-    await dao.toggleCompletion(id, DateTime(2026, 6, 12));
+  test(
+    'getHabitsWithDates returns all habits with their dates (one-shot)',
+    () async {
+      final id = await dao.createHabit(name: 'Read', color: 1);
+      await dao.toggleCompletion(id, DateTime(2026, 6, 13));
+      await dao.toggleCompletion(id, DateTime(2026, 6, 12));
 
-    final rows = await dao.getHabitsWithDates();
-    expect(rows.single.habit.name, 'Read');
-    expect(rows.single.dates, {DateTime(2026, 6, 13), DateTime(2026, 6, 12)});
-  });
+      final rows = await dao.getHabitsWithDates();
+      expect(rows.single.habit.name, 'Read');
+      expect(rows.single.dates, {DateTime(2026, 6, 13), DateTime(2026, 6, 12)});
+    },
+  );
 
   test('importReplace wipes existing data and loads the new set', () async {
     final old = await dao.createHabit(name: 'Old', color: 1);
@@ -125,20 +128,26 @@ void main() {
     expect(rows.map((r) => r.habit.sortOrder), [0, 1, 2]);
   });
 
-  test('createHabit gives a unique trailing sortOrder after a delete', () async {
-    await dao.createHabit(name: 'A', color: 1); // sortOrder 0
-    final b = await dao.createHabit(name: 'B', color: 1); // 1
-    await dao.createHabit(name: 'C', color: 1); // 2
+  test(
+    'createHabit gives a unique trailing sortOrder after a delete',
+    () async {
+      await dao.createHabit(name: 'A', color: 1); // sortOrder 0
+      final b = await dao.createHabit(name: 'B', color: 1); // 1
+      await dao.createHabit(name: 'C', color: 1); // 2
 
-    await dao.deleteHabit(b);
-    final d = await dao.createHabit(name: 'D', color: 1); // must NOT collide with C(2)
+      await dao.deleteHabit(b);
+      final d = await dao.createHabit(
+        name: 'D',
+        color: 1,
+      ); // must NOT collide with C(2)
 
-    final rows = await dao.getHabitsWithDates();
-    expect(rows.map((r) => r.habit.name), ['A', 'C', 'D']);
-    final dRow = rows.firstWhere((r) => r.habit.id == d);
-    expect(dRow.habit.sortOrder, 3); // max(0,2)+1
-    // sort orders are all distinct
-    final orders = rows.map((r) => r.habit.sortOrder).toList();
-    expect(orders.toSet().length, orders.length);
-  });
+      final rows = await dao.getHabitsWithDates();
+      expect(rows.map((r) => r.habit.name), ['A', 'C', 'D']);
+      final dRow = rows.firstWhere((r) => r.habit.id == d);
+      expect(dRow.habit.sortOrder, 3); // max(0,2)+1
+      // sort orders are all distinct
+      final orders = rows.map((r) => r.habit.sortOrder).toList();
+      expect(orders.toSet().length, orders.length);
+    },
+  );
 }
