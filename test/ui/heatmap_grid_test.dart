@@ -69,4 +69,21 @@ void main() {
     expect(find.text('May'), findsNothing);
     expect(find.text('Jun'), findsNothing);
   });
+
+  testWidgets('renders under a dark theme without error', (tester) async {
+    final data = buildHeatmap(
+      completed: {DateTime(2026, 6, 10)},
+      today: DateTime(2026, 6, 15),
+      weeks: 2,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(brightness: Brightness.dark, useMaterial3: true),
+        home: Scaffold(
+          body: HeatmapGrid(data: data, color: const Color(0xFF009688)),
+        ),
+      ),
+    );
+    expect(find.byType(HeatmapGrid), findsOneWidget);
+  });
 }

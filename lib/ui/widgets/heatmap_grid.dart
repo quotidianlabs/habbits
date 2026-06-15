@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/heatmap.dart';
+import '../core/habit_colors.dart';
 
 /// Renders a [HeatmapData] as columns of weeks (each 7 cells, Monday..Sunday).
 /// Read-only — purely the activity picture. Optionally shows month labels.
@@ -22,12 +23,12 @@ class HeatmapGrid extends StatelessWidget {
   final double cellGap;
   final bool showMonthLabels;
 
-  Color _cellColor(CellState state) {
+  Color _cellColor(CellState state, ColorScheme scheme) {
     switch (state) {
       case CellState.completed:
         return color;
       case CellState.notCompleted:
-        return color.withValues(alpha: 0.15);
+        return inactiveCellColor(color, scheme);
       case CellState.future:
         return Colors.transparent;
     }
@@ -80,7 +81,7 @@ class HeatmapGrid extends StatelessWidget {
     );
   }
 
-  Widget _grid() {
+  Widget _grid(ColorScheme scheme) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -99,7 +100,7 @@ class HeatmapGrid extends StatelessWidget {
                       width: cellSize,
                       height: cellSize,
                       decoration: BoxDecoration(
-                        color: _cellColor(cell.state),
+                        color: _cellColor(cell.state, scheme),
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),
@@ -113,14 +114,15 @@ class HeatmapGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!showMonthLabels) return _grid();
+    final scheme = Theme.of(context).colorScheme;
+    if (!showMonthLabels) return _grid(scheme);
     // Full locale tag; "en_US" is intl's built-in default and other supported
     // locales are loaded by GlobalMaterialLocalizations.delegate.
     final localeName = Localizations.localeOf(context).toString();
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [_labelsRow(localeName), _grid()],
+      children: [_labelsRow(localeName), _grid(scheme)],
     );
   }
 }

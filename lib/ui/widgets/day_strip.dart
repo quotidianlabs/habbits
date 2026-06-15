@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../domain/dates.dart';
 import '../../domain/recent_days.dart';
+import '../core/habit_colors.dart';
 
 /// A read-only one-row strip of the last [count] days (oldest -> newest).
 class DayStrip extends StatelessWidget {
@@ -24,6 +25,7 @@ class DayStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final days = recentDays(completed, today, count);
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -36,7 +38,7 @@ class DayStrip extends StatelessWidget {
               width: cellSize,
               height: cellSize,
               decoration: BoxDecoration(
-                color: day.completed ? color : color.withValues(alpha: 0.15),
+                color: day.completed ? color : inactiveCellColor(color, scheme),
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
