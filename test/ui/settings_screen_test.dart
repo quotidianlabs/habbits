@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/database.dart';
-import 'package:habbits/domain/backup.dart';
+import 'package:habbits/domain/models/backup_data.dart';
 import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/state/habit_providers.dart';
 import 'package:habbits/state/locale_controller.dart';

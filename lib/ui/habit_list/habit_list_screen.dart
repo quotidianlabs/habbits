@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/dates.dart';
 import '../../l10n/app_localizations.dart';
 import '../../domain/reorder.dart';
+import '../../domain/models/habit_summary.dart';
 import '../../state/habit_providers.dart';
 import '../habit_detail/habit_detail_screen.dart';
 import '../settings/settings_screen.dart';

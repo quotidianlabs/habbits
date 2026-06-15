@@ -5,8 +5,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../data/habit_dao.dart';
-import '../domain/backup.dart';
+import '../domain/backup_codec.dart';
 import '../domain/dates.dart';
+import '../domain/models/backup_data.dart';
+import '../domain/models/habit_with_dates.dart';
 
 /// Builds a [BackupData] snapshot from DAO rows. Pure (no I/O). Completion dates
 /// are sorted ascending for a stable file.

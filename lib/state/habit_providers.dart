@@ -4,30 +4,11 @@ import '../data/database.dart';
 import '../data/habit_dao.dart';
 import '../domain/completion_stats.dart';
 import '../domain/dates.dart';
+import '../domain/models/habit_summary.dart';
 import '../domain/streak.dart';
 import '../services/notification_service.dart';
 
 part 'habit_providers.g.dart';
-
-/// View-model for one habit (home card and detail screen).
-class HabitSummary {
-  HabitSummary({
-    required this.habit,
-    required this.streak,
-    required this.doneToday,
-    required this.completionPercent,
-    required this.dates,
-  });
-  final Habit habit;
-  final int streak;
-  final bool doneToday;
-
-  /// 30-day completion percentage, or null when there is no window yet ("—").
-  final int? completionPercent;
-
-  /// All dates this habit was completed on (for the heatmap).
-  final Set<DateTime> dates;
-}
 
 @Riverpod(keepAlive: true)
 NotificationService notificationService(Ref ref) =>

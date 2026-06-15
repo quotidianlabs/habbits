@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/database.dart';
 import 'package:habbits/domain/dates.dart';
+import 'package:habbits/domain/models/habit_summary.dart';
 import 'package:habbits/state/habit_providers.dart';
 
 /// Returns the next emission from [habitSummariesProvider] matching [predicate].
