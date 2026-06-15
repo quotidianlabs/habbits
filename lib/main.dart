@@ -34,6 +34,7 @@ class HabbitsApp extends ConsumerWidget {
     final appLocale = ref.watch(localeControllerProvider);
     return MaterialApp(
       title: 'Habbits',
+      debugShowCheckedModeBanner: false,
       theme: habbitsTheme(),
       locale: appLocale.locale,
       localizationsDelegates: AppLocalizations.localizationsDelegates,
