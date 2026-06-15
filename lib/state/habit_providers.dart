@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/database.dart';
 import '../data/habit_dao.dart';
+import '../data/repositories/habit_repository.dart';
 import '../domain/completion_stats.dart';
 import '../domain/dates.dart';
 import '../domain/models/habit_summary.dart';
@@ -27,8 +28,8 @@ HabitDao habitDao(Ref ref) => ref.watch(appDatabaseProvider).habitDao;
 
 @riverpod
 Stream<List<HabitSummary>> habitSummaries(Ref ref) {
-  final dao = ref.watch(habitDaoProvider);
-  return dao.watchHabitsWithDates().map((rows) {
+  final repo = ref.watch(habitRepositoryProvider);
+  return repo.watchHabits().map((rows) {
     final today = dateOnly(DateTime.now());
     return [
       for (final row in rows)

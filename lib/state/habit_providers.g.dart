@@ -178,7 +178,7 @@ final class HabitSummariesProvider
   }
 }
 
-String _$habitSummariesHash() => r'be870af222c16ead97f4efdb557d89cdf0108985';
+String _$habitSummariesHash() => r'f7b4c77eb623fdb4dec085ca1eccaa107c79054a';
 
 /// A single habit's summary, derived from [habitSummariesProvider]. Returns null
 /// while loading or after the habit has been deleted.
