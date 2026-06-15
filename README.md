@@ -1,25 +1,67 @@
 # Habbits
 
-A local-first, cross-platform habit tracker. Your data lives on your device —
-no account, no server, no paywall. Habits are fully editable and hard-deletable
-("okay, gone"), and exportable. Open source.
+A **local-first, cross-platform habit tracker. Your data, on your device.**
 
-## Status
+[![CI](https://github.com/quotidianlabs/habbits/actions/workflows/ci.yml/badge.svg)](https://github.com/quotidianlabs/habbits/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+![Flutter](https://img.shields.io/badge/Flutter-3.44-02569B?logo=flutter)
 
-MVP in progress. This slice ships the core loop: create / rename / delete habits,
-check off today, and see your current streak — all persisted locally via SQLite.
+Habbits is a small, fast habit tracker built around two ideas: **you own your
+data** (everything lives in an on-device SQLite database — no account, no
+backend) and **deleting a habit is frictionless**. iOS + Android, English and
+Russian.
 
-## Stack
+| Home | Home (Русский) | Detail | Settings |
+|---|---|---|---|
+| ![Home](assets/screenshots/home-en.png) | ![Home RU](assets/screenshots/home-ru.png) | ![Detail](assets/screenshots/detail-en.png) | ![Settings](assets/screenshots/settings-en.png) |
 
-Flutter · Drift (SQLite) · Riverpod. Pure-Dart domain layer for streak logic.
+## Features
 
-## Develop
+- ✅ Daily check-off with current-streak tracking
+- 📅 6-week heatmap + recent-days list with retroactive editing
+- ⏰ Per-habit reminders (on-device local notifications)
+- ↕️ Drag-to-reorder the home list
+- 💾 JSON export / import — your data is portable
+- 🌍 English + Russian, following the device locale with an in-app override
+- 🎨 Material 3, light theme
+- 📱 iOS and Android from one Flutter codebase
+
+## Architecture
+
+Layered MVVM with Riverpod: **UI** (views + per-feature view models) →
+**domain** (pure functions + models) → **data** (repositories over a Drift
+SQLite database, notifications, preferences). Generated code is committed.
+
+The design and implementation history for every change lives in
+[`planning/`](planning/) — see, e.g., the
+[layered-architecture refactor](planning/changes/archive/2026-06-15.01-architecture-refactor/design.md)
+and [Russian-language support](planning/changes/archive/2026-06-14.04-russian-language/design.md).
+
+## Getting started
+
+Requires [Flutter 3.44.2](https://flutter.dev). Then:
 
 ```bash
 flutter pub get
-dart run build_runner build --delete-conflicting-outputs   # after schema/provider changes
-flutter test            # unit + widget tests
-flutter run             # on a simulator/emulator
+flutter run
 ```
 
-See `docs/superpowers/specs/2026-06-13-habbits-mobile-local-first-design.md` for the design.
+Generated `*.g.dart` (Drift, Riverpod, l10n) is committed, so a normal run needs
+no code generation. After changing `@riverpod`/Drift code, regenerate with
+`dart run build_runner build --delete-conflicting-outputs`.
+
+## Development
+
+This repo uses [`just`](https://github.com/casey/just):
+
+```bash
+just lint    # dart format + flutter analyze
+just test    # flutter test (115 unit/widget tests)
+```
+
+The integration flow runs on a device/emulator:
+`flutter test integration_test/critical_flow_test.dart`.
+
+## License
+
+[MIT](LICENSE) © 2026 quotidianlabs
