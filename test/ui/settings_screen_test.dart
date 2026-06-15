@@ -8,7 +8,6 @@ import 'package:habbits/data/repositories/settings_repository.dart';
 import 'package:habbits/domain/models/backup_data.dart';
 import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/ui/core/locale_controller.dart';
-import 'package:habbits/ui/core/theme_controller.dart';
 import 'package:habbits/ui/settings/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
