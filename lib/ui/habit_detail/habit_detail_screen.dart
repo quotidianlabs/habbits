@@ -42,21 +42,26 @@ class HabitDetailScreen extends ConsumerWidget {
             key: const Key('detail-rename'),
             icon: const Icon(Icons.edit),
             tooltip: l10n.rename,
-            onPressed: () => showHabitNameDialog(
-              context,
-              ref,
-              habitId: habitId,
-              initial: summary.habit.name,
-            ),
+            onPressed: () async {
+              final name = await showHabitNameDialog(
+                context,
+                initial: summary.habit.name,
+                isRename: true,
+              );
+              if (name != null) {
+                await ref.read(habitDetailViewModelProvider(habitId).notifier).rename(name);
+              }
+            },
           ),
           IconButton(
             key: const Key('detail-delete'),
             icon: const Icon(Icons.delete_outline),
             tooltip: l10n.delete,
             onPressed: () async {
-              final deleted = await confirmDeleteHabit(
-                  context, ref, habitId, summary.habit.name);
-              if (deleted && context.mounted) Navigator.pop(context);
+              final ok = await confirmDeleteHabit(context, summary.habit.name);
+              if (!ok) return;
+              await ref.read(habitDetailViewModelProvider(habitId).notifier).delete();
+              if (context.mounted) Navigator.pop(context);
             },
           ),
         ],

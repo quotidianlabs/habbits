@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/repositories/habit_repository.dart';
 import '../../l10n/app_localizations.dart';
-import '../habit_list/habit_list_view_model.dart';
 
-/// Shows the create/rename name dialog. With [habitId] null it creates a new
-/// habit; otherwise it renames the given habit.
-Future<void> showHabitNameDialog(
-  BuildContext context,
-  WidgetRef ref, {
-  int? habitId,
+/// Shows the create/rename name dialog. Returns the trimmed name, or null if the
+/// user cancelled or entered nothing. [initial] pre-fills the field (rename).
+/// [isRename] only switches the title; the caller performs the create/rename.
+Future<String?> showHabitNameDialog(
+  BuildContext context, {
   String? initial,
+  bool isRename = false,
 }) async {
   final controller = TextEditingController(text: initial ?? '');
   final name = await showDialog<String>(
@@ -19,7 +16,7 @@ Future<void> showHabitNameDialog(
     builder: (ctx) {
       final l10n = AppLocalizations.of(ctx);
       return AlertDialog(
-        title: Text(habitId == null ? l10n.newHabit : l10n.renameHabit),
+        title: Text(isRename ? l10n.renameHabit : l10n.newHabit),
         content: TextField(
           key: const Key('habit-name-field'),
           controller: controller,
@@ -40,23 +37,12 @@ Future<void> showHabitNameDialog(
       );
     },
   );
-
-  if (name == null || name.isEmpty) return;
-  if (habitId == null) {
-    await ref.read(habitListViewModelProvider.notifier).createHabit(name, color: Colors.teal.toARGB32());
-  } else {
-    await ref.read(habitRepositoryProvider).renameHabit(habitId, name);
-  }
+  if (name == null || name.isEmpty) return null;
+  return name;
 }
 
-/// Shows the permanent-delete confirmation. Returns true if the habit was
-/// deleted, false if the user cancelled.
-Future<bool> confirmDeleteHabit(
-  BuildContext context,
-  WidgetRef ref,
-  int habitId,
-  String name,
-) async {
+/// Shows the permanent-delete confirmation. Returns true if the user confirmed.
+Future<bool> confirmDeleteHabit(BuildContext context, String name) async {
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (ctx) {
@@ -78,9 +64,5 @@ Future<bool> confirmDeleteHabit(
       );
     },
   );
-  if (confirmed == true) {
-    await ref.read(habitRepositoryProvider).deleteHabit(habitId);
-    return true;
-  }
-  return false;
+  return confirmed ?? false;
 }

@@ -8,6 +8,9 @@ import '../../domain/streak.dart';
 
 part 'habit_list_view_model.g.dart';
 
+/// Default color for a newly created habit (Material teal).
+const int kDefaultHabitColor = 0xFF009688;
+
 /// View model for the home list: the summaries stream + check-off / reorder /
 /// create commands. Depends only on [HabitRepository].
 @riverpod
@@ -38,6 +41,6 @@ class HabitListViewModel extends _$HabitListViewModel {
   Future<void> reorder(List<int> orderedIds) =>
       ref.read(habitRepositoryProvider).reorderHabits(orderedIds);
 
-  Future<void> createHabit(String name, {required int color}) =>
+  Future<void> createHabit(String name, {int color = kDefaultHabitColor}) =>
       ref.read(habitRepositoryProvider).createHabit(name: name, color: color);
 }
