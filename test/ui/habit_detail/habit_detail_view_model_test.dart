@@ -1,0 +1,54 @@
+import 'dart:async';
+
+import 'package:drift/native.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:habbits/data/database.dart';
+import 'package:habbits/domain/models/habit_summary.dart';
+import 'package:habbits/state/habit_providers.dart';
+import 'package:habbits/ui/habit_detail/habit_detail_view_model.dart';
+import 'package:habbits/ui/habit_list/habit_list_view_model.dart';
+
+Future<void> nextWhere(
+  ProviderContainer container,
+  bool Function(List<HabitSummary>) predicate,
+) {
+  final completer = Completer<void>();
+  ProviderSubscription<AsyncValue<List<HabitSummary>>>? sub;
+  sub = container.listen(habitListViewModelProvider, (_, next) {
+    final v = next.value;
+    if (v != null && predicate(v) && !completer.isCompleted) {
+      completer.complete();
+      sub?.close();
+    }
+  });
+  final cur = container.read(habitListViewModelProvider).value;
+  if (cur != null && predicate(cur) && !completer.isCompleted) {
+    completer.complete();
+    sub.close();
+  }
+  return completer.future;
+}
+
+void main() {
+  test('exposes the habit and rename updates it', () async {
+    final db = AppDatabase(NativeDatabase.memory());
+    final container = ProviderContainer(
+      overrides: [appDatabaseProvider.overrideWithValue(db)],
+    );
+    addTearDown(container.dispose);
+    addTearDown(db.close);
+
+    final id = await container.read(habitDaoProvider).createHabit(name: 'Old', color: 1);
+    // keep list stream alive for the derived detail VM
+    final keep = container.listen(habitListViewModelProvider, (_, next) {});
+    addTearDown(keep.close);
+    await nextWhere(container, (l) => l.any((s) => s.habit.id == id));
+
+    expect(container.read(habitDetailViewModelProvider(id))?.habit.name, 'Old');
+
+    await container.read(habitDetailViewModelProvider(id).notifier).rename('New');
+    await nextWhere(container, (l) => l.any((s) => s.habit.id == id && s.habit.name == 'New'));
+    expect(container.read(habitDetailViewModelProvider(id))?.habit.name, 'New');
+  });
+}

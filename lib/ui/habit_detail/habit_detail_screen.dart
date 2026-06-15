@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/dates.dart';
 import '../../domain/heatmap.dart';
 import '../../l10n/app_localizations.dart';
-import '../../state/habit_providers.dart';
 import '../widgets/habit_dialogs.dart';
 import '../widgets/heatmap_grid.dart';
 import '../widgets/recent_days_list.dart';
+import 'habit_detail_view_model.dart';
 
 class HabitDetailScreen extends ConsumerWidget {
   const HabitDetailScreen({super.key, required this.habitId});
@@ -15,7 +15,7 @@ class HabitDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final summary = ref.watch(habitDetailProvider(habitId));
+    final summary = ref.watch(habitDetailViewModelProvider(habitId));
 
     if (summary == null) {
       return const Scaffold(
@@ -25,7 +25,6 @@ class HabitDetailScreen extends ConsumerWidget {
     }
 
     final l10n = AppLocalizations.of(context);
-    final dao = ref.read(habitDaoProvider);
     final today = dateOnly(DateTime.now());
     final data = buildHeatmap(
       completed: summary.dates,
@@ -102,7 +101,7 @@ class HabitDetailScreen extends ConsumerWidget {
           RecentDaysList(
             completed: summary.dates,
             today: today,
-            onToggle: (date) => dao.toggleCompletion(habitId, date),
+            onToggle: (date) => ref.read(habitDetailViewModelProvider(habitId).notifier).toggle(date),
           ),
         ],
       ),
@@ -130,9 +129,9 @@ Future<void> _onReminderToggle(
   bool on,
   String? current,
 ) async {
-  final dao = ref.read(habitDaoProvider);
+  final notifier = ref.read(habitDetailViewModelProvider(habitId).notifier);
   if (!on) {
-    await dao.setReminderTime(habitId, null);
+    await notifier.setReminder(null);
     return;
   }
   final picked = await showTimePicker(
@@ -140,7 +139,7 @@ Future<void> _onReminderToggle(
     initialTime: const TimeOfDay(hour: 9, minute: 0),
   );
   if (picked != null) {
-    await dao.setReminderTime(habitId, _toHhmm(picked));
+    await notifier.setReminder(_toHhmm(picked));
   }
 }
 
@@ -155,6 +154,6 @@ Future<void> _pickReminderTime(
     initialTime: _toTimeOfDay(current),
   );
   if (picked != null && context.mounted) {
-    await ref.read(habitDaoProvider).setReminderTime(habitId, _toHhmm(picked));
+    await ref.read(habitDetailViewModelProvider(habitId).notifier).setReminder(_toHhmm(picked));
   }
 }

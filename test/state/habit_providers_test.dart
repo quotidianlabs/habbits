@@ -7,6 +7,7 @@ import 'package:habbits/data/database.dart';
 import 'package:habbits/domain/dates.dart';
 import 'package:habbits/domain/models/habit_summary.dart';
 import 'package:habbits/state/habit_providers.dart';
+import 'package:habbits/ui/habit_detail/habit_detail_view_model.dart';
 import 'package:habbits/ui/habit_list/habit_list_view_model.dart';
 
 /// Returns the next emission from [habitListViewModelProvider] matching [predicate].
@@ -59,7 +60,7 @@ void main() {
     expect(s.dates, {today});
   });
 
-  test('habitDetail returns the matching habit summary', () async {
+  test('habitDetailViewModel returns the matching habit summary', () async {
     final db = AppDatabase(NativeDatabase.memory());
     final container = ProviderContainer(
       overrides: [appDatabaseProvider.overrideWithValue(db)],
@@ -79,11 +80,11 @@ void main() {
     final sub = container.listen(habitListViewModelProvider, (_, _) {});
     addTearDown(sub.close);
 
-    final detail = container.read(habitDetailProvider(id));
+    final detail = container.read(habitDetailViewModelProvider(id));
     expect(detail, isNotNull);
     expect(detail!.habit.name, 'Walk');
 
-    final missing = container.read(habitDetailProvider(9999));
+    final missing = container.read(habitDetailViewModelProvider(9999));
     expect(missing, isNull);
   });
 }
