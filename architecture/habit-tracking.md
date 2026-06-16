@@ -6,9 +6,9 @@ The create/track/edit loop for habits and their daily completion records.
 
 ## Behavior
 
-- Add a habit by supplying a name and a color; the habit appears at the bottom of the home list with a unique sort position.
+- Add a habit by supplying a name and a color (chosen from a curated swatch palette, defaulting to teal); the habit appears at the bottom of the home list with a unique sort position.
 - Check a habit off for today from the home list, or toggle any date (including past dates) from the detail screen's heatmap.
-- Rename, delete, or change the reminder time for a habit from the detail screen; deleting a habit hard-deletes it and all its completions via `ON DELETE CASCADE`.
+- Edit a habit's name and color, delete it, or change its reminder time from the detail screen; deleting a habit hard-deletes it and all its completions via `ON DELETE CASCADE`.
 - Drag the handle on any home-list card to reorder habits; the new order is persisted immediately and the list re-renders from the stream.
 - State flows: view → view model → `HabitRepository` → `HabitDao` → Drift (SQLite). The reactive `watchHabits()` stream propagates every change back to the UI automatically.
 
@@ -21,8 +21,8 @@ The create/track/edit loop for habits and their daily completion records.
 - `lib/domain/models/habit_summary.dart:4` — `HabitSummary`: per-habit view value (streak, doneToday, completionPercent, dates) used by both view models
 - `lib/domain/models/habit_with_dates.dart:4` — `HabitWithDates`: DAO/repository transfer object pairing a `Habit` row with its completion date set
 - `lib/ui/habit_list/habit_list_view_model.dart:17` — home-screen view model: streams `List<HabitSummary>`, exposes `toggleToday`, `reorder`, `createHabit`
-- `lib/ui/habit_detail/habit_detail_view_model.dart:12` — detail-screen view model (one instance per `habitId`): state derived from the list view model, exposes `toggle`, `rename`, `delete`, `setReminder`
-- `lib/ui/widgets/habit_dialogs.dart:8` — presentational add/rename dialog (`showHabitNameDialog`) and delete confirmation (`confirmDeleteHabit`); no state of their own
+- `lib/ui/habit_detail/habit_detail_view_model.dart:12` — detail-screen view model (one instance per `habitId`): state derived from the list view model, exposes `toggle`, `editHabit` (name + color), `delete`, `setReminder`
+- `lib/ui/widgets/habit_dialogs.dart:8` — the create/edit dialog (`showHabitNameDialog`, a `StatefulWidget` that collects a name and a color from a `kHabitPalette` swatch picker and returns a `HabitFormResult`) and the delete confirmation (`confirmDeleteHabit`); `setColor` on `HabitDao`/`HabitRepository` applies the color edit. Swatch palette lives in `lib/ui/core/habit_colors.dart` (see [`theming.md`](theming.md))
 
 ## Invariants
 
@@ -33,8 +33,10 @@ The create/track/edit loop for habits and their daily completion records.
 
 ## Known edges
 
-- `TextEditingController` created in `showHabitNameDialog` is not disposed (`lib/ui/widgets/habit_dialogs.dart:13`).
+- None currently. The prior undisposed-`TextEditingController` edge in
+  `showHabitNameDialog` was resolved when the dialog became a `StatefulWidget`
+  in [2026-06-15.07-dark-theme-and-color-picker](../planning/changes/archive/2026-06-15.07-dark-theme-and-color-picker/design.md).
 
 ## History
 
-Defined by: [2026-06-13.01-foundation](../planning/changes/archive/2026-06-13.01-foundation/design.md), [2026-06-14.03-reorder-habits](../planning/changes/archive/2026-06-14.03-reorder-habits/design.md), [2026-06-15.01-architecture-refactor](../planning/changes/archive/2026-06-15.01-architecture-refactor/design.md)
+Defined by: [2026-06-13.01-foundation](../planning/changes/archive/2026-06-13.01-foundation/design.md), [2026-06-14.03-reorder-habits](../planning/changes/archive/2026-06-14.03-reorder-habits/design.md), [2026-06-15.01-architecture-refactor](../planning/changes/archive/2026-06-15.01-architecture-refactor/design.md). User-chosen habit color on create/edit (swatch picker + `setColor`/`editHabit`) added in [2026-06-15.07-dark-theme-and-color-picker](../planning/changes/archive/2026-06-15.07-dark-theme-and-color-picker/design.md).

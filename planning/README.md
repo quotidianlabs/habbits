@@ -61,13 +61,14 @@ Templates live in [`_templates/`](_templates/).
 
 ### Active
 
-- **[dark-theme-and-color-picker](changes/active/2026-06-15.07-dark-theme-and-color-picker/design.md)**
-  (2026-06-15) — App-wide dark theme with a System/Light/Dark selector +
-  dark-adaptive activity grids, and a curated per-habit color picker on
-  create/edit.
+_None._
 
 ### Archived (shipped)
 
+- **[dark-theme-and-color-picker](changes/archive/2026-06-15.07-dark-theme-and-color-picker/design.md)**
+  (#6, 2026-06-15) — App-wide dark theme with a System/Light/Dark selector +
+  dark-adaptive activity grids, and a curated per-habit color picker on
+  create/edit.
 - **[architecture-capability-docs](changes/archive/2026-06-15.06-architecture-capability-docs/design.md)**
   (#5, 2026-06-15) — Bootstrap the `architecture/` truth-home: six capability
   docs + an index, written from live code and archived bundles.
