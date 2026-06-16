@@ -1,11 +1,11 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-16
 slug: release-signing
 supersedes: null
 superseded_by: null
-pr: null
-outcome: null
+pr: 9
+outcome: Shipped — release build produces an upload-key-signed AAB; compileSdk/targetSdk pinned to 36; release runbook in docs/release.md. Reminders already inexact, so no exact-alarm permission needed.
 ---
 
 # Change: Android release signing for Google Play
