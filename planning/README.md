@@ -61,11 +61,15 @@ Templates live in [`_templates/`](_templates/).
 
 ### Active
 
-- **[release-signing](changes/active/2026-06-16.01-release-signing/change.md)**
-  (2026-06-16) — Android upload-key signing config (gitignored keystore +
-  `key.properties`) so `flutter build appbundle --release` is Play-uploadable.
+_None._
 
 ### Archived (shipped)
+
+- **[release-signing](changes/archive/2026-06-16.01-release-signing/change.md)**
+  (#9, 2026-06-16) — Android upload-key signing (gitignored keystore +
+  `key.properties`), `compileSdk`/`targetSdk` pinned to 36, and a
+  `docs/release.md` runbook — `flutter build appbundle --release` is now
+  Play-uploadable.
 
 - **[dark-theme-and-color-picker](changes/archive/2026-06-15.07-dark-theme-and-color-picker/design.md)**
   (#6, 2026-06-15) — App-wide dark theme with a System/Light/Dark selector +
