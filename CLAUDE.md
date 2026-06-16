@@ -19,6 +19,9 @@ Design + plan for every non-trivial change live in `planning/`. Read
 ## Commands
 
 `just lint` (`dart format` + `flutter analyze`) and `just test` (`flutter test`,
-115 tests) — see the `Justfile`; CI uses `just lint-ci`. Generated `*.g.dart` is
+130 tests) — see the `Justfile`; CI uses `just lint-ci`. Generated `*.g.dart` is
 committed; run `dart run build_runner build --delete-conflicting-outputs` after
 touching `@riverpod`/Drift code.
+
+README screenshots are generated, not hand-captured — see
+[`docs/screenshots.md`](docs/screenshots.md) to regenerate or add shots.

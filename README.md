@@ -11,9 +11,13 @@ data** (everything lives in an on-device SQLite database — no account, no
 backend) and **deleting a habit is frictionless**. iOS + Android, English and
 Russian.
 
-| Home | Home (Русский) | Detail | Settings |
-|---|---|---|---|
-| ![Home](assets/screenshots/home-en.png) | ![Home RU](assets/screenshots/home-ru.png) | ![Detail](assets/screenshots/detail-en.png) | ![Settings](assets/screenshots/settings-en.png) |
+| Home | Detail | Settings |
+|---|---|---|
+| ![Home](assets/screenshots/home-en.png) | ![Detail](assets/screenshots/detail-en.png) | ![Settings](assets/screenshots/settings-en.png) |
+
+| Color picker | Dark theme | Home (Русский) |
+|---|---|---|
+| ![Color picker](assets/screenshots/create-en.png) | ![Dark theme](assets/screenshots/home-dark.png) | ![Home RU](assets/screenshots/home-ru.png) |
 
 ## Features
 
@@ -23,7 +27,8 @@ Russian.
 - ↕️ Drag-to-reorder the home list
 - 💾 JSON export / import — your data is portable
 - 🌍 English + Russian, following the device locale with an in-app override
-- 🎨 Material 3, light theme
+- 🎨 Material 3 with light & dark themes (follows the device, or pick one)
+- 🌈 Per-habit color from a curated palette, set on create or edit
 - 📱 iOS and Android from one Flutter codebase
 
 ## Architecture
@@ -56,7 +61,7 @@ This repo uses [`just`](https://github.com/casey/just):
 
 ```bash
 just lint    # dart format + flutter analyze
-just test    # flutter test (115 unit/widget tests)
+just test    # flutter test (130 unit/widget tests)
 ```
 
 The integration flow runs on a device/emulator:
