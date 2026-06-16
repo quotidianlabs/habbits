@@ -74,6 +74,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageSystem => 'System default';
 
   @override
+  String get theme => 'Theme';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
+
+  @override
+  String get color => 'Color';
+
+  @override
   String get noHabits => 'No habits yet. Tap + to add one.';
 
   @override

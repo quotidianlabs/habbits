@@ -39,15 +39,16 @@ class HabitDetailScreen extends ConsumerWidget {
             icon: const Icon(Icons.edit),
             tooltip: l10n.rename,
             onPressed: () async {
-              final name = await showHabitNameDialog(
+              final result = await showHabitNameDialog(
                 context,
-                initial: summary.habit.name,
+                initialName: summary.habit.name,
+                initialColor: summary.habit.color,
                 isRename: true,
               );
-              if (name != null) {
+              if (result != null) {
                 await ref
                     .read(habitDetailViewModelProvider(habitId).notifier)
-                    .rename(name);
+                    .editHabit(result.name, result.color);
               }
             },
           ),

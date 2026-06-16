@@ -1,44 +1,129 @@
 import 'package:flutter/material.dart';
 
 import '../../l10n/app_localizations.dart';
+import '../core/habit_colors.dart';
 
-/// Shows the create/rename name dialog. Returns the trimmed name, or null if the
-/// user cancelled or entered nothing. [initial] pre-fills the field (rename).
-/// [isRename] only switches the title; the caller performs the create/rename.
-Future<String?> showHabitNameDialog(
+/// The result of the create/edit dialog: the trimmed name + chosen color.
+class HabitFormResult {
+  const HabitFormResult(this.name, this.color);
+  final String name;
+  final int color;
+}
+
+/// Shows the create/edit dialog. Returns the [HabitFormResult], or null if the
+/// user cancelled or entered nothing. [initialName]/[initialColor] pre-fill the
+/// fields (edit). [isRename] only switches the title.
+Future<HabitFormResult?> showHabitNameDialog(
   BuildContext context, {
-  String? initial,
+  String? initialName,
+  int? initialColor,
   bool isRename = false,
-}) async {
-  final controller = TextEditingController(text: initial ?? '');
-  final name = await showDialog<String>(
+}) {
+  return showDialog<HabitFormResult>(
     context: context,
-    builder: (ctx) {
-      final l10n = AppLocalizations.of(ctx);
-      return AlertDialog(
-        title: Text(isRename ? l10n.renameHabit : l10n.newHabit),
-        content: TextField(
-          key: const Key('habit-name-field'),
-          controller: controller,
-          autofocus: true,
-          decoration: InputDecoration(labelText: l10n.nameLabel),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l10n.cancel),
+    builder: (ctx) => _HabitFormDialog(
+      initialName: initialName ?? '',
+      initialColor: initialColor ?? kDefaultHabitColor,
+      isRename: isRename,
+    ),
+  );
+}
+
+class _HabitFormDialog extends StatefulWidget {
+  const _HabitFormDialog({
+    required this.initialName,
+    required this.initialColor,
+    required this.isRename,
+  });
+  final String initialName;
+  final int initialColor;
+  final bool isRename;
+
+  @override
+  State<_HabitFormDialog> createState() => _HabitFormDialogState();
+}
+
+class _HabitFormDialogState extends State<_HabitFormDialog> {
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.initialName,
+  );
+  late int _color = widget.initialColor;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final name = _controller.text.trim();
+    if (name.isEmpty) {
+      Navigator.pop(context);
+      return;
+    }
+    Navigator.pop(context, HabitFormResult(name, _color));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return AlertDialog(
+      title: Text(widget.isRename ? l10n.renameHabit : l10n.newHabit),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            key: const Key('habit-name-field'),
+            controller: _controller,
+            autofocus: true,
+            decoration: InputDecoration(labelText: l10n.nameLabel),
+            onSubmitted: (_) => _submit(),
           ),
-          TextButton(
-            key: const Key('habit-name-confirm'),
-            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: Text(l10n.save),
+          const SizedBox(height: 16),
+          Text(l10n.color),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final value in kHabitPalette)
+                GestureDetector(
+                  key: Key('habit-color-${value.toRadixString(16)}'),
+                  onTap: () => setState(() => _color = value),
+                  child: Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: Color(value),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        width: value == _color ? 3 : 0,
+                      ),
+                    ),
+                    child: value == _color
+                        ? const Icon(Icons.check, color: Colors.white, size: 18)
+                        : null,
+                  ),
+                ),
+            ],
           ),
         ],
-      );
-    },
-  );
-  if (name == null || name.isEmpty) return null;
-  return name;
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
+        TextButton(
+          key: const Key('habit-name-confirm'),
+          onPressed: _submit,
+          child: Text(l10n.save),
+        ),
+      ],
+    );
+  }
 }
 
 /// Shows the permanent-delete confirmation. Returns true if the user confirmed.

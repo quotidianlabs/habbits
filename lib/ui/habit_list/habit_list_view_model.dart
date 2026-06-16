@@ -5,11 +5,9 @@ import '../../domain/completion_stats.dart';
 import '../../domain/dates.dart';
 import '../../domain/models/habit_summary.dart';
 import '../../domain/streak.dart';
+import '../core/habit_colors.dart';
 
 part 'habit_list_view_model.g.dart';
-
-/// Default color for a newly created habit (Material teal).
-const int kDefaultHabitColor = 0xFF009688;
 
 /// View model for the home list: the summaries stream + check-off / reorder /
 /// create commands. Depends only on [HabitRepository].

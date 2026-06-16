@@ -51,12 +51,35 @@ void main() {
 
     await container
         .read(habitDetailViewModelProvider(id).notifier)
-        .rename('New');
+        .editHabit('New', 0xFF009688);
     await nextWhere(
       container,
       (l) => l.any((s) => s.habit.id == id && s.habit.name == 'New'),
     );
     expect(container.read(habitDetailViewModelProvider(id))?.habit.name, 'New');
+  });
+
+  test('editHabit updates name and color', () async {
+    final db = AppDatabase(NativeDatabase.memory());
+    final container = ProviderContainer(
+      overrides: [appDatabaseProvider.overrideWithValue(db)],
+    );
+    addTearDown(container.dispose);
+    addTearDown(db.close);
+
+    final id = await container
+        .read(habitDaoProvider)
+        .createHabit(name: 'Old', color: 0xFF009688);
+    final keep = container.listen(habitListViewModelProvider, (_, _) {});
+    addTearDown(keep.close);
+    await nextWhere(container, (l) => l.any((s) => s.habit.id == id));
+
+    await container
+        .read(habitDetailViewModelProvider(id).notifier)
+        .editHabit('New', 0xFFE53935);
+    final rows = await container.read(habitDaoProvider).getHabitsWithDates();
+    expect(rows.single.habit.name, 'New');
+    expect(rows.single.habit.color, 0xFFE53935);
   });
 
   test('returns the matching summary and null for a missing id', () async {

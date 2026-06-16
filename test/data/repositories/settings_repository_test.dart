@@ -25,4 +25,12 @@ void main() {
     await repo.writeLocaleToken('en');
     expect(repo.readLocaleToken(), 'en');
   });
+
+  test('reads and writes the theme token', () async {
+    SharedPreferences.setMockInitialValues({});
+    final repo = SettingsRepository(await SharedPreferences.getInstance());
+    expect(repo.readThemeToken(), isNull);
+    await repo.writeThemeToken('dark');
+    expect(repo.readThemeToken(), 'dark');
+  });
 }

@@ -32,6 +32,12 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
     )..where((h) => h.id.equals(id))).write(HabitsCompanion(name: Value(name)));
   }
 
+  Future<void> setColor(int id, int color) {
+    return (update(habits)..where((h) => h.id.equals(id))).write(
+      HabitsCompanion(color: Value(color)),
+    );
+  }
+
   /// Persists a new ordering: sets each habit's sortOrder to its index in
   /// [orderedIds], in a single transaction. Callers must pass every habit's id
   /// exactly once; ids not present in the table are silently skipped, and any

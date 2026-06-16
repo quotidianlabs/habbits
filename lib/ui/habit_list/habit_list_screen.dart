@@ -33,11 +33,11 @@ class HabitListScreen extends ConsumerWidget {
       floatingActionButton: FloatingActionButton(
         key: const Key('add-habit-fab'),
         onPressed: () async {
-          final name = await showHabitNameDialog(context);
-          if (name != null) {
+          final result = await showHabitNameDialog(context);
+          if (result != null) {
             await ref
                 .read(habitListViewModelProvider.notifier)
-                .createHabit(name);
+                .createHabit(result.name, color: result.color);
           }
         },
         child: const Icon(Icons.add),

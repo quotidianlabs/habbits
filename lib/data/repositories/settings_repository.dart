@@ -18,6 +18,12 @@ class SettingsRepository {
   String? readLocaleToken() => _prefs.getString(_localeKey);
   Future<void> writeLocaleToken(String token) =>
       _prefs.setString(_localeKey, token);
+
+  static const _themeKey = 'theme';
+
+  String? readThemeToken() => _prefs.getString(_themeKey);
+  Future<void> writeThemeToken(String token) =>
+      _prefs.setString(_themeKey, token);
 }
 
 @Riverpod(keepAlive: true)

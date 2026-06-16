@@ -21,6 +21,12 @@
   "language": "Язык",
   "languageSystem": "Системный язык",
 
+  "theme": "Тема",
+  "themeSystem": "Системная",
+  "themeLight": "Светлая",
+  "themeDark": "Тёмная",
+  "color": "Цвет",
+
   "noHabits": "Пока нет привычек. Нажмите +, чтобы добавить.",
   "homeError": "Ошибка: {error}",
   "streakLabel": "Серия: {count}",

@@ -27,6 +27,12 @@
   "language": "Language",
   "languageSystem": "System default",
 
+  "theme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "color": "Color",
+
   "noHabits": "No habits yet. Tap + to add one.",
   "homeError": "Error: {error}",
   "@homeError": {
