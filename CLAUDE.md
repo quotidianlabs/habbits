@@ -25,3 +25,6 @@ touching `@riverpod`/Drift code.
 
 README screenshots are generated, not hand-captured — see
 [`docs/screenshots.md`](docs/screenshots.md) to regenerate or add shots.
+
+Cutting an Android release build (`.aab`, signing, versionCode, target API) —
+see [`docs/release.md`](docs/release.md).

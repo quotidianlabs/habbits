@@ -19,7 +19,10 @@ if (hasReleaseKeystore) {
 
 android {
     namespace = "io.github.quotidianlabs.habbits"
-    compileSdk = flutter.compileSdkVersion
+    // Pinned to API 36 (Android 16) — the latest installed platform — so the
+    // Play target-API requirement is met explicitly rather than tracking the
+    // Flutter SDK default. compileSdk must be >= targetSdk.
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -35,7 +38,8 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
+        // versionCode must increase on every Play upload (see docs/release.md).
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

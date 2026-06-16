@@ -54,11 +54,15 @@ The upload keystore is a **local, uncommitted** artifact:
   verified with `keytool -printcert -jarfile`.
 - [x] `flutter analyze` — clean.
 
-## Follow-ups (not blockers for signing)
+## Follow-ups (addressed in this bundle)
 
-- Pin `targetSdk` explicitly and confirm it meets Play's current target-API
-  minimum, rather than inheriting `flutter.targetSdkVersion`.
-- Confirm `flutter_local_notifications` scheduling does not need
-  `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM` (and a Play declaration) on
-  Android 13+.
-- `versionCode` (`pubspec.yaml` `+N`) must increment on every Play upload.
+- **`targetSdk` pinned** — `compileSdk` and `targetSdk` set to 36 explicitly in
+  `build.gradle.kts` (was inheriting `flutter.*`); rebuilt the AAB to confirm it
+  compiles against API 36.
+- **Exact alarms — no change needed** — `NotificationService.syncSchedule` uses
+  `AndroidScheduleMode.inexactAllowWhileIdle`, so no
+  `SCHEDULE_EXACT_ALARM` / `USE_EXACT_ALARM` permission or Play declaration is
+  required. Documented in [`docs/release.md`](../../../../docs/release.md).
+- **`versionCode` bump** — documented as a per-upload requirement in
+  `docs/release.md` (the full release runbook); `1.0.0+1` stands for the first
+  upload.
