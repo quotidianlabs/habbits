@@ -37,7 +37,7 @@ class HabitDetailScreen extends ConsumerWidget {
           IconButton(
             key: const Key('detail-rename'),
             icon: const Icon(Icons.edit),
-            tooltip: l10n.rename,
+            tooltip: l10n.editHabit,
             onPressed: () async {
               final result = await showHabitNameDialog(
                 context,

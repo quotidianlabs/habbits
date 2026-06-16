@@ -68,7 +68,7 @@ class _HabitFormDialogState extends State<_HabitFormDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title: Text(widget.isRename ? l10n.renameHabit : l10n.newHabit),
+      title: Text(widget.isRename ? l10n.editHabit : l10n.newHabit),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,

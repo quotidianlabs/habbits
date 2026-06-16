@@ -118,16 +118,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderOff => 'Off';
 
   @override
-  String get rename => 'Rename';
-
-  @override
   String get delete => 'Delete';
 
   @override
   String get newHabit => 'New habit';
 
   @override
-  String get renameHabit => 'Rename habit';
+  String get editHabit => 'Edit habit';
 
   @override
   String get nameLabel => 'Name';

@@ -266,12 +266,6 @@ abstract class AppLocalizations {
   /// **'Off'**
   String get reminderOff;
 
-  /// No description provided for @rename.
-  ///
-  /// In en, this message translates to:
-  /// **'Rename'**
-  String get rename;
-
   /// No description provided for @delete.
   ///
   /// In en, this message translates to:
@@ -284,11 +278,11 @@ abstract class AppLocalizations {
   /// **'New habit'**
   String get newHabit;
 
-  /// No description provided for @renameHabit.
+  /// No description provided for @editHabit.
   ///
   /// In en, this message translates to:
-  /// **'Rename habit'**
-  String get renameHabit;
+  /// **'Edit habit'**
+  String get editHabit;
 
   /// No description provided for @nameLabel.
   ///
