@@ -61,7 +61,9 @@ Templates live in [`_templates/`](_templates/).
 
 ### Active
 
-_None._
+- **[release-signing](changes/active/2026-06-16.01-release-signing/change.md)**
+  (2026-06-16) — Android upload-key signing config (gitignored keystore +
+  `key.properties`) so `flutter build appbundle --release` is Play-uploadable.
 
 ### Archived (shipped)
 
