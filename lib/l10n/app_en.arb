@@ -53,11 +53,10 @@
   },
   "reminderTitle": "Reminder",
   "reminderOff": "Off",
-  "rename": "Rename",
   "delete": "Delete",
 
   "newHabit": "New habit",
-  "renameHabit": "Rename habit",
+  "editHabit": "Edit habit",
   "nameLabel": "Name",
   "save": "Save",
   "deleteHabitTitle": "Delete \"{name}\"?",

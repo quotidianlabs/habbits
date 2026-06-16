@@ -122,16 +122,13 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reminderOff => 'Отключено';
 
   @override
-  String get rename => 'Переименовать';
-
-  @override
   String get delete => 'Удалить';
 
   @override
   String get newHabit => 'Новая привычка';
 
   @override
-  String get renameHabit => 'Переименовать привычку';
+  String get editHabit => 'Изменить привычку';
 
   @override
   String get nameLabel => 'Название';

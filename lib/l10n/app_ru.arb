@@ -35,11 +35,10 @@
   "thirtyDayLabel": "30 дней: {value}",
   "reminderTitle": "Напоминание",
   "reminderOff": "Отключено",
-  "rename": "Переименовать",
   "delete": "Удалить",
 
   "newHabit": "Новая привычка",
-  "renameHabit": "Переименовать привычку",
+  "editHabit": "Изменить привычку",
   "nameLabel": "Название",
   "save": "Сохранить",
   "deleteHabitTitle": "Удалить «{name}»?",
