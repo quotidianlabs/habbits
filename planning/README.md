@@ -61,7 +61,10 @@ Templates live in [`_templates/`](_templates/).
 
 ### Active
 
-_None._
+- **[completion-pct-first-check](changes/active/2026-06-17.01-completion-pct-first-check/change.md)**
+  (draft, 2026-06-17) — Anchor the 30-day completion % at the first checked day
+  instead of `createdAt`, so pre-creation backfilled checks count and the
+  denominator follows activity span, not creation span.
 
 ### Archived (shipped)
 
