@@ -65,6 +65,12 @@ _None._
 
 ### Archived (shipped)
 
+- **[completion-pct-first-check](changes/archive/2026-06-17.01-completion-pct-first-check/change.md)**
+  (#11, 2026-06-17) — Anchor the 30-day completion % at the first checked day
+  instead of `createdAt`, so pre-creation backfilled checks count and the
+  denominator follows activity span, not creation span; unstarted habits render
+  "—".
+
 - **[release-signing](changes/archive/2026-06-16.01-release-signing/change.md)**
   (#9, 2026-06-16) — Android upload-key signing (gitignored keystore +
   `key.properties`), `compileSdk`/`targetSdk` pinned to 36, and a
