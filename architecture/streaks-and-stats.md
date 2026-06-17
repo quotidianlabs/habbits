@@ -13,9 +13,11 @@ Drift imports; the `ui/widgets/` layer only renders the results.
   a multi-week heatmap, and a recent-days list.
 - **Current streak** is computed fresh on every render from the live completion
   set — it is never stored.
-- **Completion %** is a rolling window over at most the last 30 days; when no
-  eligible window exists (e.g. the habit was created today and today is not yet
-  checked) the UI renders "—".
+- **Completion %** is a rolling window over at most the last 30 days, anchored at
+  the **first checked day** (not the creation date) — so retroactively backfilled
+  checks, including ones before the habit was created, count, and the denominator
+  follows how long the habit has actually been active. When nothing is checked yet
+  there is no window and the UI renders "—".
 - The **heatmap** (`HeatmapGrid`) is a read-only grid of week-columns
   (Mon→Sun rows). Future cells are blank and non-interactive.
 - The **recent-days list** (`RecentDaysList`) renders the last 30 days
@@ -30,8 +32,9 @@ Drift imports; the `ui/widgets/` layer only renders the results.
 
 - `lib/domain/streak.dart:8` — `currentStreak(completed, today) → int`: pure function;
   the single authoritative streak computation
-- `lib/domain/completion_stats.dart:9` — `completionPercent(completed, createdAt, today) → int?`:
-  pure function; returns null when no eligible window exists
+- `lib/domain/completion_stats.dart:12` — `completionPercent(completed, today) → int?`:
+  pure function; window anchored at the first checked day; returns null when
+  nothing is checked yet
 - `lib/domain/heatmap.dart:23` — `buildHeatmap({completed, today, weeks}) → HeatmapData`:
   pure function; produces the week-column/cell grid consumed by `HeatmapGrid`
 - `lib/domain/heatmap.dart:4` — `CellState` enum (`completed`, `notCompleted`, `future`)
@@ -59,9 +62,11 @@ Drift imports; the `ui/widgets/` layer only renders the results.
   immediately. From the anchor the function counts backward one day at a time,
   incrementing the count for every day found in the set; the first missing day
   stops the walk. A single missed day therefore resets the streak to 0.
-- **`completionPercent`** (`lib/domain/completion_stats.dart:9`):
+- **`completionPercent`** (`lib/domain/completion_stats.dart:12`):
+  - Returns null when the completed set is empty (no window yet).
   - `lastDay` = today if today is completed, otherwise yesterday.
-  - `spanDays` = `daysBetween(createdAt, lastDay) + 1`; returns null if ≤ 0.
+  - `firstDay` = the earliest completed day; `spanDays` = `daysBetween(firstDay,
+    lastDay) + 1` (the creation date is not consulted).
   - `windowDays` = `min(30, spanDays)`.
   - `windowStart` = `lastDay − (windowDays − 1)` calendar days.
   - Result: completed dates in `[windowStart, lastDay]` ÷ `windowDays` × 100, rounded.
@@ -81,4 +86,4 @@ None currently tracked.
 
 ## History
 
-Defined by: [2026-06-13.01-foundation](../planning/changes/archive/2026-06-13.01-foundation/design.md), [2026-06-13.02-heatmap-retroactive-editing](../planning/changes/archive/2026-06-13.02-heatmap-retroactive-editing/design.md)
+Defined by: [2026-06-13.01-foundation](../planning/changes/archive/2026-06-13.01-foundation/design.md), [2026-06-13.02-heatmap-retroactive-editing](../planning/changes/archive/2026-06-13.02-heatmap-retroactive-editing/design.md), [2026-06-17.01-completion-pct-first-check](../planning/changes/archive/2026-06-17.01-completion-pct-first-check/change.md)

@@ -1,5 +1,5 @@
 ---
-status: draft
+status: approved
 date: 2026-06-17
 slug: completion-pct-first-check
 supersedes: null
