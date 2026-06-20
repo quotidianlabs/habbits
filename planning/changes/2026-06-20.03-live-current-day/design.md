@@ -58,52 +58,40 @@ DateTime nextLocalMidnight(DateTime now) =>
 Date construction (not `Duration`) keeps it correct across month/year ends and
 DST transitions, matching the rest of `dates.dart`.
 
-### 2. `currentDayProvider` (`lib/ui/core/current_day.dart`)
+### 2. `currentDayProvider` + `CurrentDayTicker` (`lib/ui/core/current_day.dart`)
 
-A keep-alive Riverpod `Notifier<DateTime>` that returns `dateOnly(DateTime.now())`
-and keeps it live:
+The provider holds **only state** — a keep-alive `Notifier<DateTime>` returning
+`dateOnly(DateTime.now())` with a `refresh()` method that re-reads the wall clock
+and emits only when the day actually changed:
 
 ```dart
 @Riverpod(keepAlive: true)
 class CurrentDay extends _$CurrentDay {
-  Timer? _timer;
-  AppLifecycleListener? _lifecycle;
-
   @override
-  DateTime build() {
-    _lifecycle = AppLifecycleListener(onResume: _refresh);
-    ref.onDispose(() {
-      _timer?.cancel();
-      _lifecycle?.dispose();
-    });
-    _arm();
-    return dateOnly(DateTime.now());
-  }
+  DateTime build() => dateOnly(DateTime.now());
 
-  void _arm() {
-    _timer?.cancel();
-    final now = DateTime.now();
-    _timer = Timer(nextLocalMidnight(now).difference(now), () {
-      _refresh();
-      _arm();
-    });
-  }
-
-  void _refresh() {
+  void refresh() {
     final today = dateOnly(DateTime.now());
-    if (today != state) state = today; // no-op emit if the day hasn't changed
+    if (today != state) state = today; // no-op on the same day
   }
 }
 ```
 
-- The **timer** covers the app sitting open in the foreground across midnight.
-- The **`onResume` refresh** corrects immediately when the app returns from the
-  background (and the late-firing backgrounded timer re-arms from the new now).
-- `_refresh` only writes when the day actually changed, so resume on the same day
-  is a no-op (no spurious list rebuild).
+The timer + lifecycle wiring lives in a thin root widget, `CurrentDayTicker`
+(a `ConsumerStatefulWidget` mirroring `ReminderCoordinator`), mounted at the app
+root in `main.dart`:
 
-`current_day.dart` lives in `ui/core/` and may import Flutter (`AppLifecycleListener`),
-consistent with the layer rules.
+- Re-arms a `Timer` at `nextLocalMidnight` (covers the app open in the foreground
+  across midnight), calling `currentDayProvider.notifier.refresh()` then
+  re-arming.
+- An `AppLifecycleListener(onResume: …)` refreshes on return from the background.
+- Cancels the timer and disposes the listener in `dispose()`.
+
+**Why a widget, not timer-in-`build()`:** keeping the `Timer`/`AppLifecycleListener`
+out of the provider's `build()` makes the provider pure, so the existing
+plain-`test()` view-model tests build it without hanging on a real timer or a
+binding-dependent lifecycle listener — no per-test override needed. This matches
+how `ReminderCoordinator` already owns the app's lifecycle/timing glue.
 
 ### 3. Home view model reads the provider
 

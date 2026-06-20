@@ -8,26 +8,20 @@ part of 'current_day.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// The current local calendar day (date-only), kept live so views derived from
-/// "today" don't go stale across midnight. A timer fires at the next local
-/// midnight (covers the app sitting open in the foreground); an app-resume
-/// refresh corrects immediately when returning from the background. State only
-/// changes when the day actually rolls over, so same-day resumes are no-ops.
+/// The current local calendar day (date-only). Holds only state — the timer and
+/// lifecycle wiring that keep it live live in [CurrentDayTicker], so the provider
+/// itself is pure and safe to build in headless tests without overrides.
 
 @ProviderFor(CurrentDay)
 final currentDayProvider = CurrentDayProvider._();
 
-/// The current local calendar day (date-only), kept live so views derived from
-/// "today" don't go stale across midnight. A timer fires at the next local
-/// midnight (covers the app sitting open in the foreground); an app-resume
-/// refresh corrects immediately when returning from the background. State only
-/// changes when the day actually rolls over, so same-day resumes are no-ops.
+/// The current local calendar day (date-only). Holds only state — the timer and
+/// lifecycle wiring that keep it live live in [CurrentDayTicker], so the provider
+/// itself is pure and safe to build in headless tests without overrides.
 final class CurrentDayProvider extends $NotifierProvider<CurrentDay, DateTime> {
-  /// The current local calendar day (date-only), kept live so views derived from
-  /// "today" don't go stale across midnight. A timer fires at the next local
-  /// midnight (covers the app sitting open in the foreground); an app-resume
-  /// refresh corrects immediately when returning from the background. State only
-  /// changes when the day actually rolls over, so same-day resumes are no-ops.
+  /// The current local calendar day (date-only). Holds only state — the timer and
+  /// lifecycle wiring that keep it live live in [CurrentDayTicker], so the provider
+  /// itself is pure and safe to build in headless tests without overrides.
   CurrentDayProvider._()
     : super(
         from: null,
@@ -55,13 +49,11 @@ final class CurrentDayProvider extends $NotifierProvider<CurrentDay, DateTime> {
   }
 }
 
-String _$currentDayHash() => r'5230b163df76aaa7f81fa2fe3085e8501df0f7b1';
+String _$currentDayHash() => r'df5bd4b66c8e111ebc792a56ebdc38aba5f72d60';
 
-/// The current local calendar day (date-only), kept live so views derived from
-/// "today" don't go stale across midnight. A timer fires at the next local
-/// midnight (covers the app sitting open in the foreground); an app-resume
-/// refresh corrects immediately when returning from the background. State only
-/// changes when the day actually rolls over, so same-day resumes are no-ops.
+/// The current local calendar day (date-only). Holds only state — the timer and
+/// lifecycle wiring that keep it live live in [CurrentDayTicker], so the provider
+/// itself is pure and safe to build in headless tests without overrides.
 
 abstract class _$CurrentDay extends $Notifier<DateTime> {
   DateTime build();

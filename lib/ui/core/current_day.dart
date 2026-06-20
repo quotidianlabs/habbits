@@ -1,31 +1,50 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../domain/dates.dart';
 
 part 'current_day.g.dart';
 
-/// The current local calendar day (date-only), kept live so views derived from
-/// "today" don't go stale across midnight. A timer fires at the next local
-/// midnight (covers the app sitting open in the foreground); an app-resume
-/// refresh corrects immediately when returning from the background. State only
-/// changes when the day actually rolls over, so same-day resumes are no-ops.
+/// The current local calendar day (date-only). Holds only state — the timer and
+/// lifecycle wiring that keep it live live in [CurrentDayTicker], so the provider
+/// itself is pure and safe to build in headless tests without overrides.
 @Riverpod(keepAlive: true)
 class CurrentDay extends _$CurrentDay {
+  @override
+  DateTime build() => dateOnly(DateTime.now());
+
+  /// Recompute from the wall clock; emits only when the day actually changed, so
+  /// a same-day refresh is a no-op (no spurious rebuild of dependents).
+  void refresh() {
+    final today = dateOnly(DateTime.now());
+    if (today != state) state = today;
+  }
+}
+
+/// Drives [currentDayProvider] from real time so views derived from "today"
+/// don't go stale across midnight: re-arms a timer at the next local midnight
+/// (covers the app open in the foreground) and refreshes on app resume (covers
+/// returning from the background). Renders [child] unchanged.
+class CurrentDayTicker extends ConsumerStatefulWidget {
+  const CurrentDayTicker({super.key, required this.child});
+  final Widget child;
+
+  @override
+  ConsumerState<CurrentDayTicker> createState() => _CurrentDayTickerState();
+}
+
+class _CurrentDayTickerState extends ConsumerState<CurrentDayTicker> {
   Timer? _timer;
   AppLifecycleListener? _lifecycle;
 
   @override
-  DateTime build() {
+  void initState() {
+    super.initState();
     _lifecycle = AppLifecycleListener(onResume: _refresh);
-    ref.onDispose(() {
-      _timer?.cancel();
-      _lifecycle?.dispose();
-    });
     _arm();
-    return dateOnly(DateTime.now());
   }
 
   void _arm() {
@@ -37,8 +56,15 @@ class CurrentDay extends _$CurrentDay {
     });
   }
 
-  void _refresh() {
-    final today = dateOnly(DateTime.now());
-    if (today != state) state = today;
+  void _refresh() => ref.read(currentDayProvider.notifier).refresh();
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _lifecycle?.dispose();
+    super.dispose();
   }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
