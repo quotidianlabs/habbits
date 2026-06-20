@@ -3,7 +3,7 @@ status: draft
 date: 2026-06-20
 slug: harden-reminder-sync
 spec: harden-reminder-sync
-pr: null
+pr: 16
 ---
 
 # harden-reminder-sync — implementation plan

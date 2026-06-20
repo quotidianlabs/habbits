@@ -5,7 +5,7 @@ slug: harden-reminder-sync
 summary: Serialize ReminderCoordinator syncs, swallow plugin errors, and schedule reminders by wall-clock instant.
 supersedes: null
 superseded_by: null
-pr: null
+pr: 16
 outcome: |
   _sync routed through a CoalescingRunner (no interleaved cancelAll+reschedule)
   and made best-effort; reminders scheduled by local wall-clock instant
