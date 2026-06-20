@@ -33,11 +33,6 @@ See [`audits/2026-06-20-hardening-audit.md`](audits/2026-06-20-hardening-audit.m
 Items 1, 2, 6 are being fixed in `changes/2026-06-20.01-harden-toggle-and-import`;
 the rest are below.
 
-- **"Today" goes stale across midnight** (audit #4, High/Medium) —
-  `habit_list_view_model.dart:20` computes `today` only inside the Drift stream
-  callback; an app left open overnight shows yesterday's state until the next DB
-  write. Self-healing on next tap. *Revisit when* the habit-list view model is
-  next touched. Fix: a `currentDay` provider that ticks at local midnight.
 - **`ReminderCoordinator._sync` re-entrancy** (audit #5, Medium) —
   `reminder_coordinator.dart:41` is fired from 4 sources with no guard;
   overlapping runs race on `cancelAll()`. *Revisit when* reminder scheduling is

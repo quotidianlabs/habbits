@@ -122,10 +122,13 @@ void main() {
       final id = await container
           .read(habitDaoProvider)
           .createHabit(name: 'Read', color: 1);
-      await container.read(habitDaoProvider).toggleCompletion(id, completionDay);
+      await container
+          .read(habitDaoProvider)
+          .toggleCompletion(id, completionDay);
       final summaries = await nextSummaries(
         container,
-        (l) => l.any((s) => s.habit.id == id && s.dates.contains(completionDay)),
+        (l) =>
+            l.any((s) => s.habit.id == id && s.dates.contains(completionDay)),
       );
       return summaries.single.doneToday;
     }
