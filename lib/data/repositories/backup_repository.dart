@@ -18,14 +18,16 @@ class BackupRepository {
   final HabitRepository _habits;
 
   /// Writes the current data to a temp JSON file and opens the OS share sheet.
-  Future<void> exportAndShare() async {
+  /// [subject] is the localized share-sheet subject, resolved in the UI layer
+  /// (this layer has no `BuildContext`).
+  Future<void> exportAndShare({required String subject}) async {
     final now = DateTime.now();
     final json = encodeBackup(buildBackup(await _habits.getHabits(), now));
     final dir = await getTemporaryDirectory();
     final file = File('${dir.path}/habbits-backup-${formatIsoDate(now)}.json');
     await file.writeAsString(json);
     await SharePlus.instance.share(
-      ShareParams(files: [XFile(file.path)], subject: 'Habbits backup'),
+      ShareParams(files: [XFile(file.path)], subject: subject),
     );
   }
 

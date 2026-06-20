@@ -160,4 +160,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String reminderLimitBody(int count) {
     return 'Одновременно можно запланировать не более $count напоминаний, поэтому часть привычек не будет уведомлять. Отключите напоминания у нескольких привычек.';
   }
+
+  @override
+  String get backupShareSubject => 'Резервная копия Habbits';
 }
