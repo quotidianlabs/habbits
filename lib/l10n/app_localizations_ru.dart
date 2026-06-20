@@ -152,4 +152,12 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get reminderBody => 'Пора отметиться';
+
+  @override
+  String get reminderLimitTitle => 'Слишком много напоминаний';
+
+  @override
+  String reminderLimitBody(int count) {
+    return 'Одновременно можно запланировать не более $count напоминаний, поэтому часть привычек не будет уведомлять. Отключите напоминания у нескольких привычек.';
+  }
 }

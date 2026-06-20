@@ -319,6 +319,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Time to check in'**
   String get reminderBody;
+
+  /// No description provided for @reminderLimitTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many reminders'**
+  String get reminderLimitTitle;
+
+  /// No description provided for @reminderLimitBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No more than {count} reminders can be scheduled at once, so some habits won\'t notify. Turn off reminders on a few habits.'**
+  String reminderLimitBody(int count);
 }
 
 class _AppLocalizationsDelegate

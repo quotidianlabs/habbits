@@ -70,5 +70,11 @@
     "placeholders": { "date": { "type": "String" } }
   },
 
-  "reminderBody": "Time to check in"
+  "reminderBody": "Time to check in",
+
+  "reminderLimitTitle": "Too many reminders",
+  "reminderLimitBody": "No more than {count} reminders can be scheduled at once, so some habits won't notify. Turn off reminders on a few habits.",
+  "@reminderLimitBody": {
+    "placeholders": { "count": { "type": "int" } }
+  }
 }
