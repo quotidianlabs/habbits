@@ -5,6 +5,7 @@ import '../../data/services/notification_service.dart';
 import '../../domain/reminder_schedule.dart';
 import '../../l10n/app_localizations.dart';
 import '../habit_list/habit_list_view_model.dart';
+import 'coalescing_runner.dart';
 import 'locale_controller.dart';
 
 /// Watches habits + app lifecycle and keeps the OS notification schedule in
@@ -20,6 +21,7 @@ class ReminderCoordinator extends ConsumerStatefulWidget {
 
 class _ReminderCoordinatorState extends ConsumerState<ReminderCoordinator> {
   AppLifecycleListener? _lifecycle;
+  final _runner = CoalescingRunner();
   bool _permissionAsked = false;
 
   @override
@@ -38,7 +40,20 @@ class _ReminderCoordinatorState extends ConsumerState<ReminderCoordinator> {
     super.dispose();
   }
 
-  Future<void> _sync() async {
+  /// Serialized so overlapping triggers can't interleave a `cancelAll()` +
+  /// reschedule, and best-effort so a plugin failure doesn't escape as an
+  /// unhandled async error.
+  Future<void> _sync() => _runner.run(_runSyncSafe);
+
+  Future<void> _runSyncSafe() async {
+    try {
+      await _runSync();
+    } catch (_) {
+      // Reminder scheduling is best-effort; swallow plugin/platform failures.
+    }
+  }
+
+  Future<void> _runSync() async {
     final summaries = ref.read(habitListViewModelProvider).value;
     if (summaries == null) return;
 
