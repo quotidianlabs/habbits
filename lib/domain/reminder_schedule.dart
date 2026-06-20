@@ -24,33 +24,55 @@ class ScheduledReminder {
   final DateTime when; // local wall-clock instant
 }
 
+/// iOS keeps at most this many pending local notifications; anything scheduled
+/// beyond it is silently dropped. The reminder schedule is hard-capped here.
+const int kIosNotificationBudget = 64;
+
 /// Builds the reminder schedule: for each enabled habit, one notification per
-/// upcoming day it isn't done, within a rolling buffer sized to respect iOS's
-/// pending-notification cap. Today is included only if the habit isn't done and
-/// its time is still in the future relative to [now].
+/// upcoming day it isn't done, across a [maxBuffer]-day window. Today is included
+/// only if the habit isn't done and its time is still in the future relative to
+/// [now]. The full candidate set is then capped at [iosBudget] by keeping the
+/// soonest fire times, so the most imminent reminders across all habits win the
+/// scarce slots and the OS never silently drops the tail. Starved habits (more
+/// than [iosBudget] reminder-enabled) roll into the window on the next resync.
+///
+/// When the cap falls mid-day (candidates aren't a clean multiple of the habit
+/// count) the tail is uneven: the habits earliest in [enabled] keep the extra
+/// last-day slot. Ties on fire time break by position in [enabled] — Dart's sort
+/// is not stable, so this explicit tie-break is what makes the result a
+/// deterministic function of the caller's ordering. The coordinator passes
+/// habits in stable `sortOrder`, so the same habits keep their reminders across
+/// resyncs instead of churning which ones get dropped.
 List<ScheduledReminder> computeReminderSchedule(
   List<ReminderHabit> enabled,
   DateTime now, {
   int maxBuffer = 14,
-  int iosBudget = 64,
+  int iosBudget = kIosNotificationBudget,
 }) {
   if (enabled.isEmpty) return const [];
-  final days = (iosBudget ~/ enabled.length).clamp(1, maxBuffer);
-  final result = <ScheduledReminder>[];
-  for (final h in enabled) {
+  // Carry each candidate's habit index so fire-time ties break by caller order.
+  final all = <(int, ScheduledReminder)>[];
+  for (var i = 0; i < enabled.length; i++) {
+    final h = enabled[i];
     final parts = h.time.split(':');
     final hh = int.parse(parts[0]);
     final mm = int.parse(parts[1]);
-    for (var d = 0; d < days; d++) {
+    for (var d = 0; d < maxBuffer; d++) {
       final when = DateTime(now.year, now.month, now.day + d, hh, mm);
       if (d == 0) {
         if (h.doneToday) continue; // already done today
         if (!when.isAfter(now)) continue; // time already passed today
       }
-      result.add(
+      all.add((
+        i,
         ScheduledReminder(habitId: h.id, habitName: h.name, when: when),
-      );
+      ));
     }
   }
-  return result;
+  all.sort((a, b) {
+    final byTime = a.$2.when.compareTo(b.$2.when);
+    return byTime != 0 ? byTime : a.$1.compareTo(b.$1);
+  });
+  final capped = all.length <= iosBudget ? all : all.sublist(0, iosBudget);
+  return [for (final e in capped) e.$2];
 }

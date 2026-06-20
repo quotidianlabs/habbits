@@ -33,11 +33,6 @@ See [`audits/2026-06-20-hardening-audit.md`](audits/2026-06-20-hardening-audit.m
 Items 1, 2, 6 are being fixed in `changes/2026-06-20.01-harden-toggle-and-import`;
 the rest are below.
 
-- **iOS notification-budget overflow** (audit #3, High) —
-  `reminder_schedule.dart:38` `(iosBudget ~/ len).clamp(1, …)` lets 65+ reminder
-  habits schedule past iOS's 64-notification cap, silently dropping the tail.
-  *Revisit when* reminders next gain a feature, or a user reports missed
-  reminders with many habits.
 - **"Today" goes stale across midnight** (audit #4, High/Medium) —
   `habit_list_view_model.dart:20` computes `today` only inside the Drift stream
   callback; an app left open overnight shows yesterday's state until the next DB

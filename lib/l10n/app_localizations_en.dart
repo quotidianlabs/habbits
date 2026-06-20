@@ -148,4 +148,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reminderBody => 'Time to check in';
+
+  @override
+  String get reminderLimitTitle => 'Too many reminders';
+
+  @override
+  String reminderLimitBody(int count) {
+    return 'No more than $count reminders can be scheduled at once, so some habits won\'t notify. Turn off reminders on a few habits.';
+  }
 }
