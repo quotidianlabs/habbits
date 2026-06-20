@@ -44,6 +44,19 @@ void main() {
     expect(perHabit.values.every((c) => c == 8), isTrue);
   });
 
+  test('total never exceeds the iOS budget when habits overflow it', () {
+    final habits = [for (var i = 1; i <= 5; i++) habit(i, '20:00')];
+    final s = computeReminderSchedule(habits, now, iosBudget: 3, maxBuffer: 14);
+    expect(s.length, 3);
+  });
+
+  test('over budget, the soonest reminders win', () {
+    // Distinct future times today; maxBuffer 1 => one candidate per habit.
+    final habits = [habit(1, '11:00'), habit(2, '12:00'), habit(3, '13:00')];
+    final s = computeReminderSchedule(habits, now, iosBudget: 2, maxBuffer: 1);
+    expect(s.map((r) => r.habitId), [1, 2]); // 11:00 and 12:00 beat 13:00
+  });
+
   test('carries the habit name and times across days', () {
     final s = computeReminderSchedule([habit(7, '07:30')], now);
     expect(s.every((r) => r.habitName == 'H7'), isTrue);
