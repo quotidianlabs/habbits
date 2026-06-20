@@ -77,7 +77,9 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
               .getSingleOrNull();
 
       if (existing != null) {
-        await (delete(completions)..where((c) => c.id.equals(existing.id))).go();
+        await (delete(
+          completions,
+        )..where((c) => c.id.equals(existing.id))).go();
       } else {
         await into(completions).insert(
           CompletionsCompanion.insert(

@@ -1,12 +1,15 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-20
 slug: harden-toggle-and-import
 summary: Make the completion-toggle and backup-import write paths crash-proof.
 supersedes: null
 superseded_by: null
 pr: null
-outcome: null
+outcome: |
+  toggleCompletion now runs read+write in a transaction (double-tap safe);
+  backup import validates reminderTime as HH:mm and de-duplicates completion
+  dates. Closes audit items 1, 2, 6. +6 tests (137 total), lint clean.
 ---
 
 # Design: Harden the toggle and backup-import write paths

@@ -45,10 +45,7 @@ void main() {
       await db.habitDao.importReplace(decoded.habits);
 
       final rows = await db.habitDao.getHabitsWithDates();
-      expect(rows.single.dates, {
-        DateTime(2026, 6, 10),
-        DateTime(2026, 6, 11),
-      });
+      expect(rows.single.dates, {DateTime(2026, 6, 10), DateTime(2026, 6, 11)});
     },
   );
 
