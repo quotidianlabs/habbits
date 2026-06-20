@@ -94,6 +94,7 @@ BackupHabit _decodeHabit(Object? item) {
       'Habit "$name" has an invalid completions list.',
     );
   }
+  final seen = <String>{};
   final completions = <String>[];
   for (final c in completionsRaw) {
     if (c is! String || !_isValidIsoDate(c)) {
@@ -101,7 +102,9 @@ BackupHabit _decodeHabit(Object? item) {
         'Habit "$name" has an invalid completion date: $c.',
       );
     }
-    completions.add(c);
+    // Drop exact-duplicate dates so a redundant entry doesn't collide on the
+    // Completions {habitId, localDate} unique key and abort the whole import.
+    if (seen.add(c)) completions.add(c);
   }
   return BackupHabit(
     name: name,

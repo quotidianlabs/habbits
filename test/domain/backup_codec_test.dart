@@ -27,6 +27,32 @@ void main() {
   });
 
   test(
+    'duplicate completion dates in a backup collapse and import cleanly',
+    () async {
+      // A hand-edited or future-version backup may list the same date twice.
+      // It must not abort importReplace on the {habitId, localDate} unique key.
+      final json =
+          '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000",'
+          '"habits":[{"name":"Read","color":1,"sortOrder":0,'
+          '"createdAt":"2026-06-01T00:00:00.000",'
+          '"completions":["2026-06-10","2026-06-10","2026-06-11"]}]}';
+
+      final decoded = decodeBackup(json);
+      expect(decoded.habits.single.completions, ['2026-06-10', '2026-06-11']);
+
+      final db = AppDatabase(NativeDatabase.memory());
+      addTearDown(db.close);
+      await db.habitDao.importReplace(decoded.habits);
+
+      final rows = await db.habitDao.getHabitsWithDates();
+      expect(rows.single.dates, {
+        DateTime(2026, 6, 10),
+        DateTime(2026, 6, 11),
+      });
+    },
+  );
+
+  test(
     'full round-trip: export -> encode -> decode -> import reproduces data',
     () async {
       final src = AppDatabase(NativeDatabase.memory());
