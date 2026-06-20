@@ -65,7 +65,7 @@ final class HabitDetailViewModelProvider
 }
 
 String _$habitDetailViewModelHash() =>
-    r'cfe6037967228511d01ca098557db3c9ace9f90a';
+    r'd3facb4692a329a604ba96ad085648df4b28605e';
 
 /// View model for a single habit's detail screen. State derives from the list
 /// view model; commands go through [HabitRepository].

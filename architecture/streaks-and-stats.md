@@ -27,6 +27,11 @@ Drift imports; the `ui/widgets/` layer only renders the results.
   automatically through the existing reactive stream.
 - The **day strip** (`DayStrip`) is a compact read-only one-row bar of the last
   N days (default 14), used on the home card for a glanceable completion picture.
+- **"Today"** for the home list comes from `currentDayProvider`
+  (`lib/ui/core/current_day.dart`), a live value that ticks at local midnight and
+  refreshes on app resume. So streak, done-today, and completion-% stay correct
+  across a day boundary even with the app left open and no DB write. Action-time
+  writes (`toggleToday`) use real `DateTime.now()` directly and are unaffected.
 
 ## Code map
 

@@ -8,6 +8,11 @@ DateTime dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
 /// correct across month, year, and DST boundaries.
 DateTime previousDay(DateTime d) => DateTime(d.year, d.month, d.day - 1);
 
+/// Local midnight of the day after [now] (strictly after [now]). Uses date
+/// construction so it is correct across month, year, and DST boundaries.
+DateTime nextLocalMidnight(DateTime now) =>
+    DateTime(now.year, now.month, now.day + 1);
+
 /// Formats a date as `YYYY-MM-DD` for storage.
 String formatIsoDate(DateTime d) {
   final m = d.month.toString().padLeft(2, '0');
