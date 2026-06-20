@@ -38,6 +38,23 @@ void main() {
     expect(daysBetween(DateTime(2026, 6, 14), DateTime(2026, 6, 13)), -1);
   });
 
+  test('nextLocalMidnight returns the next day at 00:00', () {
+    expect(
+      nextLocalMidnight(DateTime(2026, 6, 20, 23, 59)),
+      DateTime(2026, 6, 21),
+    );
+    // Time-of-day is irrelevant; always the start of tomorrow.
+    expect(
+      nextLocalMidnight(DateTime(2026, 6, 20, 0, 0, 1)),
+      DateTime(2026, 6, 21),
+    );
+  });
+
+  test('nextLocalMidnight crosses month and year ends', () {
+    expect(nextLocalMidnight(DateTime(2026, 6, 30, 12)), DateTime(2026, 7, 1));
+    expect(nextLocalMidnight(DateTime(2026, 12, 31, 12)), DateTime(2027, 1, 1));
+  });
+
   test('mondayOf returns the Monday of the week containing the date', () {
     // 2026-06-13 is a Saturday.
     expect(mondayOf(DateTime(2026, 6, 13)), DateTime(2026, 6, 8));
