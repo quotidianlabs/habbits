@@ -1,12 +1,16 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-20
 slug: localize-share-subject
 summary: Localize the backup share-sheet subject, and rename the inverted backup test files.
 supersedes: null
 superseded_by: null
 pr: null
-outcome: null
+outcome: |
+  backupShareSubject ARB key (en/ru) threaded through Settings -> view model ->
+  exportAndShare; backup test files renamed to match contents. Closes the
+  disputed share-subject item + the backup test-naming deferred item. +1 test
+  (148 total), lint clean.
 ---
 
 # Change: Localize backup share subject + rename backup tests
