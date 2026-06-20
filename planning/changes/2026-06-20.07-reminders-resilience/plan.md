@@ -3,7 +3,7 @@ status: draft
 date: 2026-06-20
 slug: reminders-resilience
 spec: reminders-resilience
-pr: null
+pr: 19
 ---
 
 # reminders-resilience — implementation plan
