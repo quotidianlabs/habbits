@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/models/backup_data.dart';
+import '../../domain/models/habit_summary.dart';
+import '../../domain/reminder_schedule.dart';
 import '../../l10n/app_localizations.dart';
 import '../core/locale_controller.dart';
 import '../core/theme_controller.dart';
+import '../habit_list/habit_list_view_model.dart';
 import 'settings_view_model.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -18,6 +21,27 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         children: [
+          Consumer(
+            builder: (context, ref, _) {
+              final count =
+                  (ref.watch(habitListViewModelProvider).value ??
+                          const <HabitSummary>[])
+                      .where((s) => s.habit.reminderTime != null)
+                      .length;
+              if (count <= kIosNotificationBudget) {
+                return const SizedBox.shrink();
+              }
+              return ListTile(
+                key: const Key('reminder-budget-warning'),
+                leading: Icon(
+                  Icons.warning_amber,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                title: Text(l10n.reminderLimitTitle),
+                subtitle: Text(l10n.reminderLimitBody(kIosNotificationBudget)),
+              );
+            },
+          ),
           ListTile(
             key: const Key('export-data'),
             leading: const Icon(Icons.upload_file),

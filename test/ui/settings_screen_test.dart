@@ -6,6 +6,7 @@ import 'package:habbits/data/services/database/database.dart';
 import 'package:habbits/data/services/database/database_providers.dart';
 import 'package:habbits/data/repositories/settings_repository.dart';
 import 'package:habbits/domain/models/backup_data.dart';
+import 'package:habbits/domain/reminder_schedule.dart';
 import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/ui/core/locale_controller.dart';
 import 'package:habbits/ui/settings/settings_screen.dart';
@@ -36,6 +37,54 @@ void main() {
     );
     expect(find.byKey(const Key('export-data')), findsOneWidget);
     expect(find.byKey(const Key('import-data')), findsOneWidget);
+  });
+
+  Future<void> seedReminderHabits(AppDatabase db, int n) async {
+    for (var i = 0; i < n; i++) {
+      final id = await db.habitDao.createHabit(name: 'H$i', color: 1);
+      await db.habitDao.setReminderTime(id, '20:00');
+    }
+  }
+
+  Widget settingsApp(AppDatabase db, SharedPreferences prefs) => ProviderScope(
+    overrides: [
+      appDatabaseProvider.overrideWithValue(db),
+      sharedPreferencesProvider.overrideWithValue(prefs),
+    ],
+    child: const MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: SettingsScreen(),
+    ),
+  );
+
+  testWidgets('warns when reminder habits exceed the notification budget', (
+    tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await seedReminderHabits(db, kIosNotificationBudget + 1);
+    final prefs = await _prefs();
+
+    await tester.pumpWidget(settingsApp(db, prefs));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const Key('reminder-budget-warning')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('no warning when reminders are within the budget', (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await seedReminderHabits(db, 3);
+    final prefs = await _prefs();
+
+    await tester.pumpWidget(settingsApp(db, prefs));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('reminder-budget-warning')), findsNothing);
   });
 
   testWidgets('confirming an import replaces the data', (tester) async {
