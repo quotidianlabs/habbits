@@ -57,6 +57,23 @@ void main() {
     expect(s.map((r) => r.habitId), [1, 2]); // 11:00 and 12:00 beat 13:00
   });
 
+  test('cap mid-day leaves a deterministic uneven tail by input order', () {
+    // 5 habits * 14 days = 70 candidates capped to 64. 12 full days cover all
+    // 5 (60), the 13th day fills only the 4 remaining slots — taken in input
+    // order, so the last habit loses its 13th reminder.
+    final habits = [for (var i = 1; i <= 5; i++) habit(i, '20:00')];
+    final s = computeReminderSchedule(
+      habits,
+      now,
+    ); // default iosBudget 64, buffer 14
+    expect(s.length, 64);
+    final perHabit = <int, int>{};
+    for (final r in s) {
+      perHabit[r.habitId] = (perHabit[r.habitId] ?? 0) + 1;
+    }
+    expect(perHabit, {1: 13, 2: 13, 3: 13, 4: 13, 5: 12});
+  });
+
   test('carries the habit name and times across days', () {
     final s = computeReminderSchedule([habit(7, '07:30')], now);
     expect(s.every((r) => r.habitName == 'H7'), isTrue);

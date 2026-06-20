@@ -52,8 +52,11 @@ the habit is not yet completed that day.
 - A habit with no `reminderTime` produces no `ReminderHabit` and therefore no
   scheduled notifications.
 - The total scheduled set never exceeds `kIosNotificationBudget` (64). Above the
-  budget the soonest fire times are kept; the identity of dropped habits at the
-  cut is arbitrary when reminder times tie.
+  budget the soonest fire times are kept; fire-time ties break by position in the
+  `enabled` list, so the result is a deterministic function of caller ordering.
+  The coordinator passes habits in stable `sortOrder`, so the same habits keep
+  their slots across resyncs (no notification churn), and when the cap falls
+  mid-day the habits earliest in order keep the extra last-day slot.
 - The Settings screen renders an over-budget warning
   (`lib/ui/settings/settings_screen.dart`, key `reminder-budget-warning`) when
   more than `kIosNotificationBudget` habits have reminders enabled — the exact

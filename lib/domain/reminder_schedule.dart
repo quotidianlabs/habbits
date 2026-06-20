@@ -35,6 +35,14 @@ const int kIosNotificationBudget = 64;
 /// soonest fire times, so the most imminent reminders across all habits win the
 /// scarce slots and the OS never silently drops the tail. Starved habits (more
 /// than [iosBudget] reminder-enabled) roll into the window on the next resync.
+///
+/// When the cap falls mid-day (candidates aren't a clean multiple of the habit
+/// count) the tail is uneven: the habits earliest in [enabled] keep the extra
+/// last-day slot. Ties on fire time break by position in [enabled] — Dart's sort
+/// is not stable, so this explicit tie-break is what makes the result a
+/// deterministic function of the caller's ordering. The coordinator passes
+/// habits in stable `sortOrder`, so the same habits keep their reminders across
+/// resyncs instead of churning which ones get dropped.
 List<ScheduledReminder> computeReminderSchedule(
   List<ReminderHabit> enabled,
   DateTime now, {
@@ -42,8 +50,10 @@ List<ScheduledReminder> computeReminderSchedule(
   int iosBudget = kIosNotificationBudget,
 }) {
   if (enabled.isEmpty) return const [];
-  final all = <ScheduledReminder>[];
-  for (final h in enabled) {
+  // Carry each candidate's habit index so fire-time ties break by caller order.
+  final all = <(int, ScheduledReminder)>[];
+  for (var i = 0; i < enabled.length; i++) {
+    final h = enabled[i];
     final parts = h.time.split(':');
     final hh = int.parse(parts[0]);
     final mm = int.parse(parts[1]);
@@ -53,9 +63,16 @@ List<ScheduledReminder> computeReminderSchedule(
         if (h.doneToday) continue; // already done today
         if (!when.isAfter(now)) continue; // time already passed today
       }
-      all.add(ScheduledReminder(habitId: h.id, habitName: h.name, when: when));
+      all.add((
+        i,
+        ScheduledReminder(habitId: h.id, habitName: h.name, when: when),
+      ));
     }
   }
-  all.sort((a, b) => a.when.compareTo(b.when));
-  return all.length <= iosBudget ? all : all.sublist(0, iosBudget);
+  all.sort((a, b) {
+    final byTime = a.$2.when.compareTo(b.$2.when);
+    return byTime != 0 ? byTime : a.$1.compareTo(b.$1);
+  });
+  final capped = all.length <= iosBudget ? all : all.sublist(0, iosBudget);
+  return [for (final e in capped) e.$2];
 }

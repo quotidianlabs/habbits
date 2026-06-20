@@ -105,10 +105,14 @@ immaterial: `syncSchedule` assigns positional IDs and cancels-all before every
 reschedule.
 
 **Over-budget behavior.** For `enabled.length > iosBudget`, total candidates are
-truncated to exactly `iosBudget`, so iOS never silently drops anything. When many
-habits share a reminder time the specific habit dropped at the cut is arbitrary
-(ties), which is acceptable — above the cap *someone* must lose, and the schedule
-is fully recomputed on each resync.
+truncated to exactly `iosBudget`, so iOS never silently drops anything. Fire-time
+ties break by position in `enabled` (Dart's sort is not stable, so this is an
+explicit secondary key), making the kept set a deterministic function of caller
+ordering. The coordinator passes habits in stable `sortOrder`, so the same habits
+keep their reminders across resyncs rather than churning. When the cap falls
+mid-day the habits earliest in order keep the extra last-day slot (an uneven but
+deterministic tail) — above the cap *someone* must lose, and the schedule is fully
+recomputed on each resync.
 
 ### 2. Settings warning
 
@@ -174,9 +178,9 @@ Two new ARB keys in `app_en.arb` (template) and `app_ru.arb`:
 - **Low.** The domain change is a localized rewrite of one pure function with the
   existing test suite as a regression guard; the Settings change is additive and
   collapses to nothing below the threshold.
-- The non-stable sort makes the *identity* of the dropped habit arbitrary above
-  the cap. This is inherent to the over-budget case and does not affect the
-  invariant (total ≤ `iosBudget`, soonest win).
+- Above the cap *some* habit must lose a reminder. The choice is deterministic
+  (fire-time then `enabled` order) and self-correcting across resyncs, so it does
+  not affect the core invariant (total ≤ `iosBudget`, soonest win).
 
 ## Architecture promotion
 
