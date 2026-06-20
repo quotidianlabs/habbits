@@ -88,7 +88,9 @@ class SettingsScreen extends ConsumerWidget {
   Future<void> _export(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context);
     try {
-      await ref.read(settingsViewModelProvider.notifier).export();
+      await ref
+          .read(settingsViewModelProvider.notifier)
+          .export(l10n.backupShareSubject);
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.of(

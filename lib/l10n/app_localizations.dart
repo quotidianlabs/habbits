@@ -331,6 +331,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No more than {count} reminders can be scheduled at once, so some habits won\'t notify. Turn off reminders on a few habits.'**
   String reminderLimitBody(int count);
+
+  /// No description provided for @backupShareSubject.
+  ///
+  /// In en, this message translates to:
+  /// **'Habbits backup'**
+  String get backupShareSubject;
 }
 
 class _AppLocalizationsDelegate
