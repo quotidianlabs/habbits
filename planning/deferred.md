@@ -33,24 +33,20 @@ See [`audits/2026-06-20-hardening-audit.md`](audits/2026-06-20-hardening-audit.m
 Items 1, 2, 6 are being fixed in `changes/2026-06-20.01-harden-toggle-and-import`;
 the rest are below.
 
-- **`ReminderCoordinator._sync` re-entrancy** (audit #5, Medium) —
-  `reminder_coordinator.dart:41` is fired from 4 sources with no guard;
-  overlapping runs race on `cancelAll()`. *Revisit when* reminder scheduling is
-  next touched. Fix: serialize / debounce.
-- **Reminder coverage gaps** (audit #7, Medium) — no tests for the budget
-  overflow, `TZDateTime.from` DST conversion, cancel/reschedule sequencing,
-  permission denial, or malformed-time parsing. *Revisit with* any reminder fix
-  above.
+- **Reminder coverage gaps (remainder)** (audit #7, Medium) — budget overflow,
+  the schedule-instant construction, and `_sync` serialization/error handling are
+  now tested; still untested: permission-denial handling and explicit
+  cancel-then-reschedule ordering. *Revisit with* the next reminder change.
 - **Heatmap month label off by a column** (audit #8, Low) —
   `heatmap_grid.dart:42` labels by the column's Monday, not the column containing
   the 1st; a month starting Tue–Sun labels one column late. *Revisit when* the
   heatmap is next edited.
-- **DST / timezone reminder drift** (audit, disputed) —
-  `notification_service.dart:84` builds fire time via `TZDateTime.from` (preserves
-  instant, not wall-clock); `tz.local` set once at `init()`. *Revisit when* a
-  timezone/DST reminder bug is actually reported.
-- **`_sync` has no `try/catch`** (audit, disputed) — a plugin failure becomes an
-  unhandled async error. *Revisit with* the `_sync` re-entrancy fix.
+- **No resync on device timezone change** (audit, disputed remainder) —
+  `tz.local` is set once at `init()`; travelling across zones leaves reminders on
+  the old zone's wall-clock until the next sync. (The DST *construction* drift is
+  fixed via `scheduledInstant`.) *Revisit when* a timezone-change reminder bug is
+  reported. Fix: a platform timezone-change listener + `tz.setLocalLocation` +
+  resync.
 - **`'Habbits backup'` share subject hard-coded English** (audit, disputed) —
   `backup_repository.dart:28` bypasses l10n; Russian users get an English subject.
   *Revisit when* backup or i18n copy is next touched.

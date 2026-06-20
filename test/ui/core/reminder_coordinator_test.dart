@@ -36,10 +36,7 @@ class _FakeNotificationService extends NotificationService {
   }
 }
 
-Future<Widget> _app(
-  AppDatabase db,
-  _FakeNotificationService fake,
-) async {
+Future<Widget> _app(AppDatabase db, _FakeNotificationService fake) async {
   SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
   return ProviderScope(

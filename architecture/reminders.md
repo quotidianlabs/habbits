@@ -29,8 +29,16 @@ the habit is not yet completed that day.
 - Android uses inexact scheduling
   (`AndroidScheduleMode.inexactAllowWhileIdle`); reminders may fire a few
   minutes off, which is acceptable for daily habits.
-- Notification times are scheduled as local-zone instants via the `timezone`
-  package; the device's IANA zone is resolved once at init by `flutter_timezone`.
+- Notification times are scheduled by **local wall-clock instant**: the service
+  builds `tz.TZDateTime(tz.local, …)` from each reminder's date and `HH:mm`
+  (`scheduledInstant`), so a habit set to 09:00 fires at 09:00 local every day,
+  including across a DST transition. The device's IANA zone is resolved once at
+  init by `flutter_timezone`.
+- Resyncs are **serialized and best-effort**: `ReminderCoordinator._sync` runs
+  through a `CoalescingRunner`, so overlapping triggers can't interleave a
+  `cancelAll()` + reschedule (a single follow-up run is coalesced), and a
+  plugin/platform failure is swallowed rather than escaping as an unhandled async
+  error.
 
 ## Code map
 
