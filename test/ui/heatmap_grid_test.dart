@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/domain/heatmap.dart';
 import 'package:habbits/ui/widgets/heatmap_grid.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() {
+  setUpAll(initializeDateFormatting);
+
   // A 6-week span crossing May -> June 2026 (May 4 is a Monday).
   HeatmapData multiMonth() {
     final weeks = <List<HeatmapCell>>[];
@@ -19,6 +22,21 @@ void main() {
     }
     return HeatmapData(weeks);
   }
+
+  test('monthLabels places the label on the column containing the 1st', () {
+    // July 1 2026 is a Wednesday, so it falls mid-column (not on the Monday).
+    final data = buildHeatmap(
+      completed: const {},
+      today: DateTime(2026, 7, 5),
+      weeks: 6,
+    );
+    final labels = monthLabels(data.weeks, 'en');
+    final julCol = data.weeks.indexWhere(
+      (w) => w.any((c) => c.date == DateTime(2026, 7, 1)),
+    );
+    expect(julCol, isNonNegative);
+    expect(labels[julCol], 'Jul'); // not the column to its right
+  });
 
   testWidgets('renders a keyed cell per day', (tester) async {
     await tester.pumpWidget(

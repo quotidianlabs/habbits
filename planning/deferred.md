@@ -34,10 +34,6 @@ the rest are below.
   the schedule-instant construction, and `_sync` serialization/error handling are
   now tested; still untested: permission-denial handling and explicit
   cancel-then-reschedule ordering. *Revisit with* the next reminder change.
-- **Heatmap month label off by a column** (audit #8, Low) —
-  `heatmap_grid.dart:42` labels by the column's Monday, not the column containing
-  the 1st; a month starting Tue–Sun labels one column late. *Revisit when* the
-  heatmap is next edited.
 - **No resync on device timezone change** (audit, disputed remainder) —
   `tz.local` is set once at `init()`; travelling across zones leaves reminders on
   the old zone's wall-clock until the next sync. (The DST *construction* drift is

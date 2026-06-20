@@ -5,6 +5,29 @@ import '../../domain/dates.dart';
 import '../../domain/heatmap.dart';
 import '../core/habit_colors.dart';
 
+/// Month abbreviations for each week-column, placed where a month begins — the
+/// column that contains that month's 1st (not the column's Monday, which only
+/// coincides when the 1st falls on a Monday). The leftmost column falls back to
+/// its first cell's month as a starting reference; columns with no new month are
+/// `null`.
+List<String?> monthLabels(List<List<HeatmapCell>> weeks, String localeName) {
+  final fmt = DateFormat.MMM(localeName);
+  String fmtMonth(int month) => fmt.format(DateTime(2000, month));
+  final labels = <String?>[];
+  for (var i = 0; i < weeks.length; i++) {
+    final week = weeks[i];
+    final firstOfMonth = week.where((c) => c.date.day == 1);
+    if (firstOfMonth.isNotEmpty) {
+      labels.add(fmtMonth(firstOfMonth.first.date.month));
+    } else if (i == 0) {
+      labels.add(fmtMonth(week.first.date.month));
+    } else {
+      labels.add(null);
+    }
+  }
+  return labels;
+}
+
 /// Renders a [HeatmapData] as columns of weeks (each 7 cells, Monday..Sunday).
 /// Read-only — purely the activity picture. Optionally shows month labels.
 class HeatmapGrid extends StatelessWidget {
@@ -34,24 +57,8 @@ class HeatmapGrid extends StatelessWidget {
     }
   }
 
-  List<String?> _monthLabels(String localeName) {
-    final fmt = DateFormat.MMM(localeName);
-    final labels = <String?>[];
-    int? lastMonth;
-    for (final week in data.weeks) {
-      final m = week.first.date.month;
-      if (m != lastMonth) {
-        labels.add(fmt.format(DateTime(2000, m)));
-        lastMonth = m;
-      } else {
-        labels.add(null);
-      }
-    }
-    return labels;
-  }
-
   Widget _labelsRow(String localeName) {
-    final labels = _monthLabels(localeName);
+    final labels = monthLabels(data.weeks, localeName);
     final labelHeight = cellSize * 0.75 * 1.4;
     return Padding(
       padding: EdgeInsets.only(bottom: cellGap),
