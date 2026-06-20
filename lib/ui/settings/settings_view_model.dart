@@ -13,7 +13,8 @@ class SettingsViewModel extends _$SettingsViewModel {
   @override
   void build() {}
 
-  Future<void> export() => ref.read(backupRepositoryProvider).exportAndShare();
+  Future<void> export(String subject) =>
+      ref.read(backupRepositoryProvider).exportAndShare(subject: subject);
 
   /// Returns the decoded backup, or null if the user cancelled. Throws
   /// [BackupFormatException] on an invalid file (the view maps it to a message).
