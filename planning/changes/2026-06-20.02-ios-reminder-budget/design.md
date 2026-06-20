@@ -5,7 +5,7 @@ slug: ios-reminder-budget
 summary: Cap the reminder schedule at the iOS 64-notification budget and warn in Settings when habits exceed it.
 supersedes: null
 superseded_by: null
-pr: null
+pr: 14
 outcome: |
   computeReminderSchedule now generates all candidates, sorts by fire time, and
   truncates to kIosNotificationBudget (64) — the soonest reminders win, the OS
