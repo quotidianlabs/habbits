@@ -15,3 +15,7 @@ lint-ci:
 
 test *args:
     flutter test {{ args }}
+
+# Print the planning change index (grouped by status) to stdout.
+index:
+    python3 planning/index.py
