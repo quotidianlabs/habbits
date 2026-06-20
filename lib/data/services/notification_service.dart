@@ -33,9 +33,7 @@ class NotificationService {
 
   Future<void> init() async {
     tzdata.initializeTimeZones();
-    // flutter_timezone 5.x returns TimezoneInfo (not String); use .identifier.
-    final tzInfo = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(tzInfo.identifier));
+    await refreshTimeZone();
 
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const darwin = DarwinInitializationSettings(
@@ -55,6 +53,36 @@ class NotificationService {
         ?.createNotificationChannel(
           const AndroidNotificationChannel(_channelId, _channelName),
         );
+  }
+
+  /// Re-resolves the device's IANA zone into `tz.local`. Called at init and on
+  /// app resume so reminders follow the device after a timezone change (travel).
+  Future<void> refreshTimeZone() async {
+    // flutter_timezone 5.x returns TimezoneInfo (not String); use .identifier.
+    final tzInfo = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(tzInfo.identifier));
+  }
+
+  /// Whether notifications are currently permitted — a check, not a prompt.
+  /// Defaults to true on a platform that exposes neither query (don't nag).
+  ///
+  /// The iOS resolver returns null off-iOS, so a non-null result means iOS; on
+  /// iOS `isEnabled` reads false for the "not determined" state, so callers must
+  /// prompt (`requestPermission`) before relying on this. Mirrors the
+  /// resolve-iOS-then-Android pattern in [requestPermission].
+  Future<bool> hasPermission() async {
+    final ios = await _plugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >()
+        ?.checkPermissions();
+    if (ios != null) return ios.isEnabled;
+    final android = await _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.areNotificationsEnabled();
+    return android ?? true;
   }
 
   /// Asks the OS for notification permission. Returns true if granted.

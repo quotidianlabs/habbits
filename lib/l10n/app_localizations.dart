@@ -337,6 +337,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Habbits backup'**
   String get backupShareSubject;
+
+  /// No description provided for @notificationsOffTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are off'**
+  String get notificationsOffTitle;
+
+  /// No description provided for @notificationsOffBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders won\'t fire until you enable notifications for Habbits in system settings.'**
+  String get notificationsOffBody;
 }
 
 class _AppLocalizationsDelegate

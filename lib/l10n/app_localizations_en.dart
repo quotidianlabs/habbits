@@ -159,4 +159,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupShareSubject => 'Habbits backup';
+
+  @override
+  String get notificationsOffTitle => 'Notifications are off';
+
+  @override
+  String get notificationsOffBody =>
+      'Reminders won\'t fire until you enable notifications for Habbits in system settings.';
 }

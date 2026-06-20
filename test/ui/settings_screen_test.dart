@@ -9,12 +9,21 @@ import 'package:habbits/domain/models/backup_data.dart';
 import 'package:habbits/domain/reminder_schedule.dart';
 import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/ui/core/locale_controller.dart';
+import 'package:habbits/ui/core/notification_permission.dart';
 import 'package:habbits/ui/settings/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<SharedPreferences> _prefs() async {
   SharedPreferences.setMockInitialValues({});
   return SharedPreferences.getInstance();
+}
+
+/// A [NotificationPermission] pinned to a fixed value for tests.
+class _FixedPermission extends NotificationPermission {
+  _FixedPermission(this._value);
+  final bool? _value;
+  @override
+  bool? build() => _value;
 }
 
 void main() {
@@ -84,6 +93,65 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const Key('reminder-budget-warning')), findsNothing);
+  });
+
+  Widget settingsAppWithPermission(
+    AppDatabase db,
+    SharedPreferences prefs,
+    bool? granted,
+  ) => ProviderScope(
+    overrides: [
+      appDatabaseProvider.overrideWithValue(db),
+      sharedPreferencesProvider.overrideWithValue(prefs),
+      notificationPermissionProvider.overrideWith(
+        () => _FixedPermission(granted),
+      ),
+    ],
+    child: const MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: SettingsScreen(),
+    ),
+  );
+
+  testWidgets('warns when reminders are on but permission is denied', (
+    tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await seedReminderHabits(db, 1);
+    final prefs = await _prefs();
+
+    await tester.pumpWidget(settingsAppWithPermission(db, prefs, false));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('notifications-off-warning')), findsOneWidget);
+  });
+
+  testWidgets('no permission warning when granted', (tester) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await seedReminderHabits(db, 1);
+    final prefs = await _prefs();
+
+    await tester.pumpWidget(settingsAppWithPermission(db, prefs, true));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('notifications-off-warning')), findsNothing);
+  });
+
+  testWidgets('no permission warning when there are no reminders', (
+    tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await db.habitDao.createHabit(name: 'NoReminder', color: 1);
+    final prefs = await _prefs();
+
+    await tester.pumpWidget(settingsAppWithPermission(db, prefs, false));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('notifications-off-warning')), findsNothing);
   });
 
   testWidgets('confirming an import replaces the data', (tester) async {

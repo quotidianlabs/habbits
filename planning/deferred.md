@@ -30,13 +30,15 @@ See [`audits/2026-06-20-hardening-audit.md`](audits/2026-06-20-hardening-audit.m
 Items 1, 2, 6 are being fixed in `changes/2026-06-20.01-harden-toggle-and-import`;
 the rest are below.
 
-- **Reminder coverage gaps (remainder)** (audit #7, Medium) — budget overflow,
-  the schedule-instant construction, and `_sync` serialization/error handling are
-  now tested; still untested: permission-denial handling and explicit
-  cancel-then-reschedule ordering. *Revisit with* the next reminder change.
-- **No resync on device timezone change** (audit, disputed remainder) —
-  `tz.local` is set once at `init()`; travelling across zones leaves reminders on
-  the old zone's wall-clock until the next sync. (The DST *construction* drift is
-  fixed via `scheduledInstant`.) *Revisit when* a timezone-change reminder bug is
-  reported. Fix: a platform timezone-change listener + `tz.setLocalLocation` +
-  resync.
+- **Timezone change while foregrounded** (audit, disputed remainder) — `tz.local`
+  is now refreshed at init and on app resume, so travel-then-open is covered; an
+  app kept in the foreground across a zone change still won't resync until the
+  next resume. *Revisit when* reported. Fix: a platform timezone-change broadcast
+  listener + `tz.setLocalLocation` + resync.
+- **Open-system-settings from the notifications-off warning** — the Settings
+  warning is a hint only; a tappable "open settings" deep-link needs a new dep
+  (`app_settings`/`permission_handler`). *Revisit when* that dep is justified.
+- **`NotificationService.syncSchedule` plugin calls untested** — the real
+  cancel-all-then-`zonedSchedule` sequence is only covered at the coordinator
+  layer (via a fake); the literal plugin calls would need a mock-method-channel
+  test. *Revisit if* the scheduling glue changes.
