@@ -97,7 +97,11 @@ Most rejections were coverage-gap items the skeptics declined to count as
 
 - A finder reported the **backup test-file naming inversion** that `deferred.md`
   documents; a skeptic rejected it, claiming the names are *not* actually swapped.
-  The `deferred.md` note may be stale — worth a manual confirm before acting on it.
+  Confirmed firsthand during PR #13: `backup_test.dart` imports only the codec
+  (pure decode/encode tests) while `backup_codec_test.dart` imports drift
+  (DB-backed `buildBackup`/`importReplace`) — the more-specific name sits on the
+  less-codec-pure file. The `deferred.md` note is accurate; the skeptic's
+  rejection was wrong.
 - The **iPad `share_plus` popover anchor** and **Android channel-name i18n** items
   were surfaced and then set aside as already-documented known edges (both already
   in `deferred.md`).
