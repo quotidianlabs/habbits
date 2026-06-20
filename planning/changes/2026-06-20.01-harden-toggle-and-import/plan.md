@@ -3,7 +3,7 @@ status: draft
 date: 2026-06-20
 slug: harden-toggle-and-import
 spec: harden-toggle-and-import
-pr: null
+pr: 13
 ---
 
 # harden-toggle-and-import — implementation plan
