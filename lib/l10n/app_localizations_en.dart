@@ -156,4 +156,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String reminderLimitBody(int count) {
     return 'No more than $count reminders can be scheduled at once, so some habits won\'t notify. Turn off reminders on a few habits.';
   }
+
+  @override
+  String get backupShareSubject => 'Habbits backup';
 }
