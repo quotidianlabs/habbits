@@ -1,12 +1,16 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-20
 slug: reminders-resilience
 summary: Warn when notification permission is denied, refresh the timezone on resume, and test removed-reminder cleanup.
 supersedes: null
 superseded_by: null
 pr: null
-outcome: null
+outcome: |
+  notificationPermissionProvider + a Settings "notifications off" warning;
+  tz.local refreshed on resume; coordinator tests for permission recording,
+  removed-reminder exclusion, and resume tz-refresh. Closes audit #7a/#7b and
+  the realistic half of the timezone remainder. +7 tests (160 total), lint clean.
 ---
 
 # Design: Reminder resilience

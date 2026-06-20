@@ -47,7 +47,7 @@ final class SettingsViewModelProvider
   }
 }
 
-String _$settingsViewModelHash() => r'523e0d25c18b2bc5abebf70e586d53b0fe5dd39a';
+String _$settingsViewModelHash() => r'2ab54a75750bbc74c87258450c5bcb7413320886';
 
 /// Commands for the settings screen's data-management actions. The view keeps
 /// ownership of snackbars/dialogs; this exposes the operations they call.

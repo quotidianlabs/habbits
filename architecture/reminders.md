@@ -23,7 +23,10 @@ the habit is not yet completed that day.
   than 64 habits have reminders the most imminent 64 win and the rest get none
   until the next resync — see Known edges.
 - The first time any reminder is enabled the coordinator calls
-  `requestPermission()`; subsequent syncs skip the prompt.
+  `requestPermission()`; subsequent syncs skip the prompt. After the prompt (and
+  on each resync) it records the current status in `notificationPermissionProvider`,
+  and Settings shows a "notifications off" warning when reminders are enabled but
+  permission is denied.
 - Tapping a notification opens the app to the home screen; there is no
   deep-link to a specific habit.
 - Android uses inexact scheduling
@@ -32,8 +35,9 @@ the habit is not yet completed that day.
 - Notification times are scheduled by **local wall-clock instant**: the service
   builds `tz.TZDateTime(tz.local, …)` from each reminder's date and `HH:mm`
   (`scheduledInstant`), so a habit set to 09:00 fires at 09:00 local every day,
-  including across a DST transition. The device's IANA zone is resolved once at
-  init by `flutter_timezone`.
+  including across a DST transition. The device's IANA zone is resolved at init
+  and **refreshed on app resume** (`refreshTimeZone`), so reminders follow the
+  device after travel across timezones.
 - Resyncs are **serialized and best-effort**: `ReminderCoordinator._sync` runs
   through a `CoalescingRunner`, so overlapping triggers can't interleave a
   `cancelAll()` + reschedule (a single follow-up run is coalesced), and a

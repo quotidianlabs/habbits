@@ -103,7 +103,9 @@ void main() {
     overrides: [
       appDatabaseProvider.overrideWithValue(db),
       sharedPreferencesProvider.overrideWithValue(prefs),
-      notificationPermissionProvider.overrideWith(() => _FixedPermission(granted)),
+      notificationPermissionProvider.overrideWith(
+        () => _FixedPermission(granted),
+      ),
     ],
     child: const MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
