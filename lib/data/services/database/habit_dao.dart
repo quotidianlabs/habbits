@@ -63,26 +63,33 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
   }
 
   /// Toggles a completion for [habitId] on [date]: inserts if absent, deletes if
-  /// present. Idempotent with respect to the displayed state.
+  /// present. The read and the write run in a single transaction so two
+  /// near-simultaneous toggles (e.g. a rapid double-tap) serialize instead of
+  /// both reading "absent" and colliding on the {habitId, localDate} unique key.
+  /// Idempotent with respect to the displayed state.
   Future<void> toggleCompletion(int habitId, DateTime date) async {
     final iso = formatIsoDate(date);
-    final existing =
-        await (select(completions)..where(
-              (c) => c.habitId.equals(habitId) & c.localDate.equals(iso),
-            ))
-            .getSingleOrNull();
+    await transaction(() async {
+      final existing =
+          await (select(completions)..where(
+                (c) => c.habitId.equals(habitId) & c.localDate.equals(iso),
+              ))
+              .getSingleOrNull();
 
-    if (existing != null) {
-      await (delete(completions)..where((c) => c.id.equals(existing.id))).go();
-    } else {
-      await into(completions).insert(
-        CompletionsCompanion.insert(
-          habitId: habitId,
-          localDate: iso,
-          createdAt: DateTime.now(),
-        ),
-      );
-    }
+      if (existing != null) {
+        await (delete(
+          completions,
+        )..where((c) => c.id.equals(existing.id))).go();
+      } else {
+        await into(completions).insert(
+          CompletionsCompanion.insert(
+            habitId: habitId,
+            localDate: iso,
+            createdAt: DateTime.now(),
+          ),
+        );
+      }
+    });
   }
 
   /// Groups [rows] from a habits ⋈ completions join into [HabitWithDates]

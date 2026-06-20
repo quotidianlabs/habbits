@@ -80,7 +80,7 @@ BackupHabit _decodeHabit(Object? item) {
     throw BackupFormatException('Habit "$name" has an invalid sortOrder.');
   }
   final reminder = item['reminderTime'];
-  if (reminder != null && reminder is! String) {
+  if (reminder != null && (reminder is! String || !_isValidHhmm(reminder))) {
     throw BackupFormatException('Habit "$name" has an invalid reminderTime.');
   }
   final createdRaw = item['createdAt'];
@@ -94,6 +94,7 @@ BackupHabit _decodeHabit(Object? item) {
       'Habit "$name" has an invalid completions list.',
     );
   }
+  final seen = <String>{};
   final completions = <String>[];
   for (final c in completionsRaw) {
     if (c is! String || !_isValidIsoDate(c)) {
@@ -101,7 +102,9 @@ BackupHabit _decodeHabit(Object? item) {
         'Habit "$name" has an invalid completion date: $c.',
       );
     }
-    completions.add(c);
+    // Drop exact-duplicate dates so a redundant entry doesn't collide on the
+    // Completions {habitId, localDate} unique key and abort the whole import.
+    if (seen.add(c)) completions.add(c);
   }
   return BackupHabit(
     name: name,
@@ -111,6 +114,10 @@ BackupHabit _decodeHabit(Object? item) {
     createdAt: createdAt,
     completions: completions,
   );
+}
+
+bool _isValidHhmm(String s) {
+  return RegExp(r'^([01]\d|2[0-3]):[0-5]\d$').hasMatch(s);
 }
 
 bool _isValidIsoDate(String s) {

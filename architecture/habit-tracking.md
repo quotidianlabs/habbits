@@ -27,7 +27,7 @@ The create/track/edit loop for habits and their daily completion records.
 ## Invariants
 
 - Every habit carries an explicit integer `sortOrder`. `HabitDao.reorderHabits` assigns each habit its index in the provided list within a single transaction, making `sortOrder` values dense (`0..n-1`) after any reorder. New habits are assigned `max(existing sortOrder) + 1` (0 for an empty list), so they always land at the end with a unique position even after deletions.
-- A completion is keyed by `(habitId, localDate)` with a `UNIQUE` constraint enforced at the database level. A given day is either done or not — no partial or duplicate marks. `toggleCompletion` inserts if absent and deletes if present.
+- A completion is keyed by `(habitId, localDate)` with a `UNIQUE` constraint enforced at the database level. A given day is either done or not — no partial or duplicate marks. `toggleCompletion` inserts if absent and deletes if present, running its read and write in a single transaction so two near-simultaneous toggles (a rapid double-tap) serialize rather than both inserting and colliding on the unique key.
 - Deleting a habit removes all its completions immediately via `ON DELETE CASCADE`; there is no soft-delete or tombstone.
 - Foreign keys are enabled at open time (`PRAGMA foreign_keys = ON`).
 

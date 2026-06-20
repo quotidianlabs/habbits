@@ -59,10 +59,11 @@ that is not a valid Habbits backup.
 
 - `decodeBackup` validates and throws `BackupFormatException` on the first violation; it never returns a partial result:
   - **Document shape:** parseable JSON; root is a `Map`; `app == 'habbits'`; `version` is int `1`; `exportedAt` parses as a `DateTime`; `habits` is a `List`.
-  - **Per-habit fields:** `name` (non-empty string), `color` (int), `sortOrder` (int), `reminderTime` (string or absent), `createdAt` (parseable datetime), `completions` (list of ISO `YYYY-MM-DD` calendar-valid date strings).
+  - **Per-habit fields:** `name` (non-empty string), `color` (int), `sortOrder` (int), `reminderTime` (`HH:mm` string `00:00`–`23:59`, or absent), `createdAt` (parseable datetime), `completions` (list of ISO `YYYY-MM-DD` calendar-valid date strings).
 - The codec (`backup_codec.dart`) has no Drift or Flutter imports — it is pure Dart and is unit-testable in isolation.
 - Validation completes entirely before any DB write; a bad file leaves existing data untouched.
 - `HabitDao.importReplace` runs in a single Drift transaction: `DELETE completions` → `DELETE habits` → insert each habit then its completions. A mid-import failure leaves the database in its prior state.
+- `decodeBackup` collapses exact-duplicate completion dates within a habit, so a redundant entry imports cleanly instead of colliding on the `Completions {habitId, localDate}` unique key.
 - `buildBackup` sorts completion dates ascending, producing a stable diff across identical backups.
 - Imported completions receive a fresh `created_at` timestamp (`DateTime.now()`); the field is audit-only and is not exported.
 
