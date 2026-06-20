@@ -8,6 +8,19 @@ import '../../domain/reminder_schedule.dart';
 
 part 'notification_service.g.dart';
 
+/// The local wall-clock instant for [when]'s date and time-of-day in `tz.local`.
+/// Built directly (not via `TZDateTime.from`, which would preserve the absolute
+/// instant of a VM-local `DateTime`) so a reminder fires at the chosen `HH:mm`
+/// every day, including across a DST transition.
+tz.TZDateTime scheduledInstant(DateTime when) => tz.TZDateTime(
+  tz.local,
+  when.year,
+  when.month,
+  when.day,
+  when.hour,
+  when.minute,
+);
+
 /// Wraps flutter_local_notifications + timezone for on-device habit reminders.
 /// The plugin boundary; all decision logic lives in computeReminderSchedule.
 class NotificationService {
@@ -81,7 +94,7 @@ class NotificationService {
         id: i,
         title: r.habitName,
         body: body,
-        scheduledDate: tz.TZDateTime.from(r.when, tz.local),
+        scheduledDate: scheduledInstant(r.when),
         notificationDetails: details,
         androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       );
