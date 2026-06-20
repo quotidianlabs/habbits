@@ -42,6 +42,25 @@ void main() {
     expect(rows.single.dates, isEmpty);
   });
 
+  test(
+    'toggleCompletion tolerates concurrent double-toggle without throwing',
+    () async {
+      final id = await dao.createHabit(name: 'Read', color: 1);
+      final date = DateTime(2026, 6, 20);
+
+      // Two near-simultaneous taps on the same day must not collide on the
+      // {habitId, localDate} unique key. Two toggles net to empty; the key
+      // invariant is that neither throws a UNIQUE-constraint SqliteException.
+      await Future.wait([
+        dao.toggleCompletion(id, date),
+        dao.toggleCompletion(id, date),
+      ]);
+
+      final rows = await dao.watchHabitsWithDates().first;
+      expect(rows.single.dates, isEmpty);
+    },
+  );
+
   test('watchHabitsWithDates groups completion dates per habit', () async {
     final id = await dao.createHabit(name: 'Meditate', color: 1);
     await dao.toggleCompletion(id, DateTime(2026, 6, 13));
