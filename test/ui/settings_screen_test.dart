@@ -69,13 +69,12 @@ void main() {
     await tester.pumpWidget(settingsApp(db, prefs));
     await tester.pumpAndSettle();
 
-    expect(
-      find.byKey(const Key('reminder-budget-warning')),
-      findsOneWidget,
-    );
+    expect(find.byKey(const Key('reminder-budget-warning')), findsOneWidget);
   });
 
-  testWidgets('no warning when reminders are within the budget', (tester) async {
+  testWidgets('no warning when reminders are within the budget', (
+    tester,
+  ) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
     await seedReminderHabits(db, 3);
