@@ -5,7 +5,7 @@ slug: heatmap-month-label
 summary: Place the heatmap month label on the column containing the 1st, not the column's Monday.
 supersedes: null
 superseded_by: null
-pr: null
+pr: 17
 outcome: |
   Extracted a testable monthLabels() that labels the column containing the 1st.
   Closes audit #8. +1 test (147 total), lint clean.
