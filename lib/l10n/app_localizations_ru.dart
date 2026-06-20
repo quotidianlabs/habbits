@@ -163,4 +163,11 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get backupShareSubject => 'Резервная копия Habbits';
+
+  @override
+  String get notificationsOffTitle => 'Уведомления отключены';
+
+  @override
+  String get notificationsOffBody =>
+      'Напоминания не будут приходить, пока вы не включите уведомления для Habbits в настройках системы.';
 }

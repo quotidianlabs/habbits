@@ -6,6 +6,7 @@ import '../../domain/models/habit_summary.dart';
 import '../../domain/reminder_schedule.dart';
 import '../../l10n/app_localizations.dart';
 import '../core/locale_controller.dart';
+import '../core/notification_permission.dart';
 import '../core/theme_controller.dart';
 import '../habit_list/habit_list_view_model.dart';
 import 'settings_view_model.dart';
@@ -39,6 +40,29 @@ class SettingsScreen extends ConsumerWidget {
                 ),
                 title: Text(l10n.reminderLimitTitle),
                 subtitle: Text(l10n.reminderLimitBody(kIosNotificationBudget)),
+              );
+            },
+          ),
+          Consumer(
+            builder: (context, ref, _) {
+              final summaries =
+                  ref.watch(habitListViewModelProvider).value ??
+                  const <HabitSummary>[];
+              final hasReminders = summaries.any(
+                (s) => s.habit.reminderTime != null,
+              );
+              final granted = ref.watch(notificationPermissionProvider);
+              if (!hasReminders || granted != false) {
+                return const SizedBox.shrink();
+              }
+              return ListTile(
+                key: const Key('notifications-off-warning'),
+                leading: Icon(
+                  Icons.notifications_off,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                title: Text(l10n.notificationsOffTitle),
+                subtitle: Text(l10n.notificationsOffBody),
               );
             },
           ),

@@ -78,5 +78,8 @@
     "placeholders": { "count": { "type": "int" } }
   },
 
-  "backupShareSubject": "Habbits backup"
+  "backupShareSubject": "Habbits backup",
+
+  "notificationsOffTitle": "Notifications are off",
+  "notificationsOffBody": "Reminders won't fire until you enable notifications for Habbits in system settings."
 }
