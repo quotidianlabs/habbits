@@ -65,6 +65,11 @@ class NotificationService {
 
   /// Whether notifications are currently permitted — a check, not a prompt.
   /// Defaults to true on a platform that exposes neither query (don't nag).
+  ///
+  /// The iOS resolver returns null off-iOS, so a non-null result means iOS; on
+  /// iOS `isEnabled` reads false for the "not determined" state, so callers must
+  /// prompt (`requestPermission`) before relying on this. Mirrors the
+  /// resolve-iOS-then-Android pattern in [requestPermission].
   Future<bool> hasPermission() async {
     final ios = await _plugin
         .resolvePlatformSpecificImplementation<

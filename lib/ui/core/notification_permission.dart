@@ -12,5 +12,6 @@ class NotificationPermission extends _$NotificationPermission {
   @override
   bool? build() => null;
 
-  void set(bool granted) => state = granted;
+  /// Records the latest observed permission status (from the coordinator).
+  void report(bool granted) => state = granted;
 }

@@ -130,6 +130,27 @@ void main() {
     expect(container.read(notificationPermissionProvider), true);
   });
 
+  testWidgets('re-enabling permission flips the provider on resume', (
+    tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    await _seedReminderHabit(db);
+    final fake = _FakeNotificationService()..permission = false;
+
+    final container = await _pump(tester, db, fake);
+    await tester.pumpAndSettle();
+    expect(container.read(notificationPermissionProvider), false);
+
+    // User enables notifications in system settings, then returns to the app.
+    fake.permission = true;
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+
+    expect(container.read(notificationPermissionProvider), true);
+  });
+
   testWidgets('a removed reminder drops out of the next sync', (tester) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);

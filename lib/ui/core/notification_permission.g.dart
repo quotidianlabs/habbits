@@ -57,7 +57,7 @@ final class NotificationPermissionProvider
 }
 
 String _$notificationPermissionHash() =>
-    r'4ccf7af90949340b0664555c41cef05c6b59a795';
+    r'0e109f2e11419d85e7a72bef1466dac195784c86';
 
 /// Whether the OS currently permits notifications: `true` granted, `false`
 /// denied, `null` not yet known. The [ReminderCoordinator] sets it after the

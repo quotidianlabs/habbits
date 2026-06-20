@@ -47,15 +47,24 @@ class _ReminderCoordinatorState extends ConsumerState<ReminderCoordinator> {
   Future<void> _sync() => _runner.run(_runSyncSafe);
 
   /// On resume, re-resolve the device timezone (it may have changed while away)
-  /// before resyncing, so reminders follow the device after travel.
+  /// and re-check notification permission (the user may have toggled it in system
+  /// settings) before resyncing — both only happen here, not on every sync.
   Future<void> _resyncWithTimeZone() => _runner.run(() async {
+    final service = ref.read(notificationServiceProvider);
     try {
-      await ref.read(notificationServiceProvider).refreshTimeZone();
+      await service.refreshTimeZone();
+      if (_permissionAsked) await _updatePermission(service);
     } catch (_) {
       // Best-effort; fall through to the resync regardless.
     }
     await _runSyncSafe();
   });
+
+  Future<void> _updatePermission(NotificationService service) async {
+    final granted = await service.hasPermission();
+    if (!mounted) return;
+    ref.read(notificationPermissionProvider.notifier).report(granted);
+  }
 
   Future<void> _runSyncSafe() async {
     try {
@@ -81,14 +90,14 @@ class _ReminderCoordinatorState extends ConsumerState<ReminderCoordinator> {
     ];
 
     final service = ref.read(notificationServiceProvider);
-    if (enabled.isNotEmpty) {
-      if (!_permissionAsked) {
-        _permissionAsked = true;
-        await service.requestPermission();
-      }
-      final granted = await service.hasPermission();
-      if (!mounted) return;
-      ref.read(notificationPermissionProvider.notifier).set(granted);
+    // Prompt + record permission once (the first sync with reminders); thereafter
+    // it's only re-checked on resume. requestPermission() must run before
+    // hasPermission() — on iOS a fresh "not determined" state reads as disabled
+    // until the prompt resolves.
+    if (enabled.isNotEmpty && !_permissionAsked) {
+      _permissionAsked = true;
+      await service.requestPermission();
+      await _updatePermission(service);
     }
     if (!mounted) return;
     final body = AppLocalizations.of(context).reminderBody;
