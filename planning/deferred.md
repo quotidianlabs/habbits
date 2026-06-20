@@ -41,10 +41,6 @@ the rest are below.
   overflow, `TZDateTime.from` DST conversion, cancel/reschedule sequencing,
   permission denial, or malformed-time parsing. *Revisit with* any reminder fix
   above.
-- **Heatmap month label off by a column** (audit #8, Low) —
-  `heatmap_grid.dart:42` labels by the column's Monday, not the column containing
-  the 1st; a month starting Tue–Sun labels one column late. *Revisit when* the
-  heatmap is next edited.
 - **DST / timezone reminder drift** (audit, disputed) —
   `notification_service.dart:84` builds fire time via `TZDateTime.from` (preserves
   instant, not wall-clock); `tz.local` set once at `init()`. *Revisit when* a
