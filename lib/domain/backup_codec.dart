@@ -80,7 +80,7 @@ BackupHabit _decodeHabit(Object? item) {
     throw BackupFormatException('Habit "$name" has an invalid sortOrder.');
   }
   final reminder = item['reminderTime'];
-  if (reminder != null && reminder is! String) {
+  if (reminder != null && (reminder is! String || !_isValidHhmm(reminder))) {
     throw BackupFormatException('Habit "$name" has an invalid reminderTime.');
   }
   final createdRaw = item['createdAt'];
@@ -111,6 +111,10 @@ BackupHabit _decodeHabit(Object? item) {
     createdAt: createdAt,
     completions: completions,
   );
+}
+
+bool _isValidHhmm(String s) {
+  return RegExp(r'^([01]\d|2[0-3]):[0-5]\d$').hasMatch(s);
 }
 
 bool _isValidIsoDate(String s) {

@@ -76,6 +76,33 @@ void main() {
         '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000","habits":[{"name":"X","color":1,"sortOrder":0,"createdAt":"2026-06-01T00:00:00.000","completions":["2026-13-40"]}]}',
       ),
     );
+
+    String habitWithReminder(String reminderJson) =>
+        '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000",'
+        '"habits":[{"name":"X","color":1,"reminderTime":$reminderJson,'
+        '"sortOrder":0,"createdAt":"2026-06-01T00:00:00.000","completions":[]}]}';
+
+    test(
+      'reminderTime that is not HH:mm (word)',
+      () => expectReject(habitWithReminder('"9am"')),
+    );
+    test(
+      'reminderTime that is empty',
+      () => expectReject(habitWithReminder('""')),
+    );
+    test(
+      'reminderTime with out-of-range hour/minute',
+      () => expectReject(habitWithReminder('"99:99"')),
+    );
+  });
+
+  test('decodes a habit with a valid HH:mm reminderTime', () {
+    final decoded = decodeBackup(
+      '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000",'
+      '"habits":[{"name":"X","color":1,"reminderTime":"08:30",'
+      '"sortOrder":0,"createdAt":"2026-06-01T00:00:00.000","completions":[]}]}',
+    );
+    expect(decoded.habits.single.reminderTime, '08:30');
   });
 
   test('decodes an empty-habits backup', () {
