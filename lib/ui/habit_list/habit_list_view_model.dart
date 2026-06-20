@@ -5,6 +5,7 @@ import '../../domain/completion_stats.dart';
 import '../../domain/dates.dart';
 import '../../domain/models/habit_summary.dart';
 import '../../domain/streak.dart';
+import '../core/current_day.dart';
 import '../core/habit_colors.dart';
 
 part 'habit_list_view_model.g.dart';
@@ -16,8 +17,8 @@ class HabitListViewModel extends _$HabitListViewModel {
   @override
   Stream<List<HabitSummary>> build() {
     final repo = ref.watch(habitRepositoryProvider);
+    final today = ref.watch(currentDayProvider);
     return repo.watchHabits().map((rows) {
-      final today = dateOnly(DateTime.now());
       return [
         for (final row in rows)
           HabitSummary(

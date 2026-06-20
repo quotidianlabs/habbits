@@ -7,7 +7,16 @@ import 'package:habbits/data/services/database/database.dart';
 import 'package:habbits/data/services/database/database_providers.dart';
 import 'package:habbits/domain/dates.dart';
 import 'package:habbits/domain/models/habit_summary.dart';
+import 'package:habbits/ui/core/current_day.dart';
 import 'package:habbits/ui/habit_list/habit_list_view_model.dart';
+
+/// A [CurrentDay] pinned to a fixed day, bypassing the real timer/lifecycle.
+class _FixedCurrentDay extends CurrentDay {
+  _FixedCurrentDay(this._day);
+  final DateTime _day;
+  @override
+  DateTime build() => _day;
+}
 
 Future<List<HabitSummary>> nextSummaries(
   ProviderContainer container,
@@ -93,6 +102,37 @@ void main() {
       (l) => l.length == 2 && l.first.habit.id == b,
     );
     expect(list.map((s) => s.habit.name), ['B', 'A']);
+  });
+
+  test('anchors today on currentDayProvider, not wall-clock now', () async {
+    final completionDay = dateOnly(DateTime.now());
+    final nextDay = nextLocalMidnight(completionDay);
+
+    Future<bool> doneTodayWith(DateTime overrideDay) async {
+      final db = AppDatabase(NativeDatabase.memory());
+      final container = ProviderContainer(
+        overrides: [
+          appDatabaseProvider.overrideWithValue(db),
+          currentDayProvider.overrideWith(() => _FixedCurrentDay(overrideDay)),
+        ],
+      );
+      addTearDown(container.dispose);
+      addTearDown(db.close);
+
+      final id = await container
+          .read(habitDaoProvider)
+          .createHabit(name: 'Read', color: 1);
+      await container.read(habitDaoProvider).toggleCompletion(id, completionDay);
+      final summaries = await nextSummaries(
+        container,
+        (l) => l.any((s) => s.habit.id == id && s.dates.contains(completionDay)),
+      );
+      return summaries.single.doneToday;
+    }
+
+    // Same day as the completion -> done today; the day after -> not done today.
+    expect(await doneTodayWith(completionDay), isTrue);
+    expect(await doneTodayWith(nextDay), isFalse);
   });
 
   test('computes streak, doneToday, percent, and dates', () async {
