@@ -14,6 +14,7 @@ Design + plan for every non-trivial change live in `planning/`. Read
   implementing PR sets `status: shipped` and fills `pr` / `outcome` in the
   branch — there is no folder move. The change listing is generated: run
   `just index`.
+- Decisions taken without code (esp. options rejected with a load-bearing reason) go in `planning/decisions/YYYY-MM-DD-<slug>.md` (the `decision.md` template), each with a Revisit trigger; listed by `just index`.
 - Real-but-unscheduled items live in `planning/deferred.md`.
 - The `architecture/` capability docs live at the repo root (one file per
   capability) and are the living truth-home for what the system does now.
