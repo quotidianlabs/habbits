@@ -3,7 +3,7 @@ name: release
 on:
   push:
     tags:
-      - 'v*'
+      - '[0-9]+.[0-9]+.[0-9]+'
 
 # Needed for softprops/action-gh-release to create the release.
 permissions:
@@ -22,16 +22,16 @@ jobs:
           channel: stable
           cache: true
 
-      # Tag vX.Y.Z must match pubspec.yaml `version: X.Y.Z+N`.
+      # Tag X.Y.Z must match pubspec.yaml `version: X.Y.Z+N`.
       - name: Verify tag matches pubspec version
         run: |
           set -euo pipefail
-          tag="${GITHUB_REF_NAME#v}"
+          tag="$GITHUB_REF_NAME"
           pubspec="$(grep -E '^version:' pubspec.yaml \
             | sed -E 's/^version:[[:space:]]*([0-9]+\.[0-9]+\.[0-9]+).*/\1/')"
           echo "tag=$tag pubspec=$pubspec"
           if [ "$tag" != "$pubspec" ]; then
-            echo "::error::Tag v$tag does not match pubspec version $pubspec"
+            echo "::error::Tag $tag does not match pubspec version $pubspec"
             exit 1
           fi
 
@@ -76,12 +76,12 @@ jobs:
           mv build/app/outputs/flutter-apk/app-release.apk \
              "build/app/outputs/flutter-apk/habbits-${GITHUB_REF_NAME}.apk"
 
-      # tag vX.Y.Z -> planning/releases/X.Y.Z.md (omit body_path if absent).
+      # tag X.Y.Z -> planning/releases/X.Y.Z.md (omit body_path if absent).
       - name: Resolve release notes file
         id: notes
         run: |
           set -euo pipefail
-          version="${GITHUB_REF_NAME#v}"
+          version="$GITHUB_REF_NAME"
           path="planning/releases/${version}.md"
           if [ -f "$path" ]; then
             echo "body_path=$path" >> "$GITHUB_OUTPUT"

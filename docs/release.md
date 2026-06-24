@@ -90,7 +90,7 @@ and data-safety / content-rating forms, and roll out.
 
 # Sideload APK via GitHub Releases
 
-A parallel distribution channel to the Play `.aab` above: pushing a `v*` tag
+A parallel distribution channel to the Play `.aab` above: pushing an `X.Y.Z` tag
 builds a signed **universal** APK and publishes a GitHub Release with it
 attached. Driven by [`.github/workflows/release.yml`](../.github/workflows/release.yml).
 
@@ -126,17 +126,17 @@ never silently fall back to debug-signing.
 2. (Optional) Write user-facing notes to `planning/releases/X.Y.Z.md`. If
    present, they become the release body; GitHub's auto-generated "What's
    Changed" PR list is appended either way.
-3. Tag and push — the tag `vX.Y.Z` **must** match `pubspec.yaml` `X.Y.Z`:
+3. Tag and push — the tag `X.Y.Z` **must** match `pubspec.yaml` `X.Y.Z`:
 
    ```bash
-   git tag v1.0.0
-   git push origin v1.0.0
+   git tag 1.0.0
+   git push origin 1.0.0
    ```
 
-4. The workflow builds `habbits-vX.Y.Z.apk` and publishes the GitHub Release.
+4. The workflow builds `habbits-X.Y.Z.apk` and publishes the GitHub Release.
 
 Verify the published asset is upload-signed (not debug):
 
 ```bash
-apksigner verify --print-certs habbits-vX.Y.Z.apk   # DN must NOT be CN=Android Debug
+apksigner verify --print-certs habbits-X.Y.Z.apk   # DN must NOT be CN=Android Debug
 ```
