@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:habbits/data/services/database/database.dart';
 import 'package:habbits/data/services/database/database_providers.dart';
+import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/ui/habit_list/habit_list_screen.dart';
 
 /// Pumps frames until [finder] matches at least one widget, or [timeout]
@@ -30,7 +31,11 @@ void main() {
 
   Widget appWith(AppDatabase db) => ProviderScope(
     overrides: [appDatabaseProvider.overrideWithValue(db)],
-    child: const MaterialApp(home: HabitListScreen()),
+    child: const MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: HabitListScreen(),
+    ),
   );
 
   testWidgets('create, check off, streak=1, persists across relaunch', (
