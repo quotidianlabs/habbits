@@ -33,3 +33,31 @@ jobs:
           channel: stable
           cache: true
       - run: just install test
+
+  # Runs the critical-flow integration test on a KVM-accelerated Android
+  # emulator (standard ubuntu runners gained KVM in 2024). Only this file —
+  # screenshots_test.dart is a screenshot generator, not a pass/fail test.
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.2
+          channel: stable
+          cache: true
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - run: flutter pub get
+      - name: Run critical-flow integration test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: flutter test integration_test/critical_flow_test.dart
