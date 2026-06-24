@@ -60,16 +60,19 @@ void main() {
     now: () => DateTime(2026, 6, 13, 8, 0),
   );
 
-  test('first sync requests permission before checking, then reports', () async {
-    final fake = _FakeService();
-    bool? reported;
-    final sync = build(fake, reportPermission: (g) => reported = g);
+  test(
+    'first sync requests permission before checking, then reports',
+    () async {
+      final fake = _FakeService();
+      bool? reported;
+      final sync = build(fake, reportPermission: (g) => reported = g);
 
-    await sync.sync();
+      await sync.sync();
 
-    expect(fake.calls, ['request', 'check', 'schedule']);
-    expect(reported, isTrue);
-  });
+      expect(fake.calls, ['request', 'check', 'schedule']);
+      expect(reported, isTrue);
+    },
+  );
 
   test('permission prompt fires only once across syncs', () async {
     final fake = _FakeService();
@@ -93,16 +96,19 @@ void main() {
     expect(fake.calls, ['refresh', 'check', 'schedule']);
   });
 
-  test('onResume on a fresh controller still does the first-time prompt', () async {
-    final fake = _FakeService();
-    final sync = build(fake);
+  test(
+    'onResume on a fresh controller still does the first-time prompt',
+    () async {
+      final fake = _FakeService();
+      final sync = build(fake);
 
-    await sync.onResume();
+      await sync.onResume();
 
-    // No onResume-level re-check (gate unarmed), but _runSync does the one-time
-    // request+check; contrast the armed case above, which has no 'request'.
-    expect(fake.calls, ['refresh', 'request', 'check', 'schedule']);
-  });
+      // No onResume-level re-check (gate unarmed), but _runSync does the one-time
+      // request+check; contrast the armed case above, which has no 'request'.
+      expect(fake.calls, ['refresh', 'request', 'check', 'schedule']);
+    },
+  );
 
   test('overlapping syncs coalesce instead of interleaving', () async {
     final fake = _FakeService()..blockSync = Completer<void>();

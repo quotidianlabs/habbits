@@ -11,25 +11,31 @@ import 'coalescing_runner.dart';
 /// the once-only permission prompt, and the two order-sensitive sequences.
 class ReminderSync {
   ReminderSync({
-    required NotificationService service,
-    required List<ReminderHabit>? Function() readEnabledHabits,
-    required String Function() readBody,
-    required void Function(bool granted) reportPermission,
-    required bool Function() isActive,
-    DateTime Function() now = DateTime.now,
-  }) : _service = service,
-       _readEnabledHabits = readEnabledHabits,
-       _readBody = readBody,
-       _reportPermission = reportPermission,
-       _isActive = isActive,
-       _now = now;
+    required this.service,
+    required this.readEnabledHabits,
+    required this.readBody,
+    required this.reportPermission,
+    required this.isActive,
+    this.now = DateTime.now,
+  });
 
-  final NotificationService _service;
-  final List<ReminderHabit>? Function() _readEnabledHabits;
-  final String Function() _readBody;
-  final void Function(bool granted) _reportPermission;
-  final bool Function() _isActive;
-  final DateTime Function() _now;
+  final NotificationService service;
+
+  /// Current reminder-enabled habits, or null while summaries aren't ready yet
+  /// (skip the sync rather than cancel everything).
+  final List<ReminderHabit>? Function() readEnabledHabits;
+
+  /// The localized notification body text.
+  final String Function() readBody;
+
+  /// Records the latest observed permission status.
+  final void Function(bool granted) reportPermission;
+
+  /// Whether the owner is still live (≈ widget `mounted`); guards writes that run
+  /// after an `await`, so a post-dispose completion can't touch a dead owner.
+  final bool Function() isActive;
+
+  final DateTime Function() now;
 
   final _runner = CoalescingRunner();
   bool _permissionAsked = false;
@@ -42,7 +48,7 @@ class ReminderSync {
   /// before resyncing — both only happen here, not on every sync.
   Future<void> onResume() => _runner.run(() async {
     try {
-      await _service.refreshTimeZone();
+      await service.refreshTimeZone();
       if (_permissionAsked) await _updatePermission();
     } catch (_) {
       // Best-effort; fall through to the resync regardless.
@@ -59,7 +65,7 @@ class ReminderSync {
   }
 
   Future<void> _runSync() async {
-    final enabled = _readEnabledHabits();
+    final enabled = readEnabledHabits();
     if (enabled == null) return; // summaries not ready yet
 
     // Prompt + record permission once (the first sync with reminders); thereafter
@@ -68,19 +74,19 @@ class ReminderSync {
     // until the prompt resolves.
     if (enabled.isNotEmpty && !_permissionAsked) {
       _permissionAsked = true;
-      await _service.requestPermission();
+      await service.requestPermission();
       await _updatePermission();
     }
-    if (!_isActive()) return;
-    await _service.syncSchedule(
-      computeReminderSchedule(enabled, _now()),
-      body: _readBody(),
+    if (!isActive()) return;
+    await service.syncSchedule(
+      computeReminderSchedule(enabled, now()),
+      body: readBody(),
     );
   }
 
   Future<void> _updatePermission() async {
-    final granted = await _service.hasPermission();
-    if (!_isActive()) return;
-    _reportPermission(granted);
+    final granted = await service.hasPermission();
+    if (!isActive()) return;
+    reportPermission(granted);
   }
 }

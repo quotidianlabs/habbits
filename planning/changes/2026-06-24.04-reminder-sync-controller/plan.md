@@ -1,5 +1,5 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-24
 slug: reminder-sync-controller
 spec: reminder-sync-controller
