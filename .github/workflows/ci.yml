@@ -13,8 +13,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: extractions/setup-just@v3
+      - uses: actions/checkout@v5
+      - uses: extractions/setup-just@v4
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.44.2
@@ -25,8 +25,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: extractions/setup-just@v3
+      - uses: actions/checkout@v5
+      - uses: extractions/setup-just@v4
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.44.2
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.44.2
@@ -58,7 +58,7 @@ jobs:
       # snapshot caching is intentionally omitted: it only shortens the 39s cold
       # boot and carries snapshot-corruption/hang gotchas — not worth it here.
       - name: Gradle cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ~/.gradle/caches
@@ -68,7 +68,7 @@ jobs:
       - name: Resolve system-image path
         run: echo "ANDROID_SYSIMG=$ANDROID_SDK_ROOT/system-images/android-34/google_apis/x86_64" >> "$GITHUB_ENV"
       - name: System-image cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ env.ANDROID_SYSIMG }}
           key: sysimg-android-34-google_apis-x86_64
