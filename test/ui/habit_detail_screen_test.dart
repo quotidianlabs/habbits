@@ -224,36 +224,37 @@ void main() {
     expect(habits, isEmpty);
   });
 
-  testWidgets('recent-days + heatmap follow currentDayProvider, not the clock', (
-    tester,
-  ) async {
-    final db = AppDatabase(NativeDatabase.memory());
-    addTearDown(db.close);
-    final id = await seedHabit(db);
+  testWidgets(
+    'recent-days + heatmap follow currentDayProvider, not the clock',
+    (tester) async {
+      final db = AppDatabase(NativeDatabase.memory());
+      addTearDown(db.close);
+      final id = await seedHabit(db);
 
-    // A day far outside the real "now" 30-day window: it only renders as the
-    // newest recent-days row if the screen derives today from the provider.
-    final pinnedDay = DateTime(2030, 1, 1);
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          appDatabaseProvider.overrideWithValue(db),
-          currentDayProvider.overrideWith(() => _FixedCurrentDay(pinnedDay)),
-        ],
-        child: MaterialApp(
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          home: HabitDetailScreen(habitId: id),
+      // A day far outside the real "now" 30-day window: it only renders as the
+      // newest recent-days row if the screen derives today from the provider.
+      final pinnedDay = DateTime(2030, 1, 1);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            appDatabaseProvider.overrideWithValue(db),
+            currentDayProvider.overrideWith(() => _FixedCurrentDay(pinnedDay)),
+          ],
+          child: MaterialApp(
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: HabitDetailScreen(habitId: id),
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(
-      find.byKey(Key('daylist-${formatIsoDate(pinnedDay)}')),
-      findsOneWidget,
-    );
-  });
+      expect(
+        find.byKey(Key('daylist-${formatIsoDate(pinnedDay)}')),
+        findsOneWidget,
+      );
+    },
+  );
 
   testWidgets('detail shows Russian labels under ru locale', (tester) async {
     final db = AppDatabase(NativeDatabase.memory());

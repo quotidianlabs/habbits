@@ -42,11 +42,14 @@ void main() {
       _row({DateTime(2026, 6, 13, 9, 0), DateTime(2026, 6, 12, 23, 59)}),
       DateTime(2026, 6, 13, 14, 30),
     );
-    expect(summary.doneToday, isTrue, reason: 'today matches despite the clock time');
     expect(
-      summary.dates,
-      {DateTime(2026, 6, 13), DateTime(2026, 6, 12)},
-      reason: 'stored dates are day-only',
+      summary.doneToday,
+      isTrue,
+      reason: 'today matches despite the clock time',
     );
+    expect(summary.dates, {
+      DateTime(2026, 6, 13),
+      DateTime(2026, 6, 12),
+    }, reason: 'stored dates are day-only');
   });
 }
