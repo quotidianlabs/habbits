@@ -27,14 +27,21 @@ Drift imports; the `ui/widgets/` layer only renders the results.
   automatically through the existing reactive stream.
 - The **day strip** (`DayStrip`) is a compact read-only one-row bar of the last
   N days (default 14), used on the home card for a glanceable completion picture.
-- **"Today"** for the home list comes from `currentDayProvider`
-  (`lib/ui/core/current_day.dart`), a live value that ticks at local midnight and
-  refreshes on app resume. So streak, done-today, and completion-% stay correct
-  across a day boundary even with the app left open and no DB write. Action-time
-  writes (`toggleToday`) use real `DateTime.now()` directly and are unaffected.
+- **"Today"** comes from `currentDayProvider` (`lib/ui/core/current_day.dart`),
+  a live value that ticks at local midnight and refreshes on app resume. Every
+  rendered view derives from it — the home-list scalars, the card day-strip, and
+  the detail heatmap + recent-days — so streak, done-today, completion-%, and the
+  calendar grids all stay correct across a day boundary with the app left open
+  and no DB write. No display widget reads the wall clock; action-time writes
+  (`toggleToday`) use real `DateTime.now()` directly and are unaffected.
 
 ## Code map
 
+- `lib/domain/models/habit_summary.dart` — `HabitSummary.from(HabitWithDates, today)`:
+  the single home for the per-habit scalar composition; normalizes its inputs to
+  date-only, then composes `currentStreak`, `completionPercent`, and done-today
+  into a `HabitSummary`. Both the home list and the detail screen build summaries
+  through this factory; the parameterized calendar builders below stay separate.
 - `lib/domain/streak.dart:8` — `currentStreak(completed, today) → int`: pure function;
   the single authoritative streak computation
 - `lib/domain/completion_stats.dart:12` — `completionPercent(completed, today) → int?`:
@@ -78,6 +85,9 @@ Drift imports; the `ui/widgets/` layer only renders the results.
 - All date comparisons in the domain layer use `dateOnly`/`previousDay` from
   `lib/domain/dates.dart:5`; time-of-day never leaks into streak or percentage
   calculations, and DST transitions do not shift calendar-day counts.
+- `HabitSummary.from` is the only construction path for a `HabitSummary`. It
+  normalizes `today` and every completion date to date-only, so done-today and
+  the stored `dates` set never depend on callers pre-normalizing.
 - `buildHeatmap` always produces exactly `weeks` week-columns (default 6), each
   containing exactly 7 cells in Mon→Sun order. The last column ends at the week
   containing `today`. Cells after `today` carry `CellState.future` and are never
@@ -91,4 +101,4 @@ None currently tracked.
 
 ## History
 
-Defined by: [2026-06-13.01-foundation](../planning/changes/archive/2026-06-13.01-foundation/design.md), [2026-06-13.02-heatmap-retroactive-editing](../planning/changes/archive/2026-06-13.02-heatmap-retroactive-editing/design.md), [2026-06-17.01-completion-pct-first-check](../planning/changes/archive/2026-06-17.01-completion-pct-first-check/change.md)
+Defined by: [2026-06-13.01-foundation](../planning/changes/archive/2026-06-13.01-foundation/design.md), [2026-06-13.02-heatmap-retroactive-editing](../planning/changes/archive/2026-06-13.02-heatmap-retroactive-editing/design.md), [2026-06-17.01-completion-pct-first-check](../planning/changes/archive/2026-06-17.01-completion-pct-first-check/change.md). Scalar composition moved into `HabitSummary.from` and all rendered views switched to `currentDayProvider` in [2026-06-24.01-habit-summary-factory](../planning/changes/2026-06-24.01-habit-summary-factory/design.md).
