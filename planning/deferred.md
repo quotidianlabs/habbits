@@ -13,8 +13,6 @@ change bundle when its trigger fires.
 - **`test/ui/` screen/widget tests not mirrored** into feature subfolders
   (e.g. `habit_list_screen_test.dart` sits flat, not under `test/ui/habit_list/`).
   *Revisit on* the next test-organization pass.
-- **Codecov coverage upload** — `flutter test --coverage` + `codecov-action`,
-  matching the sibling repos. *Revisit when* the CI sub-project lands.
 - **Longest/best-streak metric** — show each habit's best-ever streak alongside
   the current streak; a natural extension of `streak.dart` / the stats surface
   (from the legacy product briefs). *Revisit when* streaks-and-stats next gains

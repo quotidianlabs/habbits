@@ -9,6 +9,7 @@
 .flutter-plugins
 .flutter-plugins-dependencies
 build/
+coverage/
 *.g.dart.bak
 .DS_Store
 
