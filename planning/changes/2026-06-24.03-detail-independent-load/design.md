@@ -140,10 +140,11 @@ provider becomes a stream provider).
 `HabitSummary?` to `AsyncValue<HabitSummary?>`:
 
 ```dart
-final summary = ref.watch(habitDetailViewModelProvider(habitId)).valueOrNull;
+final summary = ref.watch(habitDetailViewModelProvider(habitId)).value;
 ```
 
-The existing `if (summary == null) { ...spinner... }` branch is untouched:
+`.valueOrNull` isn't in this Riverpod version; `.value` is nullable here. The
+existing `if (summary == null) { ...spinner... }` branch is untouched:
 loading and "habit deleted" both surface as `null`, exactly as before. After a
 delete, the stream emits `null` and the existing `Navigator.pop` still fires from
 the delete handler.
