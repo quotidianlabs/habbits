@@ -1,12 +1,12 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-25
 slug: coverage-in-ci
 summary: Report + enforce test coverage in CI with no third-party service (PR comment, job summary, 80% gate).
 supersedes: null
 superseded_by: null
-pr: null
-outcome: null
+pr: 32
+outcome: Added `tool/coverage.py` + CI steps (PR comment, job summary, 80% gate) and `just coverage`. Coverage is 84.3% excluding generated files. No Codecov/Coveralls.
 ---
 
 # Change: Test coverage in CI (no third-party service)
