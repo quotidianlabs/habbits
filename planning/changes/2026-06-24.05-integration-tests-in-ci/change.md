@@ -5,7 +5,7 @@ slug: integration-tests-in-ci
 summary: Run the critical-flow integration test in CI on a KVM-accelerated Android emulator, so on-device regressions can't rot unnoticed.
 supersedes: null
 superseded_by: null
-pr: null
+pr: 28
 outcome: null
 ---
 
