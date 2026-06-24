@@ -87,3 +87,56 @@ delivery (which would then require a Play policy declaration).
 
 Upload the `.aab` in the Play Console, fill the store listing, privacy policy,
 and data-safety / content-rating forms, and roll out.
+
+# Sideload APK via GitHub Releases
+
+A parallel distribution channel to the Play `.aab` above: pushing a `v*` tag
+builds a signed **universal** APK and publishes a GitHub Release with it
+attached. Driven by [`.github/workflows/release.yml`](../.github/workflows/release.yml).
+
+> **Distinct signing identity.** This APK is signed with the **upload key
+> directly**, whereas Play App Signing re-signs Play installs with the real app
+> key. The two are therefore signed differently and **cannot be upgraded over
+> each other**. Expected for a sideload channel — just don't tell users to
+> "update from Play over the sideload build."
+
+## One-time setup: repo secrets
+
+Encode the existing upload keystore (the same `.jks` from the signing section
+above) and add four repository secrets under
+**Settings → Secrets and variables → Actions**:
+
+```bash
+base64 -i /absolute/path/to/upload-keystore.jks | pbcopy   # -> ANDROID_KEYSTORE_BASE64
+```
+
+| Secret | Value |
+|--------|-------|
+| `ANDROID_KEYSTORE_BASE64` | base64 of `upload-keystore.jks` |
+| `ANDROID_KEYSTORE_PASSWORD` | the store password |
+| `ANDROID_KEY_PASSWORD` | the key password (often same as store) |
+| `ANDROID_KEY_ALIAS` | `upload` |
+
+The workflow fails loudly if `ANDROID_KEYSTORE_BASE64` is missing — it will
+never silently fall back to debug-signing.
+
+## Cutting a release
+
+1. Bump `pubspec.yaml` `version: X.Y.Z+N` and merge to `main`.
+2. (Optional) Write user-facing notes to `planning/releases/X.Y.Z.md`. If
+   present, they become the release body; GitHub's auto-generated "What's
+   Changed" PR list is appended either way.
+3. Tag and push — the tag `vX.Y.Z` **must** match `pubspec.yaml` `X.Y.Z`:
+
+   ```bash
+   git tag v1.0.0
+   git push origin v1.0.0
+   ```
+
+4. The workflow builds `habbits-vX.Y.Z.apk` and publishes the GitHub Release.
+
+Verify the published asset is upload-signed (not debug):
+
+```bash
+apksigner verify --print-certs habbits-vX.Y.Z.apk   # DN must NOT be CN=Android Debug
+```
