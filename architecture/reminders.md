@@ -38,18 +38,23 @@ the habit is not yet completed that day.
   including across a DST transition. The device's IANA zone is resolved at init
   and **refreshed on app resume** (`refreshTimeZone`), so reminders follow the
   device after travel across timezones.
-- Resyncs are **serialized and best-effort**: `ReminderCoordinator._sync` runs
+- Resyncs are **serialized and best-effort**: `ReminderSync.sync` runs
   through a `CoalescingRunner`, so overlapping triggers can't interleave a
   `cancelAll()` + reschedule (a single follow-up run is coalesced), and a
   plugin/platform failure is swallowed rather than escaping as an unhandled async
   error.
+- The scheduling **policy** (the coalescing, the once-only permission prompt, and
+  the two order-sensitive sequences) lives in a plain-Dart `ReminderSync`
+  controller, separate from the widget that observes habits and lifecycle — so it
+  is unit-testable without pumping a widget.
 
 ## Code map
 
 - `lib/domain/reminder_schedule.dart` — `computeReminderSchedule(List<ReminderHabit> enabled, DateTime now, {int maxBuffer = 14, int iosBudget = kIosNotificationBudget}) → List<ScheduledReminder>`: pure function; expands each habit across the buffer window (done-today skip, time-passed skip), then sorts by fire time and truncates to `iosBudget`. No Flutter or plugin imports. `kIosNotificationBudget = 64` is the single source of truth for the cap, reused by the Settings warning.
 - `lib/domain/reminder_schedule.dart:2` — `ReminderHabit` and `ScheduledReminder` value types consumed by the function and the service.
 - `lib/data/services/notification_service.dart:13` — `NotificationService`: thin wrapper over `flutter_local_notifications`; exposes `init()`, `requestPermission()`, `syncSchedule(reminders, {body})`, and `cancelAll()`. All scheduling policy lives in `computeReminderSchedule`, not here.
-- `lib/ui/core/reminder_coordinator.dart:12` — `ReminderCoordinator`: root-mounted `ConsumerStatefulWidget` that renders its `child` unchanged; the only widget that touches the notification service.
+- `lib/ui/core/reminder_sync.dart:11` — `ReminderSync`: plain-Dart policy controller (no Flutter/Riverpod). Owns the `CoalescingRunner`, the `_permissionAsked` gate, and the `sync()` / `onResume()` sequences; collaborators (`NotificationService`, the enabled-habits reader, body text, permission reporter, liveness check, clock) are injected as callbacks. Where all the order-sensitive logic is unit-tested.
+- `lib/ui/core/reminder_coordinator.dart:13` — `ReminderCoordinator`: root-mounted `ConsumerStatefulWidget` that renders its `child` unchanged. A lifecycle adapter — it builds a `ReminderSync` and forwards events (habit/locale changes, app resume, the initial post-frame sync); it holds no scheduling policy itself.
 
 ## Invariants
 
@@ -80,9 +85,9 @@ the habit is not yet completed that day.
   - App resume via `AppLifecycleListener.onResume`.
   - Locale change via `localeControllerProvider` (keeps notification body text
     in the current language).
-- Permission is requested at most once per app session (`_permissionAsked`
-  guard); the request fires only when at least one habit has a reminder
-  enabled.
+- Permission is requested at most once per app session (`ReminderSync`'s
+  `_permissionAsked` guard); the request fires only when at least one habit has a
+  reminder enabled.
 
 ## Known edges
 
@@ -91,4 +96,4 @@ the habit is not yet completed that day.
 
 ## History
 
-Defined by: [2026-06-14.02-reminders](../planning/changes/archive/2026-06-14.02-reminders/design.md)
+Defined by: [2026-06-14.02-reminders](../planning/changes/archive/2026-06-14.02-reminders/design.md). The scheduling policy was lifted out of the coordinator widget into a plain-Dart `ReminderSync` controller in [2026-06-24.04-reminder-sync-controller](../planning/changes/2026-06-24.04-reminder-sync-controller/design.md).
