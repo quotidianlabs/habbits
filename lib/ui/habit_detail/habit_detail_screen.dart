@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/dates.dart';
 import '../../domain/heatmap.dart';
 import '../../l10n/app_localizations.dart';
+import '../core/current_day.dart';
 import '../widgets/habit_dialogs.dart';
 import '../widgets/heatmap_grid.dart';
 import '../widgets/recent_days_list.dart';
@@ -25,7 +25,7 @@ class HabitDetailScreen extends ConsumerWidget {
     }
 
     final l10n = AppLocalizations.of(context);
-    final today = dateOnly(DateTime.now());
+    final today = ref.watch(currentDayProvider);
     final data = buildHeatmap(completed: summary.dates, today: today, weeks: 6);
     final percent = summary.completionPercent;
 

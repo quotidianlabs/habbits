@@ -57,7 +57,7 @@ the habit is not yet completed that day.
   reschedules from scratch on every sync; it never reads back pending
   notification IDs from the OS or persists them. The schedule is fully
   recomputed from the current `habitListViewModelProvider`
-  (`lib/ui/habit_list/habit_list_view_model.dart:17`) value.
+  (`lib/ui/habit_list/habit_list_view_model.dart:14`) value.
 - Notification IDs are positional integers assigned by index in the
   `syncSchedule` loop (`id: i`), not derived from habit IDs. Because the
   service always cancels all before re-scheduling, stale IDs cannot accumulate.
