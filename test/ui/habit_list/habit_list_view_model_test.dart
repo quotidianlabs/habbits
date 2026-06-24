@@ -40,26 +40,40 @@ Future<List<HabitSummary>> nextSummaries(
 }
 
 void main() {
-  test('exposes summaries and toggleToday flips today', () async {
-    final db = AppDatabase(NativeDatabase.memory());
-    final container = ProviderContainer(
-      overrides: [appDatabaseProvider.overrideWithValue(db)],
-    );
-    addTearDown(container.dispose);
-    addTearDown(db.close);
+  test(
+    'toggleToday writes the currentDayProvider day, not the wall clock',
+    () async {
+      // A day far from the real wall clock: the completion only lands here if
+      // toggleToday anchors on currentDayProvider rather than DateTime.now().
+      final pinnedDay = DateTime(2030, 1, 1);
+      final db = AppDatabase(NativeDatabase.memory());
+      final container = ProviderContainer(
+        overrides: [
+          appDatabaseProvider.overrideWithValue(db),
+          currentDayProvider.overrideWith(() => _FixedCurrentDay(pinnedDay)),
+        ],
+      );
+      addTearDown(container.dispose);
+      addTearDown(db.close);
 
-    final id = await container
-        .read(habitDaoProvider)
-        .createHabit(name: 'Read', color: 1);
-    await nextSummaries(container, (list) => list.any((s) => s.habit.id == id));
+      final id = await container
+          .read(habitDaoProvider)
+          .createHabit(name: 'Read', color: 1);
+      await nextSummaries(
+        container,
+        (list) => list.any((s) => s.habit.id == id),
+      );
 
-    await container.read(habitListViewModelProvider.notifier).toggleToday(id);
-    final list = await nextSummaries(
-      container,
-      (l) => l.any((s) => s.habit.id == id && s.doneToday),
-    );
-    expect(list.single.doneToday, isTrue);
-  });
+      await container.read(habitListViewModelProvider.notifier).toggleToday(id);
+      // Wait for the toggle to land (some date written), then assert which date.
+      final list = await nextSummaries(
+        container,
+        (l) => l.any((s) => s.habit.id == id && s.dates.isNotEmpty),
+      );
+      expect(list.single.dates, contains(pinnedDay));
+      expect(list.single.doneToday, isTrue);
+    },
+  );
 
   test('createHabit adds a habit to the stream', () async {
     final db = AppDatabase(NativeDatabase.memory());
