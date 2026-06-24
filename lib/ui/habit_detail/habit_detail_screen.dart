@@ -15,7 +15,7 @@ class HabitDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final summary = ref.watch(habitDetailViewModelProvider(habitId));
+    final summary = ref.watch(habitDetailViewModelProvider(habitId)).value;
 
     if (summary == null) {
       return const Scaffold(

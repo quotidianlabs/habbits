@@ -40,7 +40,7 @@ final class HabitListViewModelProvider
 }
 
 String _$habitListViewModelHash() =>
-    r'c1fece6ef126ea4a075f7b06943cead8cd7176e9';
+    r'c3a6293cae8a4ad1d42a9cb024a4d2dbc512e31c';
 
 /// View model for the home list: the summaries stream + check-off / reorder /
 /// create commands. Depends only on [HabitRepository].

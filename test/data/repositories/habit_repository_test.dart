@@ -22,6 +22,15 @@ void main() {
     expect(rows.single.dates, {DateTime(2026, 6, 14)});
   });
 
+  test('watchHabit streams a single habit, null when absent', () async {
+    final id = await repo.createHabit(name: 'Read', color: 1);
+    await repo.toggleCompletion(id, DateTime(2026, 6, 14));
+    final row = await repo.watchHabit(id).first;
+    expect(row?.habit.name, 'Read');
+    expect(row?.dates, {DateTime(2026, 6, 14)});
+    expect(await repo.watchHabit(9999).first, isNull);
+  });
+
   test('reorder rewrites order; delete removes', () async {
     final a = await repo.createHabit(name: 'A', color: 1);
     final b = await repo.createHabit(name: 'B', color: 1);

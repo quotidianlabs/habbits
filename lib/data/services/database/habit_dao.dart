@@ -120,6 +120,18 @@ class HabitDao extends DatabaseAccessor<AppDatabase> with _$HabitDaoMixin {
     return q.watch().map(_group);
   }
 
+  /// Reactive stream of one habit with its completion dates, or null if no habit
+  /// has [id] (e.g. after deletion). Emits on any change to either table.
+  Stream<HabitWithDates?> watchHabitWithDates(int id) {
+    final q = select(habits).join([
+      leftOuterJoin(completions, completions.habitId.equalsExp(habits.id)),
+    ])..where(habits.id.equals(id));
+    return q.watch().map((rows) {
+      final grouped = _group(rows);
+      return grouped.isEmpty ? null : grouped.single;
+    });
+  }
+
   /// One-shot read of every habit with its completion dates.
   Future<List<HabitWithDates>> getHabitsWithDates() async {
     final q = select(habits).join([
