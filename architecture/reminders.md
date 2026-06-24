@@ -51,10 +51,10 @@ the habit is not yet completed that day.
 ## Code map
 
 - `lib/domain/reminder_schedule.dart` — `computeReminderSchedule(List<ReminderHabit> enabled, DateTime now, {int maxBuffer = 14, int iosBudget = kIosNotificationBudget}) → List<ScheduledReminder>`: pure function; expands each habit across the buffer window (done-today skip, time-passed skip), then sorts by fire time and truncates to `iosBudget`. No Flutter or plugin imports. `kIosNotificationBudget = 64` is the single source of truth for the cap, reused by the Settings warning.
-- `lib/domain/reminder_schedule.dart:2` — `ReminderHabit` and `ScheduledReminder` value types consumed by the function and the service.
-- `lib/data/services/notification_service.dart:26` — `NotificationService`: thin wrapper over `flutter_local_notifications`; exposes `init()`, `requestPermission()`, `syncSchedule(reminders, {body})`, and `cancelAll()`. All scheduling policy lives in `computeReminderSchedule`, not here.
-- `lib/ui/core/reminder_sync.dart:11` — `ReminderSync`: plain-Dart policy controller (no Flutter/Riverpod). Owns the `CoalescingRunner`, the `_permissionAsked` gate, and the `sync()` / `onResume()` sequences; collaborators (`NotificationService`, the enabled-habits reader, body text, permission reporter, liveness check, clock) are injected as callbacks. Where all the order-sensitive logic is unit-tested.
-- `lib/ui/core/reminder_coordinator.dart:13` — `ReminderCoordinator`: root-mounted `ConsumerStatefulWidget` that renders its `child` unchanged. A lifecycle adapter — it builds a `ReminderSync` and forwards events (habit/locale changes, app resume, the initial post-frame sync); it holds no scheduling policy itself.
+- `lib/domain/reminder_schedule.dart` — `ReminderHabit` and `ScheduledReminder` value types consumed by the function and the service.
+- `lib/data/services/notification_service.dart` — `NotificationService`: thin wrapper over `flutter_local_notifications`; exposes `init()`, `requestPermission()`, `syncSchedule(reminders, {body})`, and `cancelAll()`. All scheduling policy lives in `computeReminderSchedule`, not here.
+- `lib/ui/core/reminder_sync.dart` — `ReminderSync`: plain-Dart policy controller (no Flutter/Riverpod). Owns the `CoalescingRunner`, the `_permissionAsked` gate, and the `sync()` / `onResume()` sequences; collaborators (`NotificationService`, the enabled-habits reader, body text, permission reporter, liveness check, clock) are injected as callbacks. Where all the order-sensitive logic is unit-tested.
+- `lib/ui/core/reminder_coordinator.dart` — `ReminderCoordinator`: root-mounted `ConsumerStatefulWidget` that renders its `child` unchanged. A lifecycle adapter — it builds a `ReminderSync` and forwards events (habit/locale changes, app resume, the initial post-frame sync); it holds no scheduling policy itself.
 
 ## Invariants
 
@@ -62,7 +62,7 @@ the habit is not yet completed that day.
   reschedules from scratch on every sync; it never reads back pending
   notification IDs from the OS or persists them. The schedule is fully
   recomputed from the current `habitListViewModelProvider`
-  (`lib/ui/habit_list/habit_list_view_model.dart:14`) value.
+  (`lib/ui/habit_list/habit_list_view_model.dart`) value.
 - Notification IDs are positional integers assigned by index in the
   `syncSchedule` loop (`id: i`), not derived from habit IDs. Because the
   service always cancels all before re-scheduling, stale IDs cannot accumulate.
@@ -91,7 +91,7 @@ the habit is not yet completed that day.
 
 ## Known edges
 
-- The Android notification channel name (`'Habit reminders'`) is hard-coded English; `NotificationService._channelName` (`lib/data/services/notification_service.dart:32`) is a `const` and is not localized.
+- The Android notification channel name (`'Habit reminders'`) is hard-coded English; `NotificationService._channelName` (`lib/data/services/notification_service.dart`) is a `const` and is not localized.
 - Beyond `kIosNotificationBudget` (64) reminder-enabled habits, some habits cannot notify at all — an OS limit on pending local notifications, not a bug. The schedule keeps the soonest 64 and Settings shows a warning. The cap is applied on all platforms (the pure domain function is platform-agnostic), so Android is capped at 64 too even though it has no such OS limit.
 
 ## History

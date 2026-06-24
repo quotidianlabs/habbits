@@ -44,39 +44,39 @@ Drift imports; the `ui/widgets/` layer only renders the results.
   date-only, then composes `currentStreak`, `completionPercent`, and done-today
   into a `HabitSummary`. Both the home list and the detail screen build summaries
   through this factory; the parameterized calendar builders below stay separate.
-- `lib/domain/streak.dart:8` — `currentStreak(completed, today) → int`: pure function;
+- `lib/domain/streak.dart` — `currentStreak(completed, today) → int`: pure function;
   the single authoritative streak computation
-- `lib/domain/completion_stats.dart:12` — `completionPercent(completed, today) → int?`:
+- `lib/domain/completion_stats.dart` — `completionPercent(completed, today) → int?`:
   pure function; window anchored at the first checked day; returns null when
   nothing is checked yet
-- `lib/domain/heatmap.dart:23` — `buildHeatmap({completed, today, weeks}) → HeatmapData`:
+- `lib/domain/heatmap.dart` — `buildHeatmap({completed, today, weeks}) → HeatmapData`:
   pure function; produces the week-column/cell grid consumed by `HeatmapGrid`
-- `lib/domain/heatmap.dart:4` — `CellState` enum (`completed`, `notCompleted`, `future`)
+- `lib/domain/heatmap.dart` — `CellState` enum (`completed`, `notCompleted`, `future`)
   and `HeatmapCell`/`HeatmapData` value types
-- `lib/domain/recent_days.dart:13` — `recentDays(completed, today, count) → List<RecentDay>`:
+- `lib/domain/recent_days.dart` — `recentDays(completed, today, count) → List<RecentDay>`:
   pure function; returns `count` entries in oldest→newest order ending at `today`;
   consumed by both `DayStrip` and `RecentDaysList` (the latter reverses for display)
-- `lib/domain/dates.dart:5` — calendar-date helpers (`dateOnly`, `previousDay`,
+- `lib/domain/dates.dart` — calendar-date helpers (`dateOnly`, `previousDay`,
   `daysBetween`, `mondayOf`, `formatIsoDate`, `parseIsoDate`); no Flutter or Drift
   imports; all date math goes through this file
-- `lib/ui/widgets/heatmap_grid.dart:9` — `HeatmapGrid`: read-only `StatelessWidget`
+- `lib/ui/widgets/heatmap_grid.dart` — `HeatmapGrid`: read-only `StatelessWidget`
   that renders a `HeatmapData` as a grid; supports optional month labels
-- `lib/ui/widgets/day_strip.dart:7` — `DayStrip`: read-only one-row strip of the last
+- `lib/ui/widgets/day_strip.dart` — `DayStrip`: read-only one-row strip of the last
   N days, calling `recentDays` internally
-- `lib/ui/widgets/recent_days_list.dart:10` — `RecentDaysList`: newest-first list of
+- `lib/ui/widgets/recent_days_list.dart` — `RecentDaysList`: newest-first list of
   the last N days; the only widget in this capability that is interactive (exposes
   `onToggle`)
 
 ## Invariants
 
-- **`currentStreak`** (`lib/domain/streak.dart:8`): if today is in the completed
+- **`currentStreak`** (`lib/domain/streak.dart`): if today is in the completed
   set the streak anchors at today; if today is absent but yesterday is present the
   streak anchors at yesterday (the streak is still alive until the day actually
   lapses); if neither today nor yesterday is present the function returns 0
   immediately. From the anchor the function counts backward one day at a time,
   incrementing the count for every day found in the set; the first missing day
   stops the walk. A single missed day therefore resets the streak to 0.
-- **`completionPercent`** (`lib/domain/completion_stats.dart:12`):
+- **`completionPercent`** (`lib/domain/completion_stats.dart`):
   - Returns null when the completed set is empty (no window yet).
   - `lastDay` = today if today is completed, otherwise yesterday.
   - `firstDay` = the earliest completed day; `spanDays` = `daysBetween(firstDay,
@@ -85,7 +85,7 @@ Drift imports; the `ui/widgets/` layer only renders the results.
   - `windowStart` = `lastDay − (windowDays − 1)` calendar days.
   - Result: completed dates in `[windowStart, lastDay]` ÷ `windowDays` × 100, rounded.
 - All date comparisons in the domain layer use `dateOnly`/`previousDay` from
-  `lib/domain/dates.dart:5`; time-of-day never leaks into streak or percentage
+  `lib/domain/dates.dart`; time-of-day never leaks into streak or percentage
   calculations, and DST transitions do not shift calendar-day counts.
 - `HabitSummary.from` is the only construction path for a `HabitSummary`. It
   normalizes `today` and every completion date to date-only, so done-today and

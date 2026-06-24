@@ -28,30 +28,30 @@ that is not a valid Habbits backup.
 
 ## Code map
 
-- `lib/domain/backup_codec.dart:10` — `encodeBackup(BackupData) → String`: pure
+- `lib/domain/backup_codec.dart` — `encodeBackup(BackupData) → String`: pure
   function; serializes to pretty JSON; no Drift or Flutter imports
-- `lib/domain/backup_codec.dart:32` — `decodeBackup(String) → BackupData`:
+- `lib/domain/backup_codec.dart` — `decodeBackup(String) → BackupData`:
   pure strict parser; throws `BackupFormatException` on any violation; never
   returns a partial result
-- `lib/domain/backup_codec.dart:138` — `buildBackup(List<HabitWithDates>, DateTime) → BackupData`:
+- `lib/domain/backup_codec.dart` — `buildBackup(List<HabitWithDates>, DateTime) → BackupData`:
   pure function; maps DAO rows to `BackupData`
-- `lib/domain/models/backup_data.dart:2` — `BackupHabit`: per-habit serialized
+- `lib/domain/models/backup_data.dart` — `BackupHabit`: per-habit serialized
   shape (name, color, reminderTime, sortOrder, createdAt, completions)
-- `lib/domain/models/backup_data.dart:20` — `BackupData`: root document model
+- `lib/domain/models/backup_data.dart` — `BackupData`: root document model
   (version, exportedAt, habits)
-- `lib/domain/models/backup_data.dart:32` — `BackupFormatException`: thrown by
+- `lib/domain/models/backup_data.dart` — `BackupFormatException`: thrown by
   `decodeBackup`; `message` is user-facing
-- `lib/data/repositories/backup_repository.dart:16` — `BackupRepository`:
+- `lib/data/repositories/backup_repository.dart` — `BackupRepository`:
   bridges the codec to file I/O and the OS share sheet / file picker; handles
   the export read (`getHabits`) and the file pick + decode; does NOT perform the
   replace-all write
-- `lib/data/repositories/backup_repository.dart:21` — `exportAndShare()`:
+- `lib/data/repositories/backup_repository.dart` — `exportAndShare()`:
   encodes → writes temp file → `SharePlus.instance.share`
-- `lib/data/repositories/backup_repository.dart:34` — `pickAndDecode()`:
+- `lib/data/repositories/backup_repository.dart` — `pickAndDecode()`:
   `FilePicker` → reads file → `decodeBackup`; returns null on cancel
-- `lib/data/repositories/habit_repository.dart:28` — `HabitRepository.importReplace()`:
+- `lib/data/repositories/habit_repository.dart` — `HabitRepository.importReplace()`:
   thin pass-through to `HabitDao.importReplace`; called by `SettingsViewModel.applyImport`
-- `lib/data/services/database/habit_dao.dart:146` — `HabitDao.importReplace()`:
+- `lib/data/services/database/habit_dao.dart` — `HabitDao.importReplace()`:
   the transactional replace-all — `DELETE completions` → `DELETE habits` →
   insert each habit then its completions
 
