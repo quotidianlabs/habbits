@@ -53,6 +53,25 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - run: flutter pub get
+      # The Gradle build (assembleDebug) dominates this job (~5.5 min cold), so
+      # cache Gradle deps + build cache and the emulator system image. AVD
+      # snapshot caching is intentionally omitted: it only shortens the 39s cold
+      # boot and carries snapshot-corruption/hang gotchas — not worth it here.
+      - name: Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties', 'pubspec.lock') }}
+          restore-keys: gradle-
+      - name: Resolve system-image path
+        run: echo "ANDROID_SYSIMG=$ANDROID_SDK_ROOT/system-images/android-34/google_apis/x86_64" >> "$GITHUB_ENV"
+      - name: System-image cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.ANDROID_SYSIMG }}
+          key: sysimg-android-34-google_apis-x86_64
       - name: Run critical-flow integration test
         uses: reactivecircus/android-emulator-runner@v2
         with:
