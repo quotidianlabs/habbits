@@ -5,7 +5,7 @@ slug: ci-build-cache
 summary: Cache the Gradle build and the emulator system image in the integration CI job (the measured bottleneck), skipping AVD snapshot caching as ineffective here.
 supersedes: null
 superseded_by: null
-pr: null
+pr: 29
 outcome: null
 ---
 
