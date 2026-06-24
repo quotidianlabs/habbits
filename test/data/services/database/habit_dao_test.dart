@@ -70,6 +70,28 @@ void main() {
     expect(rows.single.dates, {DateTime(2026, 6, 13), DateTime(2026, 6, 12)});
   });
 
+  test('watchHabitWithDates streams one habit, its dates, then null', () async {
+    final id = await dao.createHabit(name: 'Read', color: 1);
+
+    // Just the habit, no completions yet.
+    var row = await dao.watchHabitWithDates(id).first;
+    expect(row?.habit.name, 'Read');
+    expect(row?.dates, isEmpty);
+
+    // Re-emits with the date after a toggle.
+    await dao.toggleCompletion(id, DateTime(2026, 6, 13));
+    row = await dao.watchHabitWithDates(id).first;
+    expect(row?.dates, {DateTime(2026, 6, 13)});
+
+    // Null after the habit is deleted.
+    await dao.deleteHabit(id);
+    expect(await dao.watchHabitWithDates(id).first, isNull);
+  });
+
+  test('watchHabitWithDates emits null for an absent id', () async {
+    expect(await dao.watchHabitWithDates(9999).first, isNull);
+  });
+
   test('deleteHabit removes the habit and its completions', () async {
     final id = await dao.createHabit(name: 'Gone', color: 1);
     await dao.toggleCompletion(id, DateTime(2026, 6, 13));
