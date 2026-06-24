@@ -14,6 +14,7 @@ class HabitRepository {
   final HabitDao _dao;
 
   Stream<List<HabitWithDates>> watchHabits() => _dao.watchHabitsWithDates();
+  Stream<HabitWithDates?> watchHabit(int id) => _dao.watchHabitWithDates(id);
   Future<List<HabitWithDates>> getHabits() => _dao.getHabitsWithDates();
   Future<int> createHabit({required String name, required int color}) =>
       _dao.createHabit(name: name, color: color);
