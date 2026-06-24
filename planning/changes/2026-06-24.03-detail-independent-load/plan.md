@@ -3,7 +3,7 @@ status: shipped
 date: 2026-06-24
 slug: detail-independent-load
 spec: detail-independent-load
-pr: null
+pr: 24
 ---
 
 # detail-independent-load — implementation plan

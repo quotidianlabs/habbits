@@ -5,7 +5,7 @@ slug: detail-independent-load
 summary: Detail screen loads its own habit via a single-habit repository watch instead of scanning the list view model's stream.
 supersedes: null
 superseded_by: null
-pr: null
+pr: 24
 outcome: |
   Added HabitDao.watchHabitWithDates(id) and HabitRepository.watchHabit(id)
   (a single-habit reactive stream, null when absent). HabitDetailViewModel.build
