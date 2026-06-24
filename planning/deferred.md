@@ -15,6 +15,13 @@ change bundle when its trigger fires.
   *Revisit on* the next test-organization pass.
 - **Codecov coverage upload** — `flutter test --coverage` + `codecov-action`,
   matching the sibling repos. *Revisit when* the CI sub-project lands.
+- **Integration tests don't run in CI** — `just test` is `flutter test` (unit/
+  widget only); `integration_test/` needs a booted emulator/simulator and runs
+  only locally. This let `critical_flow_test.dart` rot red for ~10 days
+  (missing l10n delegates after i18n localized the home screen) with nothing to
+  catch it. *Revisit when* CI gains a device runner (e.g. a macOS job with an
+  Android AVD or the `reactivecircus/android-emulator-runner` action), or when an
+  integration test next rots unnoticed.
 - **Longest/best-streak metric** — show each habit's best-ever streak alongside
   the current streak; a natural extension of `streak.dart` / the stats surface
   (from the legacy product briefs). *Revisit when* streaks-and-stats next gains
