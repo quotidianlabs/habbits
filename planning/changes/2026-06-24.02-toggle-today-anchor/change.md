@@ -5,7 +5,7 @@ slug: toggle-today-anchor
 summary: Anchor toggleToday on currentDayProvider instead of the wall clock, so the home check-off writes the day the UI displays.
 supersedes: null
 superseded_by: null
-pr: null
+pr: 22
 outcome: |
   toggleToday now writes ref.read(currentDayProvider) instead of
   dateOnly(DateTime.now()); the now-unused dates.dart import dropped from the
