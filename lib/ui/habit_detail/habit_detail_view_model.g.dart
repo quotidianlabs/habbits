@@ -8,18 +8,21 @@ part of 'habit_detail_view_model.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// View model for a single habit's detail screen. State derives from the list
-/// view model; commands go through [HabitRepository].
+/// View model for a single habit's detail screen. Watches its own habit through
+/// [HabitRepository] and composes the summary via [HabitSummary.from]; commands
+/// go through the repository. Independent of the home list view model.
 
 @ProviderFor(HabitDetailViewModel)
 final habitDetailViewModelProvider = HabitDetailViewModelFamily._();
 
-/// View model for a single habit's detail screen. State derives from the list
-/// view model; commands go through [HabitRepository].
+/// View model for a single habit's detail screen. Watches its own habit through
+/// [HabitRepository] and composes the summary via [HabitSummary.from]; commands
+/// go through the repository. Independent of the home list view model.
 final class HabitDetailViewModelProvider
-    extends $NotifierProvider<HabitDetailViewModel, HabitSummary?> {
-  /// View model for a single habit's detail screen. State derives from the list
-  /// view model; commands go through [HabitRepository].
+    extends $StreamNotifierProvider<HabitDetailViewModel, HabitSummary?> {
+  /// View model for a single habit's detail screen. Watches its own habit through
+  /// [HabitRepository] and composes the summary via [HabitSummary.from]; commands
+  /// go through the repository. Independent of the home list view model.
   HabitDetailViewModelProvider._({
     required HabitDetailViewModelFamily super.from,
     required int super.argument,
@@ -45,14 +48,6 @@ final class HabitDetailViewModelProvider
   @override
   HabitDetailViewModel create() => HabitDetailViewModel();
 
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(HabitSummary? value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<HabitSummary?>(value),
-    );
-  }
-
   @override
   bool operator ==(Object other) {
     return other is HabitDetailViewModelProvider && other.argument == argument;
@@ -65,18 +60,19 @@ final class HabitDetailViewModelProvider
 }
 
 String _$habitDetailViewModelHash() =>
-    r'd3facb4692a329a604ba96ad085648df4b28605e';
+    r'1b07bcdfb4ec2f91eaa308b8878cf1297370a3a1';
 
-/// View model for a single habit's detail screen. State derives from the list
-/// view model; commands go through [HabitRepository].
+/// View model for a single habit's detail screen. Watches its own habit through
+/// [HabitRepository] and composes the summary via [HabitSummary.from]; commands
+/// go through the repository. Independent of the home list view model.
 
 final class HabitDetailViewModelFamily extends $Family
     with
         $ClassFamilyOverride<
           HabitDetailViewModel,
+          AsyncValue<HabitSummary?>,
           HabitSummary?,
-          HabitSummary?,
-          HabitSummary?,
+          Stream<HabitSummary?>,
           int
         > {
   HabitDetailViewModelFamily._()
@@ -88,8 +84,9 @@ final class HabitDetailViewModelFamily extends $Family
         isAutoDispose: true,
       );
 
-  /// View model for a single habit's detail screen. State derives from the list
-  /// view model; commands go through [HabitRepository].
+  /// View model for a single habit's detail screen. Watches its own habit through
+  /// [HabitRepository] and composes the summary via [HabitSummary.from]; commands
+  /// go through the repository. Independent of the home list view model.
 
   HabitDetailViewModelProvider call(int habitId) =>
       HabitDetailViewModelProvider._(argument: habitId, from: this);
@@ -98,23 +95,24 @@ final class HabitDetailViewModelFamily extends $Family
   String toString() => r'habitDetailViewModelProvider';
 }
 
-/// View model for a single habit's detail screen. State derives from the list
-/// view model; commands go through [HabitRepository].
+/// View model for a single habit's detail screen. Watches its own habit through
+/// [HabitRepository] and composes the summary via [HabitSummary.from]; commands
+/// go through the repository. Independent of the home list view model.
 
-abstract class _$HabitDetailViewModel extends $Notifier<HabitSummary?> {
+abstract class _$HabitDetailViewModel extends $StreamNotifier<HabitSummary?> {
   late final _$args = ref.$arg as int;
   int get habitId => _$args;
 
-  HabitSummary? build(int habitId);
+  Stream<HabitSummary?> build(int habitId);
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
-    final ref = this.ref as $Ref<HabitSummary?, HabitSummary?>;
+    final ref = this.ref as $Ref<AsyncValue<HabitSummary?>, HabitSummary?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<HabitSummary?, HabitSummary?>,
-              HabitSummary?,
+              AnyNotifier<AsyncValue<HabitSummary?>, HabitSummary?>,
+              AsyncValue<HabitSummary?>,
               Object?,
               Object?
             >;

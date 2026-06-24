@@ -2,22 +2,22 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/repositories/habit_repository.dart';
 import '../../domain/models/habit_summary.dart';
-import '../habit_list/habit_list_view_model.dart';
+import '../core/current_day.dart';
 
 part 'habit_detail_view_model.g.dart';
 
-/// View model for a single habit's detail screen. State derives from the list
-/// view model; commands go through [HabitRepository].
+/// View model for a single habit's detail screen. Watches its own habit through
+/// [HabitRepository] and composes the summary via [HabitSummary.from]; commands
+/// go through the repository. Independent of the home list view model.
 @riverpod
 class HabitDetailViewModel extends _$HabitDetailViewModel {
   @override
-  HabitSummary? build(int habitId) {
-    final summaries = ref.watch(habitListViewModelProvider).value;
-    if (summaries == null) return null;
-    for (final s in summaries) {
-      if (s.habit.id == habitId) return s;
-    }
-    return null;
+  Stream<HabitSummary?> build(int habitId) {
+    final repo = ref.watch(habitRepositoryProvider);
+    final today = ref.watch(currentDayProvider);
+    return repo.watchHabit(habitId).map(
+      (row) => row == null ? null : HabitSummary.from(row, today),
+    );
   }
 
   Future<void> toggle(DateTime date) =>
