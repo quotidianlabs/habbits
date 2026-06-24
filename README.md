@@ -62,7 +62,7 @@ This repo uses [`just`](https://github.com/casey/just):
 
 ```bash
 just lint    # dart format + flutter analyze
-just test    # flutter test (130 unit/widget tests)
+just test    # flutter test (unit + widget)
 ```
 
 The integration flow runs on a device/emulator:

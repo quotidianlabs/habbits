@@ -35,5 +35,5 @@ capability contract moves.
 - [ ] Failing test first — command + expected error.
 - [ ] Apply the change.
 - [ ] Test passes — command.
-- [ ] `flutter test` — full suite green (115).
+- [ ] `flutter test` — full suite green.
 - [ ] `flutter analyze` — clean.
