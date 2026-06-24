@@ -1,7 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/repositories/habit_repository.dart';
-import '../../domain/dates.dart';
 import '../../domain/models/habit_summary.dart';
 import '../core/current_day.dart';
 import '../core/habit_colors.dart';
@@ -23,7 +22,7 @@ class HabitListViewModel extends _$HabitListViewModel {
 
   Future<void> toggleToday(int habitId) => ref
       .read(habitRepositoryProvider)
-      .toggleCompletion(habitId, dateOnly(DateTime.now()));
+      .toggleCompletion(habitId, ref.read(currentDayProvider));
 
   Future<void> reorder(List<int> orderedIds) =>
       ref.read(habitRepositoryProvider).reorderHabits(orderedIds);

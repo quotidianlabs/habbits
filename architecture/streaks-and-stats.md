@@ -32,8 +32,10 @@ Drift imports; the `ui/widgets/` layer only renders the results.
   rendered view derives from it — the home-list scalars, the card day-strip, and
   the detail heatmap + recent-days — so streak, done-today, completion-%, and the
   calendar grids all stay correct across a day boundary with the app left open
-  and no DB write. No display widget reads the wall clock; action-time writes
-  (`toggleToday`) use real `DateTime.now()` directly and are unaffected.
+  and no DB write. No view reads the wall clock — the home check-off
+  (`toggleToday`) also writes the `currentDayProvider` day, so the completion a
+  tap records always lands on the day the strip shows, even in the midnight
+  window before the ticker's timer fires.
 
 ## Code map
 
@@ -101,4 +103,4 @@ None currently tracked.
 
 ## History
 
-Defined by: [2026-06-13.01-foundation](../planning/changes/archive/2026-06-13.01-foundation/design.md), [2026-06-13.02-heatmap-retroactive-editing](../planning/changes/archive/2026-06-13.02-heatmap-retroactive-editing/design.md), [2026-06-17.01-completion-pct-first-check](../planning/changes/archive/2026-06-17.01-completion-pct-first-check/change.md). Scalar composition moved into `HabitSummary.from` and all rendered views switched to `currentDayProvider` in [2026-06-24.01-habit-summary-factory](../planning/changes/2026-06-24.01-habit-summary-factory/design.md).
+Defined by: [2026-06-13.01-foundation](../planning/changes/archive/2026-06-13.01-foundation/design.md), [2026-06-13.02-heatmap-retroactive-editing](../planning/changes/archive/2026-06-13.02-heatmap-retroactive-editing/design.md), [2026-06-17.01-completion-pct-first-check](../planning/changes/archive/2026-06-17.01-completion-pct-first-check/change.md). Scalar composition moved into `HabitSummary.from` and all rendered views switched to `currentDayProvider` in [2026-06-24.01-habit-summary-factory](../planning/changes/2026-06-24.01-habit-summary-factory/design.md). The home check-off (`toggleToday`) switched from the wall clock to `currentDayProvider` in [2026-06-24.02-toggle-today-anchor](../planning/changes/2026-06-24.02-toggle-today-anchor/change.md).
