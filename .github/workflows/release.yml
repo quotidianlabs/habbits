@@ -1,0 +1,96 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# Needed for softprops/action-gh-release to create the release.
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.2
+          channel: stable
+          cache: true
+
+      # Tag vX.Y.Z must match pubspec.yaml `version: X.Y.Z+N`.
+      - name: Verify tag matches pubspec version
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME#v}"
+          pubspec="$(grep -E '^version:' pubspec.yaml \
+            | sed -E 's/^version:[[:space:]]*([0-9]+\.[0-9]+\.[0-9]+).*/\1/')"
+          echo "tag=$tag pubspec=$pubspec"
+          if [ "$tag" != "$pubspec" ]; then
+            echo "::error::Tag v$tag does not match pubspec version $pubspec"
+            exit 1
+          fi
+
+      # Reconstruct the signing keystore from secrets (see docs/release.md).
+      - name: Decode signing keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          if [ -z "${KEYSTORE_BASE64:-}" ]; then
+            echo "::error::ANDROID_KEYSTORE_BASE64 secret is empty or missing"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/upload-keystore.jks
+          if [ ! -s android/upload-keystore.jks ]; then
+            echo "::error::Decoded keystore is empty — refusing to debug-sign"
+            exit 1
+          fi
+
+      - name: Write key.properties
+        env:
+          STORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+        run: |
+          set -euo pipefail
+          {
+            echo "storePassword=$STORE_PASSWORD"
+            echo "keyPassword=$KEY_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "storeFile=$GITHUB_WORKSPACE/android/upload-keystore.jks"
+          } > android/key.properties
+
+      - run: flutter pub get
+
+      - name: Build signed release APK
+        run: flutter build apk --release
+
+      - name: Rename APK
+        run: |
+          set -euo pipefail
+          mv build/app/outputs/flutter-apk/app-release.apk \
+             "build/app/outputs/flutter-apk/habbits-${GITHUB_REF_NAME}.apk"
+
+      # tag vX.Y.Z -> planning/releases/X.Y.Z.md (omit body_path if absent).
+      - name: Resolve release notes file
+        id: notes
+        run: |
+          set -euo pipefail
+          version="${GITHUB_REF_NAME#v}"
+          path="planning/releases/${version}.md"
+          if [ -f "$path" ]; then
+            echo "body_path=$path" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/app/outputs/flutter-apk/habbits-${{ github.ref_name }}.apk
+          body_path: ${{ steps.notes.outputs.body_path }}
+          generate_release_notes: true
+          draft: false
