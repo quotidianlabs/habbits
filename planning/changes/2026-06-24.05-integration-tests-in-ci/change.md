@@ -1,12 +1,18 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-24
 slug: integration-tests-in-ci
 summary: Run the critical-flow integration test in CI on a KVM-accelerated Android emulator, so on-device regressions can't rot unnoticed.
 supersedes: null
 superseded_by: null
 pr: 28
-outcome: null
+outcome: |
+  Added an 'integration' job to ci.yml: ubuntu-latest +
+  reactivecircus/android-emulator-runner@v2 (api-34/google_apis/x86_64) with the
+  KVM udev rule, running flutter test integration_test/critical_flow_test.dart.
+  Verified by a real run — the job passed in 7m58s (lint 36s, test 1m7s alongside).
+  No snapshot caching yet; revisit if the ~8 min bothers. Resolved the matching
+  deferred.md item.
 ---
 
 # Change: Run integration tests in CI
