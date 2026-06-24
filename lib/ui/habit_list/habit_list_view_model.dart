@@ -1,10 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../data/repositories/habit_repository.dart';
-import '../../domain/completion_stats.dart';
 import '../../domain/dates.dart';
 import '../../domain/models/habit_summary.dart';
-import '../../domain/streak.dart';
 import '../core/current_day.dart';
 import '../core/habit_colors.dart';
 
@@ -18,18 +16,9 @@ class HabitListViewModel extends _$HabitListViewModel {
   Stream<List<HabitSummary>> build() {
     final repo = ref.watch(habitRepositoryProvider);
     final today = ref.watch(currentDayProvider);
-    return repo.watchHabits().map((rows) {
-      return [
-        for (final row in rows)
-          HabitSummary(
-            habit: row.habit,
-            streak: currentStreak(row.dates, today),
-            doneToday: row.dates.contains(today),
-            completionPercent: completionPercent(row.dates, today),
-            dates: row.dates,
-          ),
-      ];
-    });
+    return repo.watchHabits().map(
+      (rows) => [for (final row in rows) HabitSummary.from(row, today)],
+    );
   }
 
   Future<void> toggleToday(int habitId) => ref
