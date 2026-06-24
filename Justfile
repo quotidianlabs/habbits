@@ -16,6 +16,11 @@ lint-ci:
 test *args:
     flutter test {{ args }}
 
+# tests with coverage; prints the % excluding generated files (matches CI)
+coverage:
+    flutter test --coverage
+    python3 tool/coverage.py
+
 # Print the planning change index (grouped by status) to stdout.
 index:
     python3 planning/index.py
