@@ -33,7 +33,7 @@ that is not a valid Habbits backup.
 - `lib/domain/backup_codec.dart:32` — `decodeBackup(String) → BackupData`:
   pure strict parser; throws `BackupFormatException` on any violation; never
   returns a partial result
-- `lib/domain/backup_codec.dart:131` — `buildBackup(List<HabitWithDates>, DateTime) → BackupData`:
+- `lib/domain/backup_codec.dart:138` — `buildBackup(List<HabitWithDates>, DateTime) → BackupData`:
   pure function; maps DAO rows to `BackupData`
 - `lib/domain/models/backup_data.dart:2` — `BackupHabit`: per-habit serialized
   shape (name, color, reminderTime, sortOrder, createdAt, completions)
@@ -51,7 +51,7 @@ that is not a valid Habbits backup.
   `FilePicker` → reads file → `decodeBackup`; returns null on cancel
 - `lib/data/repositories/habit_repository.dart:28` — `HabitRepository.importReplace()`:
   thin pass-through to `HabitDao.importReplace`; called by `SettingsViewModel.applyImport`
-- `lib/data/services/database/habit_dao.dart:121` — `HabitDao.importReplace()`:
+- `lib/data/services/database/habit_dao.dart:146` — `HabitDao.importReplace()`:
   the transactional replace-all — `DELETE completions` → `DELETE habits` →
   insert each habit then its completions
 
