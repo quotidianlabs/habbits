@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../domain/dates.dart';
 import '../../../domain/models/habit_summary.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../core/current_day.dart';
 import '../../habit_detail/habit_detail_screen.dart';
 import '../../widgets/day_strip.dart';
 import '../habit_list_view_model.dart';
@@ -16,7 +16,7 @@ class HabitCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
-    final today = dateOnly(DateTime.now());
+    final today = ref.watch(currentDayProvider);
     final percent = item.completionPercent;
 
     return Card(
