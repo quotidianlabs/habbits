@@ -14,9 +14,9 @@ class HabitSummary {
     required this.dates,
   });
 
-  /// Composes a habit's completion dates into its display scalars. The single
-  /// home for this derivation; both the home list and the detail screen build
-  /// summaries through here.
+  /// Composes a habit's completion dates into its display scalars and the single
+  /// home for that derivation. The home list builds summaries through here; the
+  /// detail screen reuses the list's already-built summary.
   factory HabitSummary.from(HabitWithDates row, DateTime today) {
     final day = dateOnly(today);
     final completed = {for (final d in row.dates) dateOnly(d)};

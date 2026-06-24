@@ -18,9 +18,9 @@ The create/track/edit loop for habits and their daily completion records.
 - `lib/data/services/database/habit_dao.dart:11` — Drift `DatabaseAccessor`; executes all SQL (CRUD, toggle, reorder, import)
 - `lib/data/services/database/database.dart:8` — Drift schema (`Habits`, `Completions` tables) and `AppDatabase` wiring
 - `lib/domain/reorder.dart:8` — pure function `reorderedIds(ids, oldIndex, newIndex)`: computes the updated id list for a drag move without mutating the input
-- `lib/domain/models/habit_summary.dart:4` — `HabitSummary`: per-habit view value (streak, doneToday, completionPercent, dates) used by both view models; built only via the `HabitSummary.from(HabitWithDates, today)` factory (see [`streaks-and-stats.md`](streaks-and-stats.md))
+- `lib/domain/models/habit_summary.dart:8` — `HabitSummary`: per-habit view value (streak, doneToday, completionPercent, dates) used by both view models; built only via the `HabitSummary.from(HabitWithDates, today)` factory (see [`streaks-and-stats.md`](streaks-and-stats.md))
 - `lib/domain/models/habit_with_dates.dart:4` — `HabitWithDates`: DAO/repository transfer object pairing a `Habit` row with its completion date set
-- `lib/ui/habit_list/habit_list_view_model.dart:17` — home-screen view model: streams `List<HabitSummary>`, exposes `toggleToday`, `reorder`, `createHabit`
+- `lib/ui/habit_list/habit_list_view_model.dart:14` — home-screen view model: streams `List<HabitSummary>`, exposes `toggleToday`, `reorder`, `createHabit`
 - `lib/ui/habit_detail/habit_detail_view_model.dart:12` — detail-screen view model (one instance per `habitId`): state derived from the list view model, exposes `toggle`, `editHabit` (name + color), `delete`, `setReminder`
 - `lib/ui/widgets/habit_dialogs.dart:8` — the create/edit dialog (`showHabitNameDialog`, a `StatefulWidget` that collects a name and a color from a `kHabitPalette` swatch picker and returns a `HabitFormResult`) and the delete confirmation (`confirmDeleteHabit`); `setColor` on `HabitDao`/`HabitRepository` applies the color edit. Swatch palette lives in `lib/ui/core/habit_colors.dart` (see [`theming.md`](theming.md))
 
