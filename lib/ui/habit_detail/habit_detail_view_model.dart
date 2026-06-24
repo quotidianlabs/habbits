@@ -15,9 +15,9 @@ class HabitDetailViewModel extends _$HabitDetailViewModel {
   Stream<HabitSummary?> build(int habitId) {
     final repo = ref.watch(habitRepositoryProvider);
     final today = ref.watch(currentDayProvider);
-    return repo.watchHabit(habitId).map(
-      (row) => row == null ? null : HabitSummary.from(row, today),
-    );
+    return repo
+        .watchHabit(habitId)
+        .map((row) => row == null ? null : HabitSummary.from(row, today));
   }
 
   Future<void> toggle(DateTime date) =>

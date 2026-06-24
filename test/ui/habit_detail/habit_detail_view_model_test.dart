@@ -14,7 +14,7 @@ import 'package:habbits/ui/habit_detail/habit_detail_view_model.dart';
 /// past midnight and assert the detail VM recomposes.
 class _FixedCurrentDay extends CurrentDay {
   _FixedCurrentDay(this._day);
-  DateTime _day;
+  final DateTime _day;
   @override
   DateTime build() => _day;
   void setDay(DateTime d) => state = d;
@@ -106,11 +106,15 @@ void main() {
     await container.read(habitDaoProvider).toggleCompletion(id, pinnedDay);
 
     // Done today while today == the completion day.
-    expect((await nextDetail(container, id, (s) => s?.doneToday ?? false)), isNotNull);
+    expect(
+      (await nextDetail(container, id, (s) => s?.doneToday ?? false)),
+      isNotNull,
+    );
 
     // Advance "today" one day; the completion is now yesterday.
-    (container.read(currentDayProvider.notifier) as _FixedCurrentDay)
-        .setDay(nextLocalMidnight(pinnedDay));
+    (container.read(currentDayProvider.notifier) as _FixedCurrentDay).setDay(
+      nextLocalMidnight(pinnedDay),
+    );
     final next = await nextDetail(
       container,
       id,
@@ -133,7 +137,11 @@ void main() {
     await container
         .read(habitDetailViewModelProvider(id).notifier)
         .editHabit('New', 0xFF009688);
-    final renamed = await nextDetail(container, id, (s) => s?.habit.name == 'New');
+    final renamed = await nextDetail(
+      container,
+      id,
+      (s) => s?.habit.name == 'New',
+    );
     expect(renamed?.habit.color, 0xFF009688);
   });
 

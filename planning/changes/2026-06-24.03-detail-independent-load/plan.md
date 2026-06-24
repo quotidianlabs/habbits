@@ -1,5 +1,5 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-24
 slug: detail-independent-load
 spec: detail-independent-load
@@ -137,7 +137,8 @@ Surface the stream's value without changing the spinner branch.
 - [ ] **Step 1: Read `.valueOrNull`**
 
   `habit_detail_screen.dart:18` →
-  `final summary = ref.watch(habitDetailViewModelProvider(habitId)).valueOrNull;`
+  `final summary = ref.watch(habitDetailViewModelProvider(habitId)).value;`
+  (`.valueOrNull` isn't in this Riverpod version; `.value` is nullable here.)
   Leave the `if (summary == null) → spinner` branch as-is.
 
 - [ ] **Step 2: Verify the screen tests**

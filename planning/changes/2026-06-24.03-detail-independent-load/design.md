@@ -1,12 +1,20 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-24
 slug: detail-independent-load
 summary: Detail screen loads its own habit via a single-habit repository watch instead of scanning the list view model's stream.
 supersedes: null
 superseded_by: null
 pr: null
-outcome: null
+outcome: |
+  Added HabitDao.watchHabitWithDates(id) and HabitRepository.watchHabit(id)
+  (a single-habit reactive stream, null when absent). HabitDetailViewModel.build
+  is now Stream<HabitSummary?> composing through HabitSummary.from off its own
+  watch + currentDayProvider; it no longer imports or scans the list VM. Detail
+  screen reads the AsyncValue via .value (.valueOrNull isn't in this Riverpod
+  version), preserving the null→spinner branch. The VM test dropped the
+  keep-alive list subscription — the coupling-removal proof. just lint clean;
+  just test 170 green.
 ---
 
 # Design: Detail screen loads independently of the list
@@ -19,7 +27,7 @@ detail view model its own data source — a single-habit repository watch
 (`watchHabit(id)`) — and composes its summary through the existing
 `HabitSummary.from` projection. The detail VM stops importing the list VM
 entirely; its `build` becomes a `Stream<HabitSummary?>`, symmetric with the list
-VM. The detail screen reads the resulting `AsyncValue` via `.valueOrNull`,
+VM. The detail screen reads the resulting `AsyncValue` via `.value`,
 preserving its existing "null → spinner" branch unchanged.
 
 ## Motivation
@@ -153,7 +161,7 @@ the delete handler.
   `currentDayProvider` advances. Reads switch from sync `?` to awaiting the
   detail provider's `AsyncValue`.
 - **Detail screen** (`test/ui/habit_detail_screen_test.dart`): existing cases
-  should pass with `.valueOrNull`; confirm the initial loading frame still shows
+  should pass with `.value`; confirm the initial loading frame still shows
   the spinner and resolves.
 - `just lint` + `just test` green; run `build_runner` first.
 
@@ -161,7 +169,7 @@ the delete handler.
 
 - **Low–medium. Provider type change is the main blast radius.** `build` returns
   `Stream<HabitSummary?>` instead of `HabitSummary?`, so every reader gets an
-  `AsyncValue`. Only two readers exist — the screen (`.valueOrNull`) and the VM
+  `AsyncValue`. Only two readers exist — the screen (`.value`) and the VM
   test (awaits the value) — both updated here.
 - **Deletion frame.** While on detail, deleting emits `null` → a spinner frame
   before `Navigator.pop`. Same net behavior as today (the list previously
