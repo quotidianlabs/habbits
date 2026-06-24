@@ -3,7 +3,7 @@ status: shipped
 date: 2026-06-24
 slug: reminder-sync-controller
 spec: reminder-sync-controller
-pr: null
+pr: 25
 ---
 
 # reminder-sync-controller — implementation plan
