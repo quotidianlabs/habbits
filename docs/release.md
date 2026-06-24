@@ -135,6 +135,25 @@ never silently fall back to debug-signing.
 
 4. The workflow builds `habbits-X.Y.Z.apk` and publishes the GitHub Release.
 
+### Pre-releases (alpha / beta / rc)
+
+Tag with a semver pre-release suffix to ship a test build:
+
+```bash
+git tag 1.0.0-beta.1
+git push origin 1.0.0-beta.1
+```
+
+The workflow accepts `X.Y.Z-<suffix>` tags, matches the **core** `X.Y.Z`
+against `pubspec.yaml` (the pubspec carries no `-suffix`), and flags the GitHub
+Release as a **pre-release** so it is not marked "Latest". Notes resolve from
+`planning/releases/<tag>.md` (e.g. `planning/releases/1.0.0-beta.1.md`).
+
+> The APK's internal `versionName` comes from `pubspec.yaml` (`X.Y.Z`), so a
+> beta and its final share a `versionName`; the differing `versionCode` (`+N`)
+> is what orders installs. The `-beta.1` label lives in the tag, asset name, and
+> GitHub Release, not inside the APK.
+
 Verify the published asset is upload-signed (not debug):
 
 ```bash
