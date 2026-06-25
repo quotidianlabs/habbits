@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart';
-import 'package:drift_flutter/drift_flutter.dart';
 
+import 'connection.dart';
 import 'habit_dao.dart';
 
 part 'database.g.dart';
@@ -37,7 +37,7 @@ class AppDatabase extends _$AppDatabase {
             // environment doesn't see a pending 0-duration timer after the
             // last stream listener detaches on widget disposal.
             ? DatabaseConnection(executor, closeStreamsSynchronously: true)
-            : driftDatabase(name: 'habbits'),
+            : openConnection(),
       );
 
   @override
