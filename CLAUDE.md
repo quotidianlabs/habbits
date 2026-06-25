@@ -26,6 +26,10 @@ Design + plan for every non-trivial change live in `planning/`. Read
 committed; run `dart run build_runner build --delete-conflicting-outputs` after
 touching `@riverpod`/Drift code.
 
+Local device/emulator setup and running the `integration_test/` suite (Android
+emulator + iOS Simulator, with platform gotchas) — see
+[`docs/development.md`](docs/development.md).
+
 README screenshots are generated, not hand-captured — see
 [`docs/screenshots.md`](docs/screenshots.md) to regenerate or add shots.
 
