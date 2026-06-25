@@ -23,6 +23,15 @@ Habbits is a local-first habit tracker built with Flutter, targeting iOS and And
 | [i18n](i18n.md) | English + Russian localization (live switch, no restart required) |
 | [Theming](theming.md) | Single teal Material 3 theme + brand color (no dark mode yet) |
 
+## Conventions
+
+- A widget never imports a repository, DAO, service, or `database.dart`. Views `ref.watch` their view model and call its command methods; shared widgets in `lib/ui/widgets/` are pure (no providers — they return user input and the screen acts on it).
+- Drift entities are used directly as domain models — there is no mapper layer.
+- Adding a feature: a screen + a `<Feature>ViewModel` under `lib/ui/<feature>/`; data access only through a repository (extend one or add to `lib/data/repositories/`). `test/` mirrors `lib/`.
+- After any `@riverpod`/Drift change, run `dart run build_runner build --delete-conflicting-outputs`; the generated `*.g.dart` is committed.
+
+Build, run, and local-test setup lives in [`docs/development.md`](../docs/development.md).
+
 ## History and rationale
 
 Decision history and rationale live in [`planning/`](../planning/README.md); these docs describe the present state of the system.
