@@ -5,10 +5,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/repositories/settings_repository.dart';
 import 'package:habbits/data/services/database/database.dart';
 import 'package:habbits/data/services/database/database_providers.dart';
+import 'package:habbits/domain/models/habit_summary.dart';
 import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/ui/habit_list/habit_list_screen.dart';
+import 'package:habbits/ui/habit_list/habit_list_view_model.dart';
 import 'package:habbits/ui/widgets/day_strip.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+/// A fake [HabitListViewModel] whose [build] immediately throws, forcing the
+/// provider into [AsyncError] and exercising the `error:` branch of the screen.
+class _ErrorHabitListViewModel extends HabitListViewModel {
+  @override
+  Stream<List<HabitSummary>> build() => throw Exception('boom');
+}
 
 Widget _app(AppDatabase db, {Locale? locale}) => ProviderScope(
   overrides: [appDatabaseProvider.overrideWithValue(db)],
@@ -172,5 +181,25 @@ void main() {
         .map((h) => h.habit.id)
         .toList();
     expect(order, [b, a]);
+  });
+
+  testWidgets('provider error shows the home-error message', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          habitListViewModelProvider.overrideWith(_ErrorHabitListViewModel.new),
+        ],
+        child: const MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: HabitListScreen(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Error: Exception: boom'), findsOneWidget);
   });
 }
