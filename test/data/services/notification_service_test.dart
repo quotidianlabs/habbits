@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/services/notification_service.dart';
 import 'package:habbits/domain/reminder_schedule.dart';
@@ -216,5 +217,21 @@ void main() {
 
       expect(await NotificationService(plugin).requestPermission(), isTrue);
     });
+  });
+
+  test('notificationServiceProvider throws until overridden in main', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    expect(
+      () => container.read(notificationServiceProvider),
+      throwsA(
+        isA<Object>().having(
+          (e) => e.toString(),
+          'message',
+          contains('must be overridden in main'),
+        ),
+      ),
+    );
   });
 }
