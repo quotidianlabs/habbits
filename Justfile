@@ -19,8 +19,8 @@ test *args:
 # tests with coverage; excludes generated + DB glue, gates the % (matches CI)
 coverage:
     flutter test --coverage
-    coverde transform --input coverage/lcov.info --output coverage/lcov.info --mode w --transformations preset=exclude-untestable
-    coverde check --input coverage/lcov.info 80
+    dart pub global run coverde transform --input coverage/lcov.info --output coverage/lcov.info --mode w --transformations preset=exclude-untestable
+    dart pub global run coverde check --input coverage/lcov.info 80
 
 # Print the planning change index (grouped by status) to stdout.
 index:
