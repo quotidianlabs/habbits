@@ -412,7 +412,7 @@ void main() {
     await tester.tap(find.byKey(const Key('export-data')));
     await tester.pumpAndSettle();
 
-    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text('Export failed.'), findsOneWidget);
   });
 
   testWidgets('import of a malformed file shows invalid-backup SnackBar', (
@@ -430,7 +430,10 @@ void main() {
     await tester.tap(find.byKey(const Key('import-data')));
     await tester.pumpAndSettle();
 
-    expect(find.byType(SnackBar), findsOneWidget);
+    expect(
+      find.text("That file isn't a valid Habbits backup."),
+      findsOneWidget,
+    );
   });
 
   testWidgets('import read error shows couldnt-read SnackBar', (
@@ -448,7 +451,7 @@ void main() {
     await tester.tap(find.byKey(const Key('import-data')));
     await tester.pumpAndSettle();
 
-    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text("Couldn't read that file."), findsOneWidget);
   });
 
   testWidgets('import success confirms then applies, showing imported count', (
@@ -480,7 +483,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect((await db.habitDao.getHabitsWithDates()).single.habit.name, 'Read');
-    expect(find.byType(SnackBar), findsOneWidget);
+    expect(find.text('Imported 1 habit'), findsOneWidget);
   });
 
   testWidgets('cancelling the import dialog does not apply data', (
@@ -552,6 +555,9 @@ void main() {
     await tester.tap(find.byKey(const Key('confirm-import')));
     await tester.pumpAndSettle();
 
-    expect(find.byType(SnackBar), findsOneWidget);
+    expect(
+      find.text('Import failed. Your existing data was not changed.'),
+      findsOneWidget,
+    );
   });
 }
