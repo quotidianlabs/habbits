@@ -91,24 +91,25 @@ void main() {
       ).thenReturn(null);
     });
 
-    test('init initializes the plugin and creates the channel', () async {
-      mockTimezone('America/New_York');
-      addTearDown(clearTimezone);
+    test(
+      'init initializes the plugin (channel is created in syncSchedule)',
+      () async {
+        mockTimezone('America/New_York');
+        addTearDown(clearTimezone);
 
-      when(
-        () => plugin.initialize(settings: any(named: 'settings')),
-      ).thenAnswer((_) async => true);
-      when(
-        () => android.createNotificationChannel(any()),
-      ).thenAnswer((_) async {});
+        when(
+          () => plugin.initialize(settings: any(named: 'settings')),
+        ).thenAnswer((_) async => true);
 
-      await NotificationService(plugin).init();
+        await NotificationService(plugin).init();
 
-      verify(
-        () => plugin.initialize(settings: any(named: 'settings')),
-      ).called(1);
-      verify(() => android.createNotificationChannel(any())).called(1);
-    });
+        verify(
+          () => plugin.initialize(settings: any(named: 'settings')),
+        ).called(1);
+        // The channel is created with the localized name in syncSchedule, not init.
+        verifyNever(() => android.createNotificationChannel(any()));
+      },
+    );
 
     test('hasPermission reads areNotificationsEnabled', () async {
       when(
@@ -129,6 +130,9 @@ void main() {
     test('syncSchedule cancels all then schedules one per reminder', () async {
       when(() => plugin.cancelAll()).thenAnswer((_) async {});
       when(
+        () => android.createNotificationChannel(any()),
+      ).thenAnswer((_) async {});
+      when(
         () => plugin.zonedSchedule(
           id: any(named: 'id'),
           title: any(named: 'title'),
@@ -139,18 +143,30 @@ void main() {
         ),
       ).thenAnswer((_) async {});
 
-      await NotificationService(plugin).syncSchedule([
-        ScheduledReminder(
-          habitId: 1,
-          habitName: 'Read',
-          when: DateTime(2026, 6, 25, 20),
-        ),
-        ScheduledReminder(
-          habitId: 2,
-          habitName: 'Walk',
-          when: DateTime(2026, 6, 25, 21),
-        ),
-      ], body: 'time!');
+      await NotificationService(plugin).syncSchedule(
+        [
+          ScheduledReminder(
+            habitId: 1,
+            habitName: 'Read',
+            when: DateTime(2026, 6, 25, 20),
+          ),
+          ScheduledReminder(
+            habitId: 2,
+            habitName: 'Walk',
+            when: DateTime(2026, 6, 25, 21),
+          ),
+        ],
+        body: 'time!',
+        channelName: 'Habit reminders',
+      );
+
+      // The Android channel is (re)created with the passed localized name.
+      final channel =
+          verify(
+                () => android.createNotificationChannel(captureAny()),
+              ).captured.single
+              as AndroidNotificationChannel;
+      expect(channel.name, 'Habit reminders');
 
       // Verify order: cancelAll first, then two zonedSchedule calls.
       verifyInOrder([

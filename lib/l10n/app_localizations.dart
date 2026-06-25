@@ -320,6 +320,12 @@ abstract class AppLocalizations {
   /// **'Time to check in'**
   String get reminderBody;
 
+  /// No description provided for @reminderChannelName.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit reminders'**
+  String get reminderChannelName;
+
   /// No description provided for @reminderLimitTitle.
   ///
   /// In en, this message translates to:

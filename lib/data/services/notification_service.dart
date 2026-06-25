@@ -29,7 +29,6 @@ class NotificationService {
 
   final FlutterLocalNotificationsPlugin _plugin;
   static const _channelId = 'habit_reminders';
-  static const _channelName = 'Habit reminders';
 
   Future<void> init() async {
     tzdata.initializeTimeZones();
@@ -45,14 +44,8 @@ class NotificationService {
     await _plugin.initialize(
       settings: const InitializationSettings(android: android, iOS: darwin),
     );
-
-    await _plugin
-        .resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
-        ?.createNotificationChannel(
-          const AndroidNotificationChannel(_channelId, _channelName),
-        );
+    // The Android channel is (re)created in syncSchedule with the localized
+    // name, so it isn't created here (no BuildContext at init).
   }
 
   /// Re-resolves the device's IANA zone into `tz.local`. Called at init and on
@@ -100,19 +93,30 @@ class NotificationService {
     return ios ?? android ?? false;
   }
 
-  /// Cancels everything and reschedules exactly [reminders].
+  /// Cancels everything and reschedules exactly [reminders]. [channelName] is
+  /// the localized Android channel label (shown in system settings); the channel
+  /// is (re)created with it on every sync, so it follows the app locale — the
+  /// reminder coordinator resyncs on locale change.
   Future<void> syncSchedule(
     List<ScheduledReminder> reminders, {
     required String body,
+    required String channelName,
   }) async {
     await _plugin.cancelAll();
-    const details = NotificationDetails(
+    await _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(
+          AndroidNotificationChannel(_channelId, channelName),
+        );
+    final details = NotificationDetails(
       android: AndroidNotificationDetails(
         _channelId,
-        _channelName,
+        channelName,
         importance: Importance.defaultImportance,
       ),
-      iOS: DarwinNotificationDetails(),
+      iOS: const DarwinNotificationDetails(),
     );
     for (var i = 0; i < reminders.length; i++) {
       final r = reminders[i];

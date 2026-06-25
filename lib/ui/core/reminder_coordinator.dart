@@ -31,6 +31,7 @@ class _ReminderCoordinatorState extends ConsumerState<ReminderCoordinator> {
       service: ref.read(notificationServiceProvider),
       readEnabledHabits: _readEnabledHabits,
       readBody: () => AppLocalizations.of(context).reminderBody,
+      readChannelName: () => AppLocalizations.of(context).reminderChannelName,
       reportPermission: (granted) =>
           ref.read(notificationPermissionProvider.notifier).report(granted),
       isActive: () => mounted,

@@ -154,6 +154,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get reminderBody => 'Пора отметиться';
 
   @override
+  String get reminderChannelName => 'Напоминания о привычках';
+
+  @override
   String get reminderLimitTitle => 'Слишком много напоминаний';
 
   @override
