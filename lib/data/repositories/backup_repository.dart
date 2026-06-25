@@ -4,8 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:share_plus_platform_interface/share_plus_platform_interface.dart'
-    show SharePlatform;
 
 import '../../domain/backup_codec.dart';
 import '../../domain/dates.dart';
@@ -28,7 +26,7 @@ class BackupRepository {
     final dir = await getTemporaryDirectory();
     final file = File('${dir.path}/habbits-backup-${formatIsoDate(now)}.json');
     await file.writeAsString(json);
-    await SharePlatform.instance.share(
+    await SharePlus.instance.share(
       ShareParams(files: [XFile(file.path)], subject: subject),
     );
   }

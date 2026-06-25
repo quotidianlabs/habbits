@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/repositories/backup_repository.dart';
 import 'package:habbits/data/repositories/habit_repository.dart';
@@ -9,30 +10,25 @@ import 'package:habbits/data/services/database/database.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'package:share_plus_platform_interface/share_plus_platform_interface.dart';
 
 class _MockPathProvider extends Mock
     with MockPlatformInterfaceMixin
     implements PathProviderPlatform {}
 
-class _MockShare extends Mock
-    with MockPlatformInterfaceMixin
-    implements SharePlatform {}
-
 class _MockFilePicker extends Mock
     with MockPlatformInterfaceMixin
     implements FilePicker {}
 
-class _FakeShareParams extends Fake implements ShareParams {}
-
 void main() {
   late AppDatabase db;
   late BackupRepository repo;
-  late _MockShare share;
 
-  setUpAll(() => registerFallbackValue(_FakeShareParams()));
+  const shareChannel = MethodChannel('dev.fluttercommunity.plus/share');
+  MethodCall? capturedShareCall;
 
   setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized();
+
     db = AppDatabase(NativeDatabase.memory());
     repo = BackupRepository(HabitRepository(db.habitDao));
 
@@ -42,24 +38,33 @@ void main() {
     ).thenAnswer((_) async => Directory.systemTemp.path);
     PathProviderPlatform.instance = paths;
 
-    share = _MockShare();
-    when(() => share.share(any())).thenAnswer(
-      (_) async => const ShareResult('ok', ShareResultStatus.success),
-    );
-    SharePlatform.instance = share;
+    capturedShareCall = null;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(shareChannel, (call) async {
+          capturedShareCall = call;
+          // Any non-empty, non-unavailable string => ShareResultStatus.success
+          return 'dev.fluttercommunity.plus/share/success';
+        });
   });
-  tearDown(() => db.close());
+
+  tearDown(() async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(shareChannel, null);
+    await db.close();
+  });
 
   test('exportAndShare writes a temp file and opens the share sheet', () async {
     await db.habitDao.createHabit(name: 'Read', color: 1);
 
     await repo.exportAndShare(subject: 'My backup');
 
-    final captured =
-        verify(() => share.share(captureAny())).captured.single as ShareParams;
-    expect(captured.subject, 'My backup');
-    expect(captured.files, hasLength(1));
-    final written = File(captured.files!.single.path);
+    expect(capturedShareCall, isNotNull);
+    expect(capturedShareCall!.method, 'share');
+    final args = capturedShareCall!.arguments as Map;
+    expect(args['subject'], 'My backup');
+    final filePaths = args['paths'] as List;
+    expect(filePaths, hasLength(1));
+    final written = File(filePaths.single as String);
     expect(await written.exists(), isTrue);
     expect(await written.readAsString(), contains('Read'));
   });
@@ -78,11 +83,8 @@ void main() {
     // Round-trip a real export to disk, then pick it back.
     await db.habitDao.createHabit(name: 'Read', color: 1);
     await repo.exportAndShare(subject: 's');
-    final path =
-        (verify(() => share.share(captureAny())).captured.single as ShareParams)
-            .files!
-            .single
-            .path;
+    final args = capturedShareCall!.arguments as Map;
+    final path = (args['paths'] as List).single as String;
 
     final picker = _MockFilePicker();
     when(
