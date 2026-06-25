@@ -1,9 +1,9 @@
 ---
-status: draft
+status: shipped
 date: 2026-06-25
 slug: coverage-100
 spec: design.md
-pr: null
+pr: 33
 ---
 
 # Meaningful 100% Coverage Implementation Plan
