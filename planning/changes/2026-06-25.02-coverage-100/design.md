@@ -2,7 +2,7 @@
 status: draft
 date: 2026-06-25
 slug: coverage-100
-summary: Drive coverage to a meaningful 100%; replace tool/coverage.py with coverde, migrate the CI gate off deprecated very_good_coverage, isolate the production DB glue, and cover the notification + backup platform channels with mock handlers (no glue excluded beyond the DB connection).
+summary: Drive coverage to a meaningful 100%; replace tool/coverage.py with coverde, migrate the CI gate off deprecated very_good_coverage, isolate the production DB glue, and cover the notification + backup platform boundaries with mocktail-injected fakes + a channel mock for the one static timezone call (no glue excluded beyond the DB connection).
 supersedes: null
 superseded_by: null
 pr: null
@@ -60,10 +60,21 @@ The notification and backup boundaries call method-channel plugins
 (`flutter_local_notifications`, `flutter_timezone`, `share_plus`, `file_picker`,
 `path_provider`). Rather than treat them as irreducible glue and exclude the
 files (the path the sibling `nooka` project took only for its DB connection),
-**this change covers them with `flutter_test`'s built-in
-`setMockMethodCallHandler` and the plugins' platform-interface seams.** No new
-test dependency is added — the project has only `flutter_test` +
-`integration_test`, and channel mocking needs neither `mocktail` nor `mockito`.
+**this change covers them by injecting test doubles through the boundaries'
+existing seams.** `NotificationService` already takes an optional
+`FlutterLocalNotificationsPlugin`, and the backup plugins expose settable
+platform interfaces (`PathProviderPlatform.instance`, `SharePlatform.instance`,
+`FilePicker.platform`) — so the doubles are `mocktail` mocks, not raw
+method-channel handlers. The one exception is the static
+`FlutterTimezone.getLocalTimezone()` call, which has no injection seam and is
+covered with `flutter_test`'s built-in `setMockMethodCallHandler`.
+
+This adds one dev-only dependency, **`mocktail`** (no codegen; the de-facto
+Flutter mocking standard). It is preferred over the no-dependency raw-channel
+approach because `FlutterLocalNotificationsPlugin` cannot be subclassed (private
+generative constructor), so the no-dep path would force brittle guessing of the
+plugin's channel method names and the iOS `checkPermissions` reply-map shape;
+mocktail stubs typed methods directly.
 
 Consequence: the only file-level coverage exclusions beyond generated code are
 `database/connection.dart` and `database/database_providers.dart`. This reverses
@@ -169,22 +180,23 @@ ordinary in-memory tests, not mocks or exclusions.
 
 No file exclusions here — the boundaries are exercised through their test seams.
 
-- **`notification_service.dart`** — the implementer first verifies the channel
-  names experimentally (`dexterous.com/flutter/local_notifications`,
-  `flutter_timezone`). Tests register `setMockMethodCallHandler`s that record the
-  invoked methods + args and return canned replies, and set
-  `debugDefaultTargetPlatformOverride` to reach both the iOS and Android branches
-  of `hasPermission` / `requestPermission` (the
-  `resolvePlatformSpecificImplementation<…>()` dispatch). They assert that
-  `syncSchedule` cancels-all then schedules one notification per reminder at the
-  right `scheduledInstant`, and cover `init`, `refreshTimeZone`, `cancelAll`, and
-  the pure `scheduledInstant` tz math directly.
+- **`notification_service.dart`** — a `mocktail` mock of
+  `FlutterLocalNotificationsPlugin` is injected via the constructor seam. Tests
+  stub the typed methods (`initialize`, `cancelAll`, `zonedSchedule`, and the
+  `resolvePlatformSpecificImplementation<…>()` dispatch returning mocked
+  Android/iOS implementations) to reach both the iOS and Android branches of
+  `hasPermission` / `requestPermission`. They `verify` that `syncSchedule`
+  cancels-all then schedules one notification per reminder at the right
+  `scheduledInstant`, and cover `cancelAll` and the pure `scheduledInstant` tz
+  math directly. `init` / `refreshTimeZone` additionally need the static
+  `FlutterTimezone.getLocalTimezone()` mocked via `setMockMethodCallHandler` on
+  the `flutter_timezone` channel.
 - **`backup_repository.dart`** — `exportAndShare` / `pickAndDecode` are covered
-  by overriding the plugins' platform interfaces with small fakes:
-  `PathProviderPlatform.instance` returns a real temp dir (so the actual `File`
-  write/read runs), `SharePlatform.instance` records the share, and
-  `FilePicker.platform` returns a chosen path (and `null` for the
-  cancelled-pick branch).
+  by swapping the plugins' platform interfaces for `mocktail` mocks (mixing in
+  `MockPlatformInterfaceMixin`): `PathProviderPlatform.instance` returns a real
+  temp dir (so the actual `File` write/read runs), `SharePlatform.instance`
+  records the share, and `FilePicker.platform` returns a chosen path (and `null`
+  for the cancelled-pick branch).
 
 If a specific line proves genuinely unrunnable under `flutter test`, the
 implementer surfaces it for a ruling rather than silently excluding it — the
@@ -230,7 +242,7 @@ None out-of-repo. CI installs `coverde` via `dart pub global activate`.
   100% threshold over the filtered lcov.
 - New/expanded tests: in-memory schema + DAO/repository tests; `current_day`
   ticker widget test; widget tests for settings / habit-detail / habit-list /
-  dialogs; `backup_codec` edge cases; channel-mock tests for
+  dialogs; `backup_codec` edge cases; mocktail-injected tests for
   `notification_service` (both platform branches) and `backup_repository`.
 - `just lint-ci` clean on an already-committed tree.
 
@@ -239,10 +251,11 @@ None out-of-repo. CI installs `coverde` via `dart pub global activate`.
 - **Table getters may stay credited to generated code** (medium × low) —
   fallback is the `tables.dart` split + glob-exclude; design already accounts for
   it.
-- **`flutter_local_notifications` channel-mock surface** (medium × medium) — the
-  `resolvePlatformSpecificImplementation` dispatch is the fiddliest part; mitigate
-  by verifying the exact channel/method names experimentally before writing the
-  suite, and by surfacing (not excluding) any line that proves unrunnable.
+- **`flutter_local_notifications` mock surface** (low × medium) — the
+  `resolvePlatformSpecificImplementation` dispatch is the fiddliest part; with
+  `mocktail` it is stubbed to return mocked Android/iOS implementations, removing
+  the channel-reply-shape guessing. Surface (don't exclude) any line that still
+  proves unrunnable.
 - **`coverde` flag/preset surface changes** (low × medium) — mitigate by pinning
   the version in CI.
 - **Hidden unrunnable lines surface once the gate is 100%** (medium × low) — e.g.
