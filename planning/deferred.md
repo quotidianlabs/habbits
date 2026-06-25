@@ -3,10 +3,6 @@
 Real-but-unscheduled items. Each has a revisit trigger. Promote one into a
 change bundle when its trigger fires.
 
-- **Android notification channel name not localized** —
-  `NotificationService._channelName = 'Habit reminders'` is hard-coded English
-  (no `BuildContext` at the `const` site). *Revisit when* notification copy is
-  next touched.
 - **`share_plus` iPad popover anchor** — `backup_repository.dart`'s
   `SharePlus...share` passes no `sharePositionOrigin`, which crashes on iPad.
   *Revisit when* iPad becomes a target.
