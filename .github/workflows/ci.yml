@@ -42,7 +42,7 @@ jobs:
       - name: Filter generated + glue, enforce threshold
         run: |
           dart pub global run coverde transform --input coverage/lcov.info --output coverage/lcov.info --mode w --transformations preset=exclude-untestable
-          dart pub global run coverde check --input coverage/lcov.info 80
+          dart pub global run coverde check --input coverage/lcov.info 100
 
   # Runs the critical-flow integration test on a KVM-accelerated Android
   # emulator (standard ubuntu runners gained KVM in 2024). Only this file —

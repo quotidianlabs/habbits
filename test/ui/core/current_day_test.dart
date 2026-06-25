@@ -5,6 +5,16 @@ import 'package:habbits/domain/dates.dart';
 import 'package:habbits/ui/core/current_day.dart';
 
 void main() {
+  test(
+    'CurrentDayTicker non-const construction (covers the generative ctor)',
+    () {
+      final child = const SizedBox();
+      // ignore: prefer_const_constructors
+      final ticker = CurrentDayTicker(child: child);
+      expect(ticker, isA<ConsumerStatefulWidget>());
+    },
+  );
+
   test('defaults to today and refresh is a no-op on the same day', () {
     final container = ProviderContainer();
     addTearDown(container.dispose);

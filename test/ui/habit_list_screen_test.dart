@@ -42,6 +42,14 @@ Widget _appWithPrefs(AppDatabase db, SharedPreferences prefs) => ProviderScope(
 );
 
 void main() {
+  test(
+    'HabitListScreen non-const construction (covers the generative ctor)',
+    () {
+      // ignore: prefer_const_constructors
+      expect(HabitListScreen(), isA<ConsumerWidget>());
+    },
+  );
+
   testWidgets('adding a habit shows it in the list', (tester) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);

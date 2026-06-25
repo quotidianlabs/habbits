@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:drift/native.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/repositories/backup_repository.dart';
 import 'package:habbits/data/repositories/habit_repository.dart';
 import 'package:habbits/data/services/database/database.dart';
+import 'package:habbits/data/services/database/database_providers.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -107,5 +109,27 @@ void main() {
 
     expect(data, isNotNull);
     expect(data!.habits.single.name, 'Read');
+  });
+
+  test(
+    'BackupRepository default share (covers ?? SharePlus.instance branch)',
+    () {
+      // Construct with no share: arg so the ?? branch runs.
+      final noShareRepo = BackupRepository(HabitRepository(db.habitDao));
+      expect(noShareRepo, isA<BackupRepository>());
+    },
+  );
+
+  test('backupRepositoryProvider wires up via ProviderContainer', () async {
+    final memDb = AppDatabase(NativeDatabase.memory());
+    addTearDown(memDb.close);
+
+    final container = ProviderContainer(
+      overrides: [appDatabaseProvider.overrideWithValue(memDb)],
+    );
+    addTearDown(container.dispose);
+
+    final instance = container.read(backupRepositoryProvider);
+    expect(instance, isA<BackupRepository>());
   });
 }

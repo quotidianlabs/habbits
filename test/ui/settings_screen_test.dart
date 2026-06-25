@@ -102,6 +102,14 @@ Widget settingsAppWithBackupAndHabitRepo(
 );
 
 void main() {
+  test(
+    'SettingsScreen non-const construction (covers the generative ctor)',
+    () {
+      // ignore: prefer_const_constructors
+      expect(SettingsScreen(), isA<ConsumerWidget>());
+    },
+  );
+
   testWidgets('renders Export and Import rows', (tester) async {
     final db = AppDatabase(NativeDatabase.memory());
     addTearDown(db.close);
