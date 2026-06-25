@@ -196,6 +196,12 @@ void main() {
               IOSFlutterLocalNotificationsPlugin
             >(),
       ).thenReturn(ios);
+      when(
+        () => plugin
+            .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin
+            >(),
+      ).thenReturn(null);
     });
 
     test('hasPermission returns the ios isEnabled', () async {
