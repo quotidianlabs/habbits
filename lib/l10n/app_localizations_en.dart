@@ -150,6 +150,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reminderBody => 'Time to check in';
 
   @override
+  String get reminderChannelName => 'Habit reminders';
+
+  @override
   String get reminderLimitTitle => 'Too many reminders';
 
   @override

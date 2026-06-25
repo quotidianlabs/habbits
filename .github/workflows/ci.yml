@@ -49,9 +49,19 @@ jobs:
   # screenshots_test.dart is a screenshot generator, not a pass/fail test.
   integration:
     runs-on: ubuntu-latest
-    timeout-minutes: 30   # headroom for a one-shot retry on emulator-boot flake
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
+      # The AVD userdata partition (~7.4 GB for api-34) FATAL-exits at boot when
+      # the runner is low on free disk ("Not enough space to create userdata
+      # partition" → emulator never registers with adb → "boot timeout"). The
+      # hosted image leaves us a few hundred MB short, so reclaim a few GB of
+      # preinstalled tooling the Flutter/Android build never uses.
+      - name: Free disk space for the emulator
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force || true
+          df -h /
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.44.2
@@ -82,32 +92,11 @@ jobs:
         with:
           path: ${{ env.ANDROID_SYSIMG }}
           key: sysimg-android-34-google_apis-x86_64
-      # The emulator occasionally fails to register on a cold boot
-      # ("adb: device 'emulator-5554' not found" → "Timeout waiting for emulator
-      # to boot") — an android-emulator-runner infra flake, not a test failure.
-      # GitHub Actions can't wrap a `uses:` action in a retry, so run it once
-      # (tolerating failure) and re-run once if it flaked. `emulator-boot-timeout`
-      # is dropped to 300s (a healthy boot is ~40s) so a flaky boot fails fast
-      # and leaves room for the retry within the job timeout. A second failure
-      # is a real failure and fails the job.
       - name: Run critical-flow integration test
-        id: integration
-        continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
-          emulator-boot-timeout: 300
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: flutter test integration_test/critical_flow_test.dart
-      - name: Retry critical-flow integration test (boot flake)
-        if: steps.integration.outcome == 'failure'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          emulator-boot-timeout: 300
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: flutter test integration_test/critical_flow_test.dart

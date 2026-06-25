@@ -38,6 +38,7 @@ class _FakeNotificationService extends NotificationService {
   Future<void> syncSchedule(
     List<ScheduledReminder> reminders, {
     required String body,
+    required String channelName,
   }) async {
     syncCalls++;
     last = reminders;

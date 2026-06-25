@@ -33,6 +33,7 @@ class _FakeService extends NotificationService {
   Future<void> syncSchedule(
     List<ScheduledReminder> reminders, {
     required String body,
+    required String channelName,
   }) async {
     calls.add('schedule');
     syncCalls++;
@@ -55,6 +56,7 @@ void main() {
     service: fake,
     readEnabledHabits: readEnabledHabits ?? () => _oneHabit,
     readBody: () => 'body',
+    readChannelName: () => 'channel',
     reportPermission: reportPermission ?? (_) {},
     isActive: isActive ?? () => true,
     now: () => DateTime(2026, 6, 13, 8, 0),

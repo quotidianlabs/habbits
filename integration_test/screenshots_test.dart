@@ -20,7 +20,11 @@ class _NoopNotifications extends NotificationService {
   @override
   Future<bool> requestPermission() async => true;
   @override
-  Future<void> syncSchedule(List reminders, {required String body}) async {}
+  Future<void> syncSchedule(
+    List reminders, {
+    required String body,
+    required String channelName,
+  }) async {}
   @override
   Future<void> cancelAll() async {}
 }

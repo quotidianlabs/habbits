@@ -14,6 +14,7 @@ class ReminderSync {
     required this.service,
     required this.readEnabledHabits,
     required this.readBody,
+    required this.readChannelName,
     required this.reportPermission,
     required this.isActive,
     this.now = DateTime.now,
@@ -27,6 +28,9 @@ class ReminderSync {
 
   /// The localized notification body text.
   final String Function() readBody;
+
+  /// The localized Android channel name (shown in system settings).
+  final String Function() readChannelName;
 
   /// Records the latest observed permission status.
   final void Function(bool granted) reportPermission;
@@ -81,6 +85,7 @@ class ReminderSync {
     await service.syncSchedule(
       computeReminderSchedule(enabled, now()),
       body: readBody(),
+      channelName: readChannelName(),
     );
   }
 
