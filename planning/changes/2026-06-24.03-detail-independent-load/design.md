@@ -1,20 +1,5 @@
 ---
-status: shipped
-date: 2026-06-24
-slug: detail-independent-load
 summary: Detail screen loads its own habit via a single-habit repository watch instead of scanning the list view model's stream.
-supersedes: null
-superseded_by: null
-pr: 24
-outcome: |
-  Added HabitDao.watchHabitWithDates(id) and HabitRepository.watchHabit(id)
-  (a single-habit reactive stream, null when absent). HabitDetailViewModel.build
-  is now Stream<HabitSummary?> composing through HabitSummary.from off its own
-  watch + currentDayProvider; it no longer imports or scans the list VM. Detail
-  screen reads the AsyncValue via .value (.valueOrNull isn't in this Riverpod
-  version), preserving the null→spinner branch. The VM test dropped the
-  keep-alive list subscription — the coupling-removal proof. just lint clean;
-  just test 170 green.
 ---
 
 # Design: Detail screen loads independently of the list

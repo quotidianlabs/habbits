@@ -1,18 +1,5 @@
 ---
-status: shipped
-date: 2026-06-24
-slug: toggle-today-anchor
 summary: Anchor toggleToday on currentDayProvider instead of the wall clock, so the home check-off writes the day the UI displays.
-supersedes: null
-superseded_by: null
-pr: 22
-outcome: |
-  toggleToday now writes ref.read(currentDayProvider) instead of
-  dateOnly(DateTime.now()); the now-unused dates.dart import dropped from the
-  view model. Strengthened the home VM test to pin currentDayProvider to a day
-  far from the wall clock and assert the completion lands there (red against the
-  old code: it wrote the wall-clock day). Audit confirmed this was the only
-  wall-clock day-read on a write path. just lint clean; just test 165 green.
 ---
 
 # Change: Anchor toggleToday on currentDayProvider

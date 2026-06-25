@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-13
-slug: usability-v2
 summary: Usability pass across home, detail, and dialogs.
-supersedes: null
-superseded_by: null
-pr: merged to main locally
-outcome: Usability pass across home, detail, and dialogs.
 ---
 
 

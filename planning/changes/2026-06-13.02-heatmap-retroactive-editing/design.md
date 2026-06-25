@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-13
-slug: heatmap-retroactive-editing
 summary: Detail-screen heatmap + retroactive check-off.
-supersedes: null
-superseded_by: null
-pr: merged to main locally
-outcome: Detail-screen heatmap + retroactive check-off via the recent-days list.
 ---
 
 

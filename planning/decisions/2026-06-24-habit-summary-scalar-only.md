@@ -1,11 +1,8 @@
 ---
 status: accepted
-date: 2026-06-24
-slug: habit-summary-scalar-only
 summary: HabitSummary.from owns only the scalar projection; the calendar builders (buildHeatmap, recentDays) stay pure view-parameterized functions, not absorbed into the projection.
 supersedes: null
 superseded_by: null
-pr: 21
 ---
 
 # Keep the habit projection scalar-only

@@ -1,11 +1,3 @@
----
-status: draft
-date: YYYY-MM-DD
-slug: my-change
-spec: my-change
-pr: null
----
-
 # <slug> — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use
@@ -28,8 +20,8 @@ Whichever fits.
 ### Task 1: <imperative description>
 
 **Files:**
-- Modify: `path/to/file.dart`
-- Create: `path/to/new.dart`
+- Modify: `path/to/file.py`
+- Create: `path/to/new.py`
 
 One sentence on what this task accomplishes. No deeper reasoning — that's
 in the spec.
@@ -45,10 +37,8 @@ in the spec.
 - [ ] **Step 3: Commit**
 
   ```bash
-  git add path/to/file.dart
-  git commit -m "<type>: <subject>
-
-  Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>"
+  git add path/to/file.py
+  git commit -m "<type>: <subject>"
   ```
 
 ---

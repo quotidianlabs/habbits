@@ -1,11 +1,3 @@
----
-status: draft
-date: 2026-06-20
-slug: harden-toggle-and-import
-spec: harden-toggle-and-import
-pr: 13
----
-
 # harden-toggle-and-import — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use

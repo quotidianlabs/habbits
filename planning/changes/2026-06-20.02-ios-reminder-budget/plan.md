@@ -1,11 +1,3 @@
----
-status: draft
-date: 2026-06-20
-slug: ios-reminder-budget
-spec: ios-reminder-budget
-pr: 14
----
-
 # ios-reminder-budget — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use

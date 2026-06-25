@@ -32,6 +32,13 @@ Habbits is a local-first habit tracker built with Flutter, targeting iOS and And
 
 Build, run, and local-test setup lives in [`docs/development.md`](../docs/development.md).
 
+## Promotion rule
+
+These files are the living truth home — they describe what the system does
+*now*. When a change alters a capability's behavior, hand-edit the matching
+`architecture/<capability>.md` in the same PR that ships the code, so the edit
+is reviewed with the diff rather than applied as a separate post-merge step.
+
 ## History and rationale
 
 Decision history and rationale live in [`planning/`](../planning/README.md); these docs describe the present state of the system.

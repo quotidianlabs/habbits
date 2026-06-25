@@ -1,11 +1,3 @@
----
-status: shipped
-date: 2026-06-24
-slug: habit-summary-factory
-spec: habit-summary-factory
-pr: 21
----
-
 # habit-summary-factory — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use

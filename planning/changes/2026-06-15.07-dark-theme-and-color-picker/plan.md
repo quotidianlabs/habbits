@@ -1,11 +1,3 @@
----
-status: shipped
-date: 2026-06-15
-slug: dark-theme-and-color-picker
-spec: dark-theme-and-color-picker
-pr: 6
----
-
 # dark-theme-and-color-picker — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use

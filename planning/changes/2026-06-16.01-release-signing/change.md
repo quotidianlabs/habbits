@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-16
-slug: release-signing
 summary: Android upload-key signing (gitignored keystore + `key.properties`), `compileSdk`/`targetSdk` pinned to 36, and a `docs/release.md` runbook — `flutter build appbundle --release` is now Play-uploadable.
-supersedes: null
-superseded_by: null
-pr: 9
-outcome: Shipped — release build produces an upload-key-signed AAB; compileSdk/targetSdk pinned to 36; release runbook in docs/release.md. Reminders already inexact, so no exact-alarm permission needed.
 ---
 
 # Change: Android release signing for Google Play

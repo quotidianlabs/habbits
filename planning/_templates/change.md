@@ -1,12 +1,5 @@
 ---
-status: draft
-date: YYYY-MM-DD
-slug: my-change
-summary: One line — shown in the generated index. Fill at ship time.
-supersedes: null
-superseded_by: null
-pr: null
-outcome: null
+summary: One line — shown in the generated index. Written at creation; finalize at ship to state the realized result.
 ---
 
 # Change: One-line capitalized title
@@ -27,13 +20,13 @@ capability contract moves.
 
 ## Files
 
-- `path/to/file.dart` — what changes
-- `test/path/x_test.dart` — test added / updated
+- `path/to/file.py` — what changes
+- `tests/test_x.py` — test added / updated
 
 ## Verification
 
 - [ ] Failing test first — command + expected error.
 - [ ] Apply the change.
 - [ ] Test passes — command.
-- [ ] `flutter test` — full suite green.
-- [ ] `flutter analyze` — clean.
+- [ ] `just test` — full suite green.
+- [ ] `just lint` — clean.

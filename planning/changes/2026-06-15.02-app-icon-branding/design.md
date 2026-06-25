@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-15
-slug: app-icon-branding
 summary: Activity-grid app icon + bundle id `io.github.quotidianlabs.habbits`.
-supersedes: null
-superseded_by: null
-pr: "1 (bbb0a93)"
-outcome: Activity-grid app icon + bundle id io.github.quotidianlabs.habbits.
 ---
 
 # App icon + branding — design

@@ -1,11 +1,3 @@
----
-status: shipped
-date: 2026-06-24
-slug: detail-independent-load
-spec: detail-independent-load
-pr: 24
----
-
 # detail-independent-load — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use

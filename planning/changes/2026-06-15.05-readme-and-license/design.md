@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-15
-slug: readme-and-license
 summary: Project README (badges, en/ru screenshots, features, architecture) + MIT LICENSE.
-supersedes: null
-superseded_by: null
-pr: "4"
-outcome: Project README (badges, en/ru screenshots, features, architecture) + MIT LICENSE.
 ---
 
 # Design: README + MIT LICENSE (with en/ru screenshots)

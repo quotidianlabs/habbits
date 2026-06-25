@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-25
-slug: coverage-100
 summary: Drive coverage to a meaningful 100%; replace tool/coverage.py with coverde, migrate the CI gate off deprecated very_good_coverage, isolate the production DB glue, and cover the notification + backup platform boundaries with mocktail-injected fakes + a channel mock for the one static timezone call (no glue excluded beyond the DB connection).
-supersedes: null
-superseded_by: null
-pr: 33
-outcome: "100% on the filtered set (949/949); coverde gate at 100 in Justfile + CI (run via `dart pub global run`); tool/coverage.py + very_good_coverage + the lcov PR comment replaced; notification + backup plugin boundaries covered via mocktail-injected seams (no glue excluded beyond connection.dart / database_providers.dart / tables.dart); mocktail added as a dev dep; no production behavior change; 221 tests."
 ---
 
 # Design: Drive line coverage to a meaningful 100% on off-the-shelf tooling

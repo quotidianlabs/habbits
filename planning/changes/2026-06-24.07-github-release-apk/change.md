@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-24
-slug: github-release-apk
 summary: Publish a signed universal release APK to GitHub Releases on every `v*` tag.
-supersedes: null
-superseded_by: null
-pr: 30
-outcome: Added `.github/workflows/release.yml` (v* tag → signed universal APK → published GitHub Release) plus docs and the `planning/releases/` notes convention. Signing secrets + first `v1.0.0` tag are a manual post-merge step.
 ---
 
 # Change: Signed APK on GitHub Releases
