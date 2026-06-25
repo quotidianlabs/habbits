@@ -94,6 +94,36 @@ void main() {
       'reminderTime with out-of-range hour/minute',
       () => expectReject(habitWithReminder('"99:99"')),
     );
+
+    // Emits a valid single-habit backup JSON, overriding one field's raw value.
+    String validBackupWith({
+      String color = '1',
+      String sortOrder = '0',
+      String createdAt = '"2026-06-01T08:00:00.000"',
+      String completions = '[]',
+    }) =>
+        '{"app":"habbits","version":1,'
+        '"exportedAt":"2026-06-14T09:00:00.000","habits":[{'
+        '"name":"Read","color":$color,"reminderTime":null,'
+        '"sortOrder":$sortOrder,"createdAt":$createdAt,'
+        '"completions":$completions}]}';
+
+    test(
+      'habit with invalid color (not int)',
+      () => expectReject(validBackupWith(color: '"red"')),
+    );
+    test(
+      'habit with invalid sortOrder (not int)',
+      () => expectReject(validBackupWith(sortOrder: '"x"')),
+    );
+    test(
+      'habit with invalid createdAt (unparseable string)',
+      () => expectReject(validBackupWith(createdAt: '"nope"')),
+    );
+    test(
+      'habit with invalid completions (not a list)',
+      () => expectReject(validBackupWith(completions: '5')),
+    );
   });
 
   test('decodes a habit with a valid HH:mm reminderTime', () {
@@ -110,5 +140,10 @@ void main() {
       '{"app":"habbits","version":1,"exportedAt":"2026-06-14T00:00:00.000","habits":[]}',
     );
     expect(decoded.habits, isEmpty);
+  });
+
+  test('BackupFormatException.toString includes the message', () {
+    const e = BackupFormatException('bad file');
+    expect(e.toString(), 'BackupFormatException: bad file');
   });
 }
