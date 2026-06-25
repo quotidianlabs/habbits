@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:habbits/data/repositories/settings_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,5 +33,15 @@ void main() {
     expect(repo.readThemeToken(), isNull);
     await repo.writeThemeToken('dark');
     expect(repo.readThemeToken(), 'dark');
+  });
+
+  test('sharedPreferencesProvider throws until overridden in main', () {
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    expect(
+      () => container.read(sharedPreferencesProvider),
+      throwsA(isA<UnimplementedError>()),
+    );
   });
 }
