@@ -14,3 +14,5 @@ transformations:
       glob: "**/data/services/database/connection.dart"
     - type: skip-by-glob
       glob: "**/data/services/database/database_providers.dart"
+    - type: skip-by-glob
+      glob: "**/data/services/database/tables.dart"

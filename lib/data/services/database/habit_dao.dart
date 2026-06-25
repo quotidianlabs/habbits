@@ -4,6 +4,7 @@ import '../../../domain/dates.dart';
 import '../../../domain/models/backup_data.dart';
 import '../../../domain/models/habit_with_dates.dart';
 import 'database.dart';
+import 'tables.dart';
 
 part 'habit_dao.g.dart';
 
