@@ -2,10 +2,13 @@ import 'package:drift/native.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:habbits/data/repositories/backup_repository.dart';
+import 'package:habbits/data/repositories/habit_repository.dart';
 import 'package:habbits/data/services/database/database.dart';
 import 'package:habbits/data/services/database/database_providers.dart';
 import 'package:habbits/data/repositories/settings_repository.dart';
 import 'package:habbits/domain/models/backup_data.dart';
+import 'package:habbits/domain/models/habit_with_dates.dart';
 import 'package:habbits/domain/reminder_schedule.dart';
 import 'package:habbits/l10n/app_localizations.dart';
 import 'package:habbits/ui/core/locale_controller.dart';
@@ -25,6 +28,78 @@ class _FixedPermission extends NotificationPermission {
   @override
   bool? build() => _value;
 }
+
+class _FakeBackup extends BackupRepository {
+  _FakeBackup(
+    super.habits, {
+    this.exportThrows = false,
+    this.picked,
+    this.pickThrows,
+  });
+  final bool exportThrows;
+  final BackupData? picked;
+  final Object? pickThrows;
+  bool exported = false;
+
+  @override
+  Future<void> exportAndShare({required String subject}) async {
+    if (exportThrows) throw Exception('share failed');
+    exported = true;
+  }
+
+  @override
+  Future<BackupData?> pickAndDecode() async {
+    if (pickThrows != null) throw pickThrows!;
+    return picked;
+  }
+}
+
+Widget settingsAppWithBackup(
+  AppDatabase db,
+  SharedPreferences prefs,
+  BackupRepository backup,
+) => ProviderScope(
+  overrides: [
+    appDatabaseProvider.overrideWithValue(db),
+    sharedPreferencesProvider.overrideWithValue(prefs),
+    backupRepositoryProvider.overrideWithValue(backup),
+  ],
+  child: const MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: SettingsScreen(),
+  ),
+);
+
+class _ThrowingHabitRepository extends HabitRepository {
+  _ThrowingHabitRepository(super.dao);
+
+  @override
+  Future<void> importReplace(List<BackupHabit> habits) =>
+      throw Exception('db error');
+
+  @override
+  Future<List<HabitWithDates>> getHabits() async => [];
+}
+
+Widget settingsAppWithBackupAndHabitRepo(
+  AppDatabase db,
+  SharedPreferences prefs,
+  BackupRepository backup,
+  HabitRepository habitRepo,
+) => ProviderScope(
+  overrides: [
+    appDatabaseProvider.overrideWithValue(db),
+    sharedPreferencesProvider.overrideWithValue(prefs),
+    backupRepositoryProvider.overrideWithValue(backup),
+    habitRepositoryProvider.overrideWithValue(habitRepo),
+  ],
+  child: const MaterialApp(
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: SettingsScreen(),
+  ),
+);
 
 void main() {
   testWidgets('renders Export and Import rows', (tester) async {
@@ -305,5 +380,178 @@ void main() {
     await tester.tap(find.byKey(const Key('theme-option-dark')));
     await tester.pumpAndSettle();
     expect(prefs.getString('theme'), 'dark');
+  });
+
+  testWidgets('tapping Export delegates to the backup repository', (
+    WidgetTester tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final backup = _FakeBackup(HabitRepository(db.habitDao));
+    await tester.pumpWidget(settingsAppWithBackup(db, await _prefs(), backup));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('export-data')));
+    await tester.pumpAndSettle();
+
+    expect(backup.exported, isTrue);
+  });
+
+  testWidgets('export failure shows the error SnackBar', (
+    WidgetTester tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final backup = _FakeBackup(
+      HabitRepository(db.habitDao),
+      exportThrows: true,
+    );
+    await tester.pumpWidget(settingsAppWithBackup(db, await _prefs(), backup));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('export-data')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsOneWidget);
+  });
+
+  testWidgets('import of a malformed file shows invalid-backup SnackBar', (
+    WidgetTester tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final backup = _FakeBackup(
+      HabitRepository(db.habitDao),
+      pickThrows: const BackupFormatException('bad'),
+    );
+    await tester.pumpWidget(settingsAppWithBackup(db, await _prefs(), backup));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('import-data')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsOneWidget);
+  });
+
+  testWidgets('import read error shows couldnt-read SnackBar', (
+    WidgetTester tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final backup = _FakeBackup(
+      HabitRepository(db.habitDao),
+      pickThrows: Exception('io'),
+    );
+    await tester.pumpWidget(settingsAppWithBackup(db, await _prefs(), backup));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('import-data')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsOneWidget);
+  });
+
+  testWidgets('import success confirms then applies, showing imported count', (
+    WidgetTester tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final data = BackupData(
+      version: 1,
+      exportedAt: DateTime(2026, 6, 14),
+      habits: [
+        BackupHabit(
+          name: 'Read',
+          color: 1,
+          reminderTime: null,
+          sortOrder: 0,
+          createdAt: DateTime(2026, 6, 1),
+          completions: const [],
+        ),
+      ],
+    );
+    final backup = _FakeBackup(HabitRepository(db.habitDao), picked: data);
+    await tester.pumpWidget(settingsAppWithBackup(db, await _prefs(), backup));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('import-data')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('confirm-import')));
+    await tester.pumpAndSettle();
+
+    expect((await db.habitDao.getHabitsWithDates()).single.habit.name, 'Read');
+    expect(find.byType(SnackBar), findsOneWidget);
+  });
+
+  testWidgets('cancelling the import dialog does not apply data', (
+    WidgetTester tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final data = BackupData(
+      version: 1,
+      exportedAt: DateTime(2026, 6, 14),
+      habits: [
+        BackupHabit(
+          name: 'Cancelled',
+          color: 1,
+          reminderTime: null,
+          sortOrder: 0,
+          createdAt: DateTime(2026, 6, 1),
+          completions: const [],
+        ),
+      ],
+    );
+    final backup = _FakeBackup(HabitRepository(db.habitDao), picked: data);
+    await tester.pumpWidget(settingsAppWithBackup(db, await _prefs(), backup));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('import-data')));
+    await tester.pumpAndSettle();
+    // Tap cancel — covers the cancel button onPressed
+    await tester.tap(find.byType(TextButton).first);
+    await tester.pumpAndSettle();
+
+    expect(await db.habitDao.getHabitsWithDates(), isEmpty);
+    expect(find.byType(SnackBar), findsNothing);
+  });
+
+  testWidgets('applyImport failure shows import-failed SnackBar', (
+    WidgetTester tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final data = BackupData(
+      version: 1,
+      exportedAt: DateTime(2026, 6, 14),
+      habits: [
+        BackupHabit(
+          name: 'WillFail',
+          color: 1,
+          reminderTime: null,
+          sortOrder: 0,
+          createdAt: DateTime(2026, 6, 1),
+          completions: const [],
+        ),
+      ],
+    );
+    final backup = _FakeBackup(HabitRepository(db.habitDao), picked: data);
+    final throwingHabitRepo = _ThrowingHabitRepository(db.habitDao);
+    await tester.pumpWidget(
+      settingsAppWithBackupAndHabitRepo(
+        db,
+        await _prefs(),
+        backup,
+        throwingHabitRepo,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('import-data')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('confirm-import')));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SnackBar), findsOneWidget);
   });
 }
