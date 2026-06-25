@@ -1,11 +1,3 @@
----
-status: draft
-date: 2026-06-20
-slug: live-current-day
-spec: live-current-day
-pr: 15
----
-
 # live-current-day — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use

@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-14
-slug: reminders
 summary: Per-habit local-notification reminders.
-supersedes: null
-superseded_by: null
-pr: merged to main locally
-outcome: Per-habit local-notification reminders (flutter_local_notifications + timezone).
 ---
 
 

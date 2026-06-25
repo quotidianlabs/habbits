@@ -1,11 +1,3 @@
----
-status: draft
-date: 2026-06-24
-slug: github-release-apk
-spec: github-release-apk
-pr: 30
----
-
 # github-release-apk — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use

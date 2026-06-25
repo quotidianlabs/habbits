@@ -1,12 +1,5 @@
 ---
-status: draft
-date: YYYY-MM-DD
-slug: my-change
-summary: One line — shown in the generated index. Fill at ship time.
-supersedes: null
-superseded_by: null
-pr: null
-outcome: null
+summary: One line — shown in the generated index. Written at creation; finalize at ship to state the realized result.
 ---
 
 # Design: One-line capitalized title
@@ -48,7 +41,8 @@ explicitly-excluded follow-ups belongs here when the list is long.
 
 ## Testing
 
-How we know it landed correctly. New test? Smoke check? Lint pass? Be specific.
+How we know it landed correctly. New pytest? Smoke check on live URL?
+Lint pass? Be specific.
 
 ## Risk
 

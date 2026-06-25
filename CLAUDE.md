@@ -1,37 +1,65 @@
 # Habbits — project guide
 
-Local-first habit tracker (Flutter, iOS + Android, English + Russian).
-Architecture: layered MVVM with Riverpod — see the shipped change bundles in
-`planning/`.
+Local-first habit tracker (Flutter, iOS + Android, English + Russian). No
+backend, no cloud sync — state lives in a Drift (SQLite) database on device,
+managed with Riverpod.
+
+## Architecture
+
+Layered MVVM. `architecture/` (repo root) is the living truth home — one file
+per capability. **When a change alters a capability's behavior, update the
+matching `architecture/<capability>.md` in the same PR.** Start at
+[`architecture/README.md`](architecture/README.md) for the layer map and
+conventions.
+
+Invariants that must not break:
+
+- Dependency direction: `ui/` → `domain/` + `data/`; `domain/` imports neither
+  Flutter nor Drift and is independently unit-testable; nothing imports `ui/`.
+- A widget never imports a repository, DAO, service, or `database.dart` — views
+  `ref.watch` a view model; shared widgets in `lib/ui/widgets/` are pure.
+- Drift entities are used directly as domain models — no mapper layer.
+- A completion is keyed `(habitId, localDate)` with a DB `UNIQUE` constraint;
+  every habit carries an explicit dense integer `sortOrder`.
+
+Capability → truth-home file:
+
+| Capability | File |
+|------------|------|
+| Habit tracking (create/edit/check-off/reorder) | [`architecture/habit-tracking.md`](architecture/habit-tracking.md) |
+| Streaks & stats (streak, completion %, heatmap) | [`architecture/streaks-and-stats.md`](architecture/streaks-and-stats.md) |
+| Reminders (per-habit local notifications) | [`architecture/reminders.md`](architecture/reminders.md) |
+| Backup I/O (JSON export / import) | [`architecture/backup-io.md`](architecture/backup-io.md) |
+| i18n (English + Russian, live switch) | [`architecture/i18n.md`](architecture/i18n.md) |
+| Theming (light/dark Material 3 + brand color) | [`architecture/theming.md`](architecture/theming.md) |
 
 ## Workflow
 
 Design + plan for every non-trivial change live in `planning/`. Read
-`planning/README.md` for the full convention. In short:
+[`planning/README.md`](planning/README.md)'s Quick path to choose a lane (Full /
+Lightweight / Tiny), create a bundle, and ship — that file is the authoritative
+convention. Run `just index` for the generated change listing and
+`just check-planning` to validate bundles (CI runs it via `just lint-ci`).
 
-- A change is a bundle `planning/changes/YYYY-MM-DD.NN-<slug>/` with
-  `design.md` + `plan.md` (Full lane) or `change.md` (Lightweight). The
-  implementing PR sets `status: shipped` and fills `pr` / `outcome` in the
-  branch — there is no folder move. The change listing is generated: run
-  `just index`.
-- Decisions taken without code (esp. options rejected with a load-bearing reason) go in `planning/decisions/YYYY-MM-DD-<slug>.md` (the `decision.md` template), each with a Revisit trigger; listed by `just index`.
-- Real-but-unscheduled items live in `planning/deferred.md`.
-- The `architecture/` capability docs live at the repo root (one file per
-  capability) and are the living truth-home for what the system does now.
+Decisions taken without code (esp. options rejected with a load-bearing reason)
+go in `planning/decisions/`. Real-but-unscheduled items live in
+`planning/deferred.md`.
 
 ## Commands
 
-`just lint` (`dart format` + `flutter analyze`) and `just test` (`flutter test`)
-— see the `Justfile`; CI uses `just lint-ci`. Generated `*.g.dart` is
-committed; run `dart run build_runner build --delete-conflicting-outputs` after
-touching `@riverpod`/Drift code.
+`just --list` is the source of truth. `just lint` (`dart format` +
+`flutter analyze`) and `just test` (`flutter test`); CI uses `just lint-ci`.
+Generated `*.g.dart` is committed — run
+`dart run build_runner build --delete-conflicting-outputs` after touching
+`@riverpod`/Drift code.
 
-Local device/emulator setup and running the `integration_test/` suite (Android
-emulator + iOS Simulator, with platform gotchas) — see
-[`docs/development.md`](docs/development.md).
+Non-obvious pointers:
 
-README screenshots are generated, not hand-captured — see
-[`docs/screenshots.md`](docs/screenshots.md) to regenerate or add shots.
-
-Cutting an Android release build (`.aab`, signing, versionCode, target API) —
-see [`docs/release.md`](docs/release.md).
+- Local device/emulator setup and the `integration_test/` suite (platform
+  gotchas) — [`docs/development.md`](docs/development.md).
+- README screenshots are generated, not hand-captured —
+  [`docs/screenshots.md`](docs/screenshots.md).
+- Cutting an Android release build (`.aab`, signing, versionCode, target API) —
+  [`docs/release.md`](docs/release.md).
+</content>
+</invoke>

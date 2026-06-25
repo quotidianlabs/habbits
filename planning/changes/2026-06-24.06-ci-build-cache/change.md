@@ -1,18 +1,5 @@
 ---
-status: shipped
-date: 2026-06-24
-slug: ci-build-cache
 summary: Cache the Gradle build and the emulator system image in the integration CI job (the measured bottleneck), skipping AVD snapshot caching as ineffective here.
-supersedes: null
-superseded_by: null
-pr: 29
-outcome: |
-  Added Gradle (~/.gradle/caches + wrapper) and system-image caches to the
-  integration job. Measured before/after on real runs: warm run 5m0s vs ~8min
-  cold (~37% faster). The emulator-runner step fell 434s → 196s (Gradle deps/NDK
-  build cache + system image both restored; both cache keys HIT, no PANIC). AVD
-  snapshot caching deliberately skipped — it'd only shave the 39s boot inside
-  that step. Verified the system-image cache doesn't break emulator startup.
 ---
 
 # Change: Cache the integration job's Gradle build + system image

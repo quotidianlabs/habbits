@@ -1,21 +1,5 @@
 ---
-status: shipped
-date: 2026-06-24
-slug: reminder-sync-controller
 summary: Lift reminder-sync policy out of the coordinator widget into a plain-Dart ReminderSync controller, so the ordering, gate, and coalescing are unit-testable.
-supersedes: null
-superseded_by: null
-pr: 25
-outcome: |
-  New lib/ui/core/reminder_sync.dart — a plain-Dart ReminderSync owning the
-  CoalescingRunner, the once-only permission gate, and the sync()/onResume()
-  sequences; collaborators injected as callbacks (the two mounted guards become
-  an isActive() check). ReminderCoordinator shrank to a lifecycle adapter
-  (-42 net lines) that builds the controller and forwards events. New pure
-  reminder_sync_test.dart (8 cases: request-before-check ordering, gate-once,
-  onResume order, coalescing, best-effort swallow, isActive guard, not-ready
-  skip); the existing widget tests pass unchanged. just lint clean; just test
-  178 green.
 ---
 
 # Design: Lift reminder sync into a plain-Dart controller

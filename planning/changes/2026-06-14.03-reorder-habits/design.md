@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-14
-slug: reorder-habits
 summary: Drag-to-reorder the home list via a per-card handle.
-supersedes: null
-superseded_by: null
-pr: 2c197d1
-outcome: Drag-to-reorder the home list via a per-card handle with persisted sortOrder.
 ---
 
 

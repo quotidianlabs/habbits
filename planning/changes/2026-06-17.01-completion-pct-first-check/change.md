@@ -1,14 +1,5 @@
 ---
-status: shipped
-date: 2026-06-17
-slug: completion-pct-first-check
 summary: Anchor the 30-day completion % at the first checked day instead of `createdAt`, so pre-creation backfilled checks count and the denominator follows activity span, not creation span; unstarted habits render "—".
-supersedes: null
-superseded_by: null
-pr: 11
-outcome: Completion % now anchors at the first checked day; pre-creation
-  backfilled checks count, denominator follows activity span, unstarted habits
-  render "—". Full suite green (131), analyze clean.
 ---
 
 # Change: Anchor 30-day completion % at first checked day, not creation date

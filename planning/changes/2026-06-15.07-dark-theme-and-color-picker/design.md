@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-15
-slug: dark-theme-and-color-picker
 summary: App-wide dark theme with a System/Light/Dark selector + dark-adaptive activity grids, and a curated per-habit color picker on create/edit.
-supersedes: null
-superseded_by: null
-pr: 6
-outcome: Shipped as planned — light/dark themes + System/Light/Dark selector, dark-adaptive activity cells, and a curated per-habit color picker on create/edit. 15 new tests; all 130 green.
 ---
 
 # Design: Dark theme + per-habit color picker

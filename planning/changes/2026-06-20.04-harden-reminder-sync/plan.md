@@ -1,11 +1,3 @@
----
-status: draft
-date: 2026-06-20
-slug: harden-reminder-sync
-spec: harden-reminder-sync
-pr: 16
----
-
 # harden-reminder-sync — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:executing-plans

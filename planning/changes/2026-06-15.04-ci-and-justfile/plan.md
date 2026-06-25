@@ -1,11 +1,3 @@
----
-status: shipped
-date: 2026-06-15
-slug: ci-and-justfile
-spec: ci-and-justfile
-pr: "#3"
----
-
 # ci-and-justfile — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

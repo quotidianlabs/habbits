@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-13
-slug: foundation
 summary: Initial local-first core loop.
-supersedes: null
-superseded_by: null
-pr: merged to main locally
-outcome: Initial local-first core loop: Drift schema, daily check-off, streaks, home list.
 ---
 
 

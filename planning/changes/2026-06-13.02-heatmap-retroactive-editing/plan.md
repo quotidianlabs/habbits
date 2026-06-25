@@ -1,11 +1,3 @@
----
-status: shipped
-date: 2026-06-13
-slug: heatmap-retroactive-editing
-spec: heatmap-retroactive-editing
-pr: merged to main locally
----
-
 # Heatmap + Retroactive Editing Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

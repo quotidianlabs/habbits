@@ -1,12 +1,5 @@
 ---
-status: shipped
-date: 2026-06-14
-slug: export-import
 summary: JSON export/import with strict backup validation.
-supersedes: null
-superseded_by: null
-pr: merged to main locally
-outcome: JSON export/import (share + file picker) with strict backup validation.
 ---
 
 

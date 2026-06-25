@@ -1,19 +1,5 @@
 ---
-status: shipped
-date: 2026-06-24
-slug: habit-summary-factory
 summary: Give the habit projection a home — a HabitSummary.from factory that owns the scalar composition, and one reactive today across all derived views.
-supersedes: null
-superseded_by: null
-pr: 21
-outcome: |
-  HabitSummary.from(HabitWithDates, today) now owns the streak/done-today/
-  completion-% composition and normalizes its inputs internally; the home list's
-  inline map collapses to one call. The two stray dateOnly(DateTime.now()) reads
-  in habit_card and habit_detail_screen are gone — both watch currentDayProvider,
-  so the detail heatmap and day-strip no longer go stale at midnight. New pure
-  habit_summary_test (composition + normalization contract) and a detail-screen
-  test pinning views to currentDayProvider. just lint clean; just test 165 green.
 ---
 
 # Design: Give the habit projection a home

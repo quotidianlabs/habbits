@@ -1,11 +1,3 @@
----
-status: shipped
-date: 2026-06-15
-slug: architecture-capability-docs
-spec: architecture-capability-docs
-pr: 5
----
-
 # architecture-capability-docs — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use

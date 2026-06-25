@@ -1,16 +1,5 @@
 ---
-status: shipped
-date: 2026-06-20
-slug: live-current-day
 summary: Recompute "today" on a live day-boundary signal so the home list doesn't go stale across midnight.
-supersedes: null
-superseded_by: null
-pr: 15
-outcome: |
-  Home list reads "today" from currentDayProvider, driven by a root
-  CurrentDayTicker (midnight timer + app-resume refresh), so streak/done-today/
-  completion-% stay correct across midnight without a DB write. Closes audit
-  item #4. +4 tests (146 total), lint clean.
 ---
 
 # Design: Anchor "today" to a live day-boundary signal

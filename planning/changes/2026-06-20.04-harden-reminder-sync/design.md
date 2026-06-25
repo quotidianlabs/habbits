@@ -1,16 +1,5 @@
 ---
-status: shipped
-date: 2026-06-20
-slug: harden-reminder-sync
 summary: Serialize ReminderCoordinator syncs, swallow plugin errors, and schedule reminders by wall-clock instant.
-supersedes: null
-superseded_by: null
-pr: 16
-outcome: |
-  _sync routed through a CoalescingRunner (no interleaved cancelAll+reschedule)
-  and made best-effort; reminders scheduled by local wall-clock instant
-  (DST-stable). First coordinator + notification-service tests. Closes audit #5,
-  disputed #5b/#4-construction. +6 tests (151 total), lint clean.
 ---
 
 # Design: Harden reminder sync

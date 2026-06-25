@@ -1,11 +1,3 @@
----
-status: draft
-date: 2026-06-20
-slug: reminders-resilience
-spec: reminders-resilience
-pr: 19
----
-
 # reminders-resilience — implementation plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: superpowers:executing-plans.
