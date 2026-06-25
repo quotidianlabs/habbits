@@ -14,8 +14,10 @@ part 'backup_repository.g.dart';
 
 /// Orchestrates backup export/import over [HabitRepository] + file/share/picker.
 class BackupRepository {
-  BackupRepository(this._habits);
+  BackupRepository(this._habits, {SharePlus? share})
+    : _share = share ?? SharePlus.instance;
   final HabitRepository _habits;
+  final SharePlus _share;
 
   /// Writes the current data to a temp JSON file and opens the OS share sheet.
   /// [subject] is the localized share-sheet subject, resolved in the UI layer
@@ -26,7 +28,7 @@ class BackupRepository {
     final dir = await getTemporaryDirectory();
     final file = File('${dir.path}/habbits-backup-${formatIsoDate(now)}.json');
     await file.writeAsString(json);
-    await SharePlus.instance.share(
+    await _share.share(
       ShareParams(files: [XFile(file.path)], subject: subject),
     );
   }
