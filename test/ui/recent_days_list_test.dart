@@ -84,6 +84,6 @@ void main() {
     await tester.tap(find.byType(Checkbox).first); // onChanged → line 51
     await tester.pumpAndSettle();
 
-    expect(toggled, isNotNull);
+    expect(toggled, defaultToday); // first checkbox is today (2026-06-13)
   });
 }
