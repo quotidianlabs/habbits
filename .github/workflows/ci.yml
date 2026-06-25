@@ -52,6 +52,16 @@ jobs:
     timeout-minutes: 30   # headroom for a one-shot retry on emulator-boot flake
     steps:
       - uses: actions/checkout@v5
+      # The AVD userdata partition (~7.4 GB for api-34) FATAL-exits at boot when
+      # the runner is low on free disk ("Not enough space to create userdata
+      # partition" → emulator never registers with adb → "boot timeout"). The
+      # hosted image leaves us a few hundred MB short, so reclaim a few GB of
+      # preinstalled tooling the Flutter/Android build never uses.
+      - name: Free disk space for the emulator
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force || true
+          df -h /
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.44.2
@@ -82,14 +92,13 @@ jobs:
         with:
           path: ${{ env.ANDROID_SYSIMG }}
           key: sysimg-android-34-google_apis-x86_64
-      # The emulator occasionally fails to register on a cold boot
-      # ("adb: device 'emulator-5554' not found" → "Timeout waiting for emulator
-      # to boot") — an android-emulator-runner infra flake, not a test failure.
-      # GitHub Actions can't wrap a `uses:` action in a retry, so run it once
-      # (tolerating failure) and re-run once if it flaked. `emulator-boot-timeout`
-      # is dropped to 300s (a healthy boot is ~40s) so a flaky boot fails fast
-      # and leaves room for the retry within the job timeout. A second failure
-      # is a real failure and fails the job.
+      # The "Free disk space" step above fixes the dominant cause of boot
+      # failure (the userdata-partition FATAL). This one-shot retry stays as
+      # cheap insurance against a genuinely rare cold-boot flake unrelated to
+      # disk. GitHub Actions can't wrap a `uses:` action in a retry, so run it
+      # once (tolerating failure) and re-run once if it flaked; a second failure
+      # is a real failure. `emulator-boot-timeout` is 300s (a healthy boot is
+      # ~40s) so any flake fails fast, leaving room for the retry.
       - name: Run critical-flow integration test
         id: integration
         continue-on-error: true
