@@ -42,6 +42,9 @@ void main() {
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pumpAndSettle();
 
+    // Resume ran _refresh; the provider holds today's date-only.
+    expect(container.read(currentDayProvider), dateOnly(DateTime.now()));
+
     // Dispose path: replacing the tree disposes the State (cancels timer +
     // lifecycle listener).
     await tester.pumpWidget(
