@@ -66,6 +66,10 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.0
   integration_test:
     sdk: flutter
+  mocktail: ^1.0.5
+  path_provider_platform_interface: ^2.1.2
+  plugin_platform_interface: ^2.1.0
+  share_plus_platform_interface: ^6.1.0
 
 # Pin flutter_plugin_android_lifecycle to 2.0.22 (v2 embedding, pre-compileSdk-36)
 # — the version file_picker 8.3.7 expects. Avoids the 2.0.35 AAR-metadata demand

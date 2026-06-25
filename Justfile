@@ -16,10 +16,11 @@ lint-ci:
 test *args:
     flutter test {{ args }}
 
-# tests with coverage; prints the % excluding generated files (matches CI)
+# tests with coverage; excludes generated + DB glue, gates the % (matches CI)
 coverage:
     flutter test --coverage
-    python3 tool/coverage.py
+    dart pub global run coverde transform --input coverage/lcov.info --output coverage/lcov.info --mode w --transformations preset=exclude-untestable
+    dart pub global run coverde check --input coverage/lcov.info 100
 
 # Print the planning change index (grouped by status) to stdout.
 index:

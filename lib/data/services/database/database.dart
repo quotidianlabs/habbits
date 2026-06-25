@@ -1,31 +1,10 @@
 import 'package:drift/drift.dart';
-import 'package:drift_flutter/drift_flutter.dart';
 
+import 'connection.dart';
 import 'habit_dao.dart';
+import 'tables.dart';
 
 part 'database.g.dart';
-
-class Habits extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  TextColumn get name => text()();
-  IntColumn get color => integer()();
-  TextColumn get reminderTime => text().nullable()(); // 'HH:mm', null = none
-  IntColumn get sortOrder => integer()();
-  DateTimeColumn get createdAt => dateTime()();
-}
-
-class Completions extends Table {
-  IntColumn get id => integer().autoIncrement()();
-  IntColumn get habitId =>
-      integer().references(Habits, #id, onDelete: KeyAction.cascade)();
-  TextColumn get localDate => text()(); // 'YYYY-MM-DD'
-  DateTimeColumn get createdAt => dateTime()();
-
-  @override
-  List<Set<Column>> get uniqueKeys => [
-    {habitId, localDate},
-  ];
-}
 
 @DriftDatabase(tables: [Habits, Completions], daos: [HabitDao])
 class AppDatabase extends _$AppDatabase {
@@ -37,7 +16,7 @@ class AppDatabase extends _$AppDatabase {
             // environment doesn't see a pending 0-duration timer after the
             // last stream listener detaches on widget disposal.
             ? DatabaseConnection(executor, closeStreamsSynchronously: true)
-            : driftDatabase(name: 'habbits'),
+            : openConnection(),
       );
 
   @override

@@ -175,6 +175,48 @@ void main() {
     expect(rows.single.habit.reminderTime, isNull);
   });
 
+  testWidgets('toggling the reminder on opens the time picker and saves it', (
+    WidgetTester tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final id = await seedHabit(db);
+    await tester.pumpWidget(app(db, id));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('reminder-switch')));
+    await tester.pumpAndSettle();
+
+    // The Material time picker is up; accept the default (09:00) via OK.
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+
+    final saved =
+        (await db.habitDao.getHabitsWithDates()).single.habit.reminderTime;
+    expect(saved, '09:00');
+  });
+
+  testWidgets('tapping the reminder row edits the existing time', (
+    WidgetTester tester,
+  ) async {
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    final id = await seedHabit(db);
+    await db.habitDao.setReminderTime(id, '08:00');
+    await tester.pumpWidget(app(db, id));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const Key('reminder-row')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+
+    expect(
+      (await db.habitDao.getHabitsWithDates()).single.habit.reminderTime,
+      '08:00',
+    );
+  });
+
   testWidgets('deleting from detail confirms, removes the habit, and pops', (
     tester,
   ) async {

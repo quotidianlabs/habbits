@@ -36,7 +36,3 @@ the rest are below.
 - **Open-system-settings from the notifications-off warning** — the Settings
   warning is a hint only; a tappable "open settings" deep-link needs a new dep
   (`app_settings`/`permission_handler`). *Revisit when* that dep is justified.
-- **`NotificationService.syncSchedule` plugin calls untested** — the real
-  cancel-all-then-`zonedSchedule` sequence is only covered at the coordinator
-  layer (via a fake); the literal plugin calls would need a mock-method-channel
-  test. *Revisit if* the scheduling glue changes.

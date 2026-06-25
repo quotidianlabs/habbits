@@ -73,4 +73,17 @@ void main() {
     final yesterday = DateTime(2026, 6, 11);
     expect(find.text(DateFormat.MMMEd('ru').format(yesterday)), findsOneWidget);
   });
+
+  testWidgets('tapping a day checkbox invokes onToggle with that date', (
+    tester,
+  ) async {
+    DateTime? toggled;
+    await tester.pumpWidget(host(onToggle: (d) => toggled = d));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(Checkbox).first); // onChanged → line 51
+    await tester.pumpAndSettle();
+
+    expect(toggled, defaultToday); // first checkbox is today (2026-06-13)
+  });
 }
