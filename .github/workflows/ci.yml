@@ -49,7 +49,7 @@ jobs:
   # screenshots_test.dart is a screenshot generator, not a pass/fail test.
   integration:
     runs-on: ubuntu-latest
-    timeout-minutes: 30   # headroom for a one-shot retry on emulator-boot flake
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
       # The AVD userdata partition (~7.4 GB for api-34) FATAL-exits at boot when
@@ -92,31 +92,11 @@ jobs:
         with:
           path: ${{ env.ANDROID_SYSIMG }}
           key: sysimg-android-34-google_apis-x86_64
-      # The "Free disk space" step above fixes the dominant cause of boot
-      # failure (the userdata-partition FATAL). This one-shot retry stays as
-      # cheap insurance against a genuinely rare cold-boot flake unrelated to
-      # disk. GitHub Actions can't wrap a `uses:` action in a retry, so run it
-      # once (tolerating failure) and re-run once if it flaked; a second failure
-      # is a real failure. `emulator-boot-timeout` is 300s (a healthy boot is
-      # ~40s) so any flake fails fast, leaving room for the retry.
       - name: Run critical-flow integration test
-        id: integration
-        continue-on-error: true
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 34
           target: google_apis
           arch: x86_64
-          emulator-boot-timeout: 300
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          script: flutter test integration_test/critical_flow_test.dart
-      - name: Retry critical-flow integration test (boot flake)
-        if: steps.integration.outcome == 'failure'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 34
-          target: google_apis
-          arch: x86_64
-          emulator-boot-timeout: 300
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: flutter test integration_test/critical_flow_test.dart
