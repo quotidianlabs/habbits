@@ -41,7 +41,13 @@ void main() {
 
     expect(
       () => container.read(sharedPreferencesProvider),
-      throwsA(isA<UnimplementedError>()),
+      throwsA(
+        isA<Object>().having(
+          (e) => e.toString(),
+          'message',
+          contains('must be overridden in main'),
+        ),
+      ),
     );
   });
 }
