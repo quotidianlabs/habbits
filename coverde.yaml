@@ -1,0 +1,16 @@
+# coverde.yaml — single home for coverage exclusions (see planning/changes/2026-06-25.02-coverage-100).
+# Generated Dart is machine-written; the database connection/providers are the
+# production file-open glue, unrunnable under `flutter test` and covered instead
+# by the emulator integration test (integration_test/).
+transformations:
+  exclude-untestable:
+    - type: skip-by-glob
+      glob: "**/*.g.dart"
+    - type: skip-by-glob
+      glob: "**/*.freezed.dart"
+    - type: skip-by-glob
+      glob: "**/app_localizations*.dart"
+    - type: skip-by-glob
+      glob: "**/data/services/database/connection.dart"
+    - type: skip-by-glob
+      glob: "**/data/services/database/database_providers.dart"

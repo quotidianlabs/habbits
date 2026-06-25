@@ -26,7 +26,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: write   # post the coverage comment on PRs
     steps:
       - uses: actions/checkout@v5
       - uses: extractions/setup-just@v4
@@ -38,20 +37,13 @@ jobs:
       - run: flutter pub get
       - name: Run tests with coverage
         run: flutter test --coverage
-      # Filters generated files out of lcov AND writes the job summary.
-      - name: Filter + summarize coverage
-        run: python3 tool/coverage.py | tee -a "$GITHUB_STEP_SUMMARY"
-      - name: Enforce coverage threshold
-        uses: VeryGoodOpenSource/very_good_coverage@v3
-        with:
-          path: coverage/lcov.info
-          min_coverage: 80
-      - name: Coverage comment on PR
-        if: github.event_name == 'pull_request'
-        uses: romeovs/lcov-reporter-action@v0.4.0
-        with:
-          lcov-file: coverage/lcov.info
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install coverde
+        run: dart pub global activate coverde 0.4.0
+      - name: Filter generated + glue, enforce threshold
+        run: |
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          coverde transform --input coverage/lcov.info --output coverage/lcov.info --mode w --transformations preset=exclude-untestable
+          coverde check --input coverage/lcov.info 80
 
   # Runs the critical-flow integration test on a KVM-accelerated Android
   # emulator (standard ubuntu runners gained KVM in 2024). Only this file —
