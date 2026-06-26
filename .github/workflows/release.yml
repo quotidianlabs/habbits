@@ -37,6 +37,24 @@ jobs:
             exit 1
           fi
 
+      # Curated release notes are MANDATORY for a stable tag. A missing notes
+      # file aborts the release before the APK build, rather than silently
+      # shipping with GitHub's auto-generated notes. Pre-release tags (a "-suffix"
+      # e.g. 1.0.0-beta.1) are exempt and keep the auto-generated fallback.
+      - name: Require curated release notes (stable tags)
+        run: |
+          set -euo pipefail
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            echo "Pre-release ${GITHUB_REF_NAME}: curated notes not required."
+            exit 0
+          fi
+          notes="planning/releases/${GITHUB_REF_NAME}.md"
+          if [ ! -f "$notes" ]; then
+            echo "::error::Stable tag ${GITHUB_REF_NAME} has no curated release notes at ${notes}. Write the notes, commit to main, and re-tag." >&2
+            exit 1
+          fi
+          echo "Found curated release notes: ${notes}"
+
       # Reconstruct the signing keystore from secrets (see docs/release.md).
       - name: Decode signing keystore
         env:
