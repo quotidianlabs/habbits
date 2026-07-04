@@ -33,9 +33,12 @@ The create/track/edit loop for habits and their daily completion records.
 
 ## Known edges
 
-- None currently. The prior undisposed-`TextEditingController` edge in
-  `showHabitNameDialog` was resolved when the dialog became a `StatefulWidget`
-  in [2026-06-15.07-dark-theme-and-color-picker](../planning/changes/archive/2026-06-15.07-dark-theme-and-color-picker/design.md).
+- The home list's bottom padding adds the system nav-bar inset
+  (`MediaQuery.viewPaddingOf`) plus FAB clearance so the last card stays
+  reachable above both under Android edge-to-edge — see
+  [2026-07-04.01-home-list-bottom-inset](../planning/changes/2026-07-04.01-home-list-bottom-inset/change.md).
+- The prior undisposed-`TextEditingController` edge in `showHabitNameDialog` was
+  resolved when the dialog became a `StatefulWidget` in [2026-06-15.07-dark-theme-and-color-picker](../planning/changes/archive/2026-06-15.07-dark-theme-and-color-picker/design.md).
 
 ## History
 

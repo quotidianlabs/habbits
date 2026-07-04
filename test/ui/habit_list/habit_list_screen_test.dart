@@ -191,6 +191,42 @@ void main() {
     expect(order, [b, a]);
   });
 
+  testWidgets('last card clears the system nav bar and FAB when overflowing', (
+    tester,
+  ) async {
+    const bottomInset = 48.0;
+    tester.view.physicalSize = const Size(400, 800);
+    tester.view.devicePixelRatio = 1.0;
+    tester.view.viewPadding = const FakeViewPadding(bottom: bottomInset);
+    tester.view.padding = const FakeViewPadding(bottom: bottomInset);
+    addTearDown(tester.view.reset);
+
+    final db = AppDatabase(NativeDatabase.memory());
+    addTearDown(db.close);
+    for (var i = 0; i < 20; i++) {
+      await db.habitDao.createHabit(name: 'Habit $i', color: 0xFF009688);
+    }
+    await tester.pumpWidget(_app(db));
+    await tester.pumpAndSettle();
+
+    // Scroll to the very end of the list.
+    await tester.drag(find.text('Habit 0'), const Offset(0, -4000));
+    await tester.pumpAndSettle();
+
+    final lastCard = find.ancestor(
+      of: find.text('Habit 19'),
+      matching: find.byType(Card),
+    );
+    expect(lastCard, findsOneWidget);
+
+    // The last card's bottom must sit above the system nav bar region.
+    const viewportHeight = 800.0;
+    expect(
+      tester.getBottomRight(lastCard).dy,
+      lessThanOrEqualTo(viewportHeight - bottomInset),
+    );
+  });
+
   testWidgets('provider error shows the home-error message', (
     WidgetTester tester,
   ) async {

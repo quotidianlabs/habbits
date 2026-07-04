@@ -11,6 +11,10 @@ import 'widgets/habit_card.dart';
 class HabitListScreen extends ConsumerWidget {
   const HabitListScreen({super.key});
 
+  /// Space to keep the last card clear of the FAB: 56 (FAB) + 16 (its margin)
+  /// + 16 breathing room.
+  static const double _fabClearance = 88;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final summaries = ref.watch(habitListViewModelProvider);
@@ -51,7 +55,13 @@ class HabitListScreen extends ConsumerWidget {
           }
           return ReorderableListView(
             buildDefaultDragHandles: false,
-            padding: const EdgeInsets.symmetric(vertical: 6),
+            // Pad past the FAB and the system nav bar so the last card is
+            // fully reachable while the list still renders edge-to-edge.
+            padding: EdgeInsets.only(
+              top: 6,
+              bottom:
+                  6 + _fabClearance + MediaQuery.viewPaddingOf(context).bottom,
+            ),
             onReorderItem: (oldIndex, newIndex) {
               final ids = [for (final it in items) it.habit.id];
               ref
