@@ -127,3 +127,30 @@ jobs:
           prerelease: ${{ steps.meta.outputs.prerelease }}
           generate_release_notes: ${{ steps.meta.outputs.generate_notes }}
           draft: false
+
+      # Upload to RuStore only on stable tags (RuStore has no closed-test track)
+      # and only when credentials are configured — so tags still cut a GitHub
+      # Release before the RuStore account exists.
+      - name: Check RuStore credentials
+        id: rustore
+        env:
+          RS: ${{ secrets.RUSTORE_CREDENTIALS }}
+        run: |
+          set -euo pipefail
+          if [ -n "${RS:-}" ] && [ "${{ steps.meta.outputs.prerelease }}" = "false" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::RuStore upload skipped (no credentials or prerelease tag)."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload APK to RuStore
+        if: steps.rustore.outputs.enabled == 'true'
+        working-directory: android
+        env:
+          RUSTORE_CREDENTIALS: ${{ secrets.RUSTORE_CREDENTIALS }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$RUSTORE_CREDENTIALS" > rustore-credentials.json
+          ./gradlew :app:publishRustoreRelease \
+            --buildFile="$GITHUB_WORKSPACE/build/app/outputs/flutter-apk/habbits-${GITHUB_REF_NAME}.apk"
