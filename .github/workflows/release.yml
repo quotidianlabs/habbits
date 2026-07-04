@@ -96,7 +96,10 @@ jobs:
           mv build/app/outputs/flutter-apk/app-release.apk \
              "build/app/outputs/flutter-apk/habbits-${GITHUB_REF_NAME}.apk"
 
-      # Notes: tag -> planning/releases/<tag>.md (omit body_path if absent).
+      # Notes: tag -> planning/releases/<tag>.md. When present it is the release
+      # body verbatim (generate_notes=false, no auto "What's Changed" appended);
+      # the guard above makes it mandatory for stable tags, so the generated-notes
+      # fallback only ever fires for a pre-release without a curated file.
       # Pre-release: any tag with a "-suffix" (e.g. 1.0.0-beta.1) is flagged so
       # GitHub does not mark it "Latest".
       - name: Resolve release metadata
@@ -106,6 +109,9 @@ jobs:
           notes="planning/releases/${GITHUB_REF_NAME}.md"
           if [ -f "$notes" ]; then
             echo "body_path=$notes" >> "$GITHUB_OUTPUT"
+            echo "generate_notes=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "generate_notes=true" >> "$GITHUB_OUTPUT"
           fi
           if [[ "$GITHUB_REF_NAME" == *-* ]]; then
             echo "prerelease=true" >> "$GITHUB_OUTPUT"
@@ -119,5 +125,5 @@ jobs:
           files: build/app/outputs/flutter-apk/habbits-${{ github.ref_name }}.apk
           body_path: ${{ steps.meta.outputs.body_path }}
           prerelease: ${{ steps.meta.outputs.prerelease }}
-          generate_release_notes: true
+          generate_release_notes: ${{ steps.meta.outputs.generate_notes }}
           draft: false
