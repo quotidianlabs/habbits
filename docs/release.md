@@ -159,3 +159,14 @@ Verify the published asset is upload-signed (not debug):
 ```bash
 apksigner verify --print-certs habbits-X.Y.Z.apk   # DN must NOT be CN=Android Debug
 ```
+
+## RuStore
+
+The stable-tag release workflow also uploads the signed universal APK to
+**RuStore** (VK's Russian Android store) via
+`ru.cian.rustore-publish-gradle-plugin` (task `publishRustoreRelease`). The
+upload is **guarded**: it runs only when the `RUSTORE_CREDENTIALS` secret is set
+and the tag is not a pre-release, so tags still cut a GitHub Release otherwise.
+
+Account signup, API-key generation, GitHub Pages privacy policy, and the Russian
+store listing are in [`rustore-release.md`](rustore-release.md).

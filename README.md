@@ -3,6 +3,7 @@
 A **local-first, cross-platform habit tracker. Your data, on your device.**
 
 [![Release](https://img.shields.io/github/v/release/quotidianlabs/habbits)](https://github.com/quotidianlabs/habbits/releases/latest)
+[![RuStore](https://img.shields.io/badge/RuStore-Download-0A7CFF)](https://www.rustore.ru/catalog/app/io.github.quotidianlabs.habbits)
 [![CI](https://github.com/quotidianlabs/habbits/actions/workflows/ci.yml/badge.svg)](https://github.com/quotidianlabs/habbits/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)](https://github.com/quotidianlabs/habbits/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
