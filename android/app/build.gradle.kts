@@ -5,6 +5,7 @@ plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("ru.cian.rustore-publish-gradle-plugin")
 }
 
 // Release signing is read from android/key.properties (gitignored). When that
@@ -80,4 +81,29 @@ flutter {
 dependencies {
     // Required by flutter_local_notifications 22.x core library desugaring.
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+}
+
+// RuStore publishing (cianru plugin). Inert unless `publishRustoreRelease` is
+// invoked with a credentials file present — see .github/workflows/release.yml.
+rustorePublish {
+    instances {
+        create("release") {
+            credentialsPath = "$rootDir/rustore-credentials.json"
+            buildFormat = ru.cian.rustore.publish.BuildFormat.APK
+            // Flutter writes the universal APK here (repo-root/build/...).
+            buildFile = "$rootDir/../build/app/outputs/flutter-apk/app-release.apk"
+            publishType = ru.cian.rustore.publish.PublishType.INSTANTLY
+            developerContacts = ru.cian.rustore.publish.DeveloperContacts(
+                email = "me@shiriev.ru",
+                website = "https://github.com/quotidianlabs/habbits",
+                vkCommunity = null,
+            )
+            releaseNotes = listOf(
+                ru.cian.rustore.publish.ReleaseNote(
+                    lang = "ru-RU",
+                    filePath = "$rootDir/app/rustore-release-notes-ru.txt",
+                ),
+            )
+        }
+    }
 }
