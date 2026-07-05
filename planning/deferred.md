@@ -29,3 +29,17 @@ the rest are below.
 - **Open-system-settings from the notifications-off warning** — the Settings
   warning is a hint only; a tappable "open settings" deep-link needs a new dep
   (`app_settings`/`permission_handler`). *Revisit when* that dep is justified.
+
+## Runtime schema self-check (`validateDatabaseSchema` in `beforeOpen`)
+
+Drift can validate the live database against its declared schema at startup via
+`validateDatabaseSchema()`. We deliberately did not adopt it with the
+schema-verifier harness (see
+[`changes/2026-07-05.01-schema-verifier-harness/design.md`](changes/2026-07-05.01-schema-verifier-harness/design.md)):
+it is imported from `drift_dev`, so calling it from `lib/` pulls the analyzer /
+build stack into the app's *runtime* dependency graph. The CI `schema-check`
+gate already covers schema-drift.
+
+**Revisit trigger:** we want a debug-build, app-startup schema self-check
+(e.g. after a migration bug slips past CI) and have confirmed a way to invoke
+`validateDatabaseSchema` without adding `drift_dev` to runtime deps.

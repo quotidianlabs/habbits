@@ -44,6 +44,22 @@ jobs:
           dart pub global run coverde transform --input coverage/lcov.info --output coverage/lcov.info --mode w --transformations preset=exclude-untestable
           dart pub global run coverde check --input coverage/lcov.info 100
 
+  # Fails if the committed schema snapshots / generated migration helpers are
+  # not current — a schemaVersion bump without a dumped snapshot, or generated
+  # files not regenerated. Keeps the SchemaVerifier harness trustworthy.
+  schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: extractions/setup-just@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.2
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: just schema-check
+
   # Runs the critical-flow integration test on a KVM-accelerated Android
   # emulator (standard ubuntu runners gained KVM in 2024). Only this file —
   # screenshots_test.dart is a screenshot generator, not a pass/fail test.
