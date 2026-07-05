@@ -5,6 +5,7 @@ analyzer:
     - riverpod_lint
   exclude:
     - "**/*.g.dart"
+    - "test/generated_migrations/**"
 
 linter:
   rules:

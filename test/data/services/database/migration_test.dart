@@ -16,7 +16,7 @@ void main() {
     final verifier = SchemaVerifier(GeneratedHelper());
     final connection = await verifier.startAt(1);
     final db = AppDatabase(connection);
+    addTearDown(db.close);
     await verifier.migrateAndValidate(db, 1);
-    await db.close();
   });
 }
