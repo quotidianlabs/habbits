@@ -14,8 +14,9 @@ Install Drift's official schema-snapshot migration harness in habbits **now**,
 while `AppDatabase.schemaVersion == 1` and the database has never migrated. We
 commit a JSON snapshot of the current schema (`drift_schemas/drift_schema_v1.json`),
 generate `SchemaVerifier` helpers into `test/generated_migrations/`, add a
-migration test that locks the live schema against that snapshot via
-`migrateAndValidate(db, 1)`, and add a `just schema-check` CI gate. This is the
+harness-wiring migration test, and add the **load-bearing** `just schema-check`
+CI gate — a re-dump-and-diff that fails if a schema change lands without a
+re-committed snapshot. This is the
 same harness the sibling project nooka adopted after its first migration, ported
 here as a clean-slate **preventive** install so habbits' first real migration is
 forced through generated snapshots and the CI gate rather than a hand-written
@@ -93,12 +94,12 @@ generates:
 ### 3. Migration test — `test/data/services/database/migration_test.dart` (new)
 
 Placed under the mirrored-lib test path habbits uses (alongside the existing
-`schema_test.dart`), and using the test-only import
+`schema_test.dart`), using the test-only import
 `package:drift_dev/api/migrations_native.dart` (so `drift_dev` stays a **dev**
-dependency):
+dependency). The exact API shape below is copied verbatim from nooka's shipped
+`migration_test.dart` and **verified to run green in habbits** (see Testing):
 
 ```dart
-import 'package:drift/native.dart';
 import 'package:drift_dev/api/migrations_native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:habbits/data/services/database/database.dart';
@@ -106,23 +107,29 @@ import 'package:habbits/data/services/database/database.dart';
 import '../../../generated_migrations/schema.dart';
 
 void main() {
-  test('current schema matches the committed v1 snapshot', () async {
+  // At schemaVersion 1 this is a HARNESS-WIRING SMOKE, not a schema lock:
+  // migrateAndValidate(db, 1) has no migration to run, so it cannot catch a
+  // table change made without re-dumping (verified — see design Testing). Its
+  // value now is proving the generated helpers compile and SchemaVerifier runs
+  // in habbits' test env. When schemaVersion first reaches 2, migrateAndValidate
+  // (db, 2) becomes the real schema+data validator (one-line change: 1 -> 2).
+  test('current schema builds and validates via SchemaVerifier', () async {
     final verifier = SchemaVerifier(GeneratedHelper());
     final connection = await verifier.startAt(1);
-    final db = AppDatabase(connection.newConnection());
-    addTearDown(db.close);
+    final db = AppDatabase(connection);
     await verifier.migrateAndValidate(db, 1);
+    await db.close();
   });
 }
 ```
 
-With a single version this is a **schema lock**: `migrateAndValidate(db, 1)`
-fails if the live `AppDatabase` schema no longer matches the committed v1
-snapshot — i.e. someone changed a table without bumping `schemaVersion` and
-re-dumping. The exact `startAt` / `newConnection` call shape is whatever
-`SchemaVerifier` exposes in drift 2.34; the implementer copies the generated /
-documented signature verbatim. The existing `schema_test.dart` onCreate smoke
-test stays as-is (cheap, independent).
+**What actually locks the schema is §4's `just schema-check`, not this test.**
+Empirically (spike, this branch): adding a nullable column to `Habits` without
+re-dumping left `migrateAndValidate(db, 1)` **green** — a single-version verify is
+vacuous. The same divergence, however, makes `schema-check`'s re-dump rewrite
+`drift_schema_v1.json` (the probe column appeared in the JSON), so the porcelain
+diff fails the CI job. The existing `schema_test.dart` onCreate smoke test stays
+as-is (cheap, independent).
 
 ### 4. Developer workflow + CI gate
 
@@ -199,27 +206,34 @@ helper (there is no migration to step through yet).
 
 ## Testing
 
-- `just test` runs the new `migration_test.dart` schema-lock assertion plus the
-  existing suite.
-- **Fault-injection sanity check during implementation** (not committed):
-  temporarily add or rename a column in `tables.dart` **without** re-dumping the
-  snapshot and confirm `migrateAndValidate(db, 1)` fails — proving the lock is
-  real, not vacuous. Revert before commit; note the result in the task report.
-- **`just schema-check` locally green** on a clean tree; then dirty a snapshot by
-  hand and confirm the recipe fails — proving the CI gate bites.
-- `just coverage` stays at the 100% gate (generated `test/generated_migrations/**`
-  excluded; no production line added).
-- `just lint-ci` clean; `just check-planning` OK.
+Already verified on this branch (spike), so the plan builds on facts, not hopes:
+
+- **Toolchain runs in habbits.** `just schema-dump` + `just schema-gen` produced
+  `drift_schema_v1.json` and a `GeneratedHelper` with `versions=[1]`;
+  `migration_test.dart` runs **green** under `flutter test`.
+- **The real gate bites; the test does not (at v1).** Fault injection: a nullable
+  `Habits` column added without re-dumping left `migrateAndValidate(db, 1)` green
+  (single-version verify is vacuous), while a re-dump wrote the new column into
+  `drift_schema_v1.json` — so `schema-check`'s porcelain diff is what fails CI.
+  This is why §3 frames the test as a wiring smoke and §4's `schema-check` as the
+  lock.
+
+Still to confirm in the implementing PR:
+
+- `just schema-check` **green on the committed clean tree**, then red after a
+  hand-dirtied snapshot — closing the loop with the snapshots actually committed
+  (the spike ran before commit, so `git status` showed them untracked).
+- `just test` full suite green; `just coverage` stays at the 100% gate (generated
+  `test/generated_migrations/**` excluded; no production line added);
+  `just lint-ci` clean; `just check-planning` OK.
 
 ## Risk
 
-- **`schema generate` on a single snapshot emits a degenerate helper the test
-  can't drive** (low × medium): mitigated by the fault-injection check — if
-  `migrateAndValidate(db, 1)` can both pass on a clean tree and fail on a
-  divergent schema, the harness works. If drift 2.34's `SchemaVerifier` rejects a
-  single-version helper outright, fall back to the onCreate smoke test as the lock
-  and still ship the `schema-check` gate + snapshot (note in task report). This is
-  the one thing to confirm empirically first.
+- **~~`schema generate` on a single snapshot emits a degenerate helper~~**
+  (RESOLVED by the spike): the helper generates and the test runs green. The real
+  residual — that the test is *vacuous* at v1 — is not a risk but a documented
+  property: §3 labels it a wiring smoke and the load-bearing lock is
+  `schema-check`, which the spike confirmed bites.
 - **The deferred two-line checklist is skipped at the first migration** (low ×
   medium): mitigated by baking it into the `Justfile` comment and
   `habit-tracking.md`; and `just schema-check` fails loudly the moment a v2 bump
