@@ -170,10 +170,13 @@ schema-check: schema-dump schema-gen
 `setup-just`, `flutter-action@v2` (pinned `3.44.2`, matching habbits' other
 jobs), `flutter pub get`, `just schema-check`.
 
-`coverde.yaml` gains one skip-glob, `**/test/generated_migrations/**`, alongside
-the existing `*.g.dart` / `*.freezed.dart` exclusions, so the 100% line-coverage
-gate holds against the generated helpers. (No `database.steps.dart` glob yet — it
-does not exist until the first migration; adding it is part of the §5 checklist.)
+**No `coverde.yaml` change is needed.** `flutter test --coverage` instruments only
+`lib/`; the generated helpers live under `test/`, so they never enter
+`coverage/lcov.info` and cannot move the gate. Verified on this branch: with the
+harness present, `coverde check ... 100` reports **100.00% (956/956)**, unchanged
+and unexcluded. (This differs from nooka, whose `coverde` edit was for
+`database.steps.dart` — a `lib/` file that *is* instrumented; habbits gains no
+such file until its first migration, hence the §5 checklist.)
 
 ### 5. The first-migration checklist (baked in now, executed later)
 
@@ -223,9 +226,9 @@ Still to confirm in the implementing PR:
 - `just schema-check` **green on the committed clean tree**, then red after a
   hand-dirtied snapshot — closing the loop with the snapshots actually committed
   (the spike ran before commit, so `git status` showed them untracked).
-- `just test` full suite green; `just coverage` stays at the 100% gate (generated
-  `test/generated_migrations/**` excluded; no production line added);
-  `just lint-ci` clean; `just check-planning` OK.
+- `just test` full suite green; `just coverage` stays at the 100% gate
+  (**verified 956/956, no `coverde` change** — generated helpers under `test/` are
+  not instrumented); `just lint-ci` clean; `just check-planning` OK.
 
 ## Risk
 
@@ -238,8 +241,9 @@ Still to confirm in the implementing PR:
   medium): mitigated by baking it into the `Justfile` comment and
   `habit-tracking.md`; and `just schema-check` fails loudly the moment a v2 bump
   ships without its dumped snapshot, so the omission cannot land silently.
-- **Coverage gate breaks on the generated files** (low × low): the `coverde.yaml`
-  glob is added in the same change and verified by `just coverage`.
+- **~~Coverage gate breaks on the generated files~~** (RESOLVED by the spike):
+  `test/`-resident helpers are not instrumented by `flutter test --coverage`; the
+  gate stays at 956/956 with no `coverde` change.
 
 ## Architecture docs to update (same PR)
 
