@@ -1,5 +1,5 @@
 ---
-summary: Install Drift's schema-snapshot migration harness preventively while the DB is still at schemaVersion 1 — a committed v1 snapshot, generated SchemaVerifier helpers, a schema-lock migration test, and a CI schema-check gate — so habbits' first real migration is forced through the tooling instead of a hand-written fixture.
+summary: Installed Drift's schema-snapshot migration harness at schemaVersion 1 — a committed v1 snapshot (drift_schemas/), generated SchemaVerifier helpers, a harness-wiring migration test, and a load-bearing `just schema-check` CI gate (the real schema lock; the test is vacuous until a migration exists). No coverde or database.dart change needed; forces the first migration through the tooling.
 ---
 
 # Design: Preventive schema-verifier migration harness
