@@ -42,8 +42,8 @@ SQLite database, notifications, preferences). Generated code is committed.
 
 The design and implementation history for every change lives in
 [`planning/`](planning/) — see, e.g., the
-[layered-architecture refactor](planning/changes/archive/2026-06-15.01-architecture-refactor/design.md)
-and [Russian-language support](planning/changes/archive/2026-06-14.04-russian-language/design.md).
+[layered-architecture refactor](planning/changes/2026-06-15.01-architecture-refactor.md)
+and [Russian-language support](planning/changes/2026-06-14.04-russian-language.md).
 
 ## Getting started
 

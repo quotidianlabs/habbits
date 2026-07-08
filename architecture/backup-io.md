@@ -73,4 +73,4 @@ that is not a valid Habbits backup.
 
 ## History
 
-Defined by: [2026-06-14.01-export-import](../planning/changes/archive/2026-06-14.01-export-import/design.md)
+Defined by: [2026-06-14.01-export-import](../planning/changes/2026-06-14.01-export-import.md)

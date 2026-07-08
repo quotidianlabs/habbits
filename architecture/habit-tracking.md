@@ -38,8 +38,8 @@ The create/track/edit loop for habits and their daily completion records.
   reachable above both under Android edge-to-edge — see
   [2026-07-04.01-home-list-bottom-inset](../planning/changes/2026-07-04.01-home-list-bottom-inset.md).
 - The prior undisposed-`TextEditingController` edge in `showHabitNameDialog` was
-  resolved when the dialog became a `StatefulWidget` in [2026-06-15.07-dark-theme-and-color-picker](../planning/changes/archive/2026-06-15.07-dark-theme-and-color-picker/design.md).
+  resolved when the dialog became a `StatefulWidget` in [2026-06-15.07-dark-theme-and-color-picker](../planning/changes/2026-06-15.07-dark-theme-and-color-picker.md).
 
 ## History
 
-Defined by: [2026-06-13.01-foundation](../planning/changes/archive/2026-06-13.01-foundation/design.md), [2026-06-14.03-reorder-habits](../planning/changes/archive/2026-06-14.03-reorder-habits/design.md), [2026-06-15.01-architecture-refactor](../planning/changes/archive/2026-06-15.01-architecture-refactor/design.md). User-chosen habit color on create/edit (swatch picker + `setColor`/`editHabit`) added in [2026-06-15.07-dark-theme-and-color-picker](../planning/changes/archive/2026-06-15.07-dark-theme-and-color-picker/design.md). The detail view model stopped deriving from the home list — it now watches its own habit via `HabitRepository.watchHabit` — in [2026-06-24.03-detail-independent-load](../planning/changes/2026-06-24.03-detail-independent-load.md).
+Defined by: [2026-06-13.01-foundation](../planning/changes/2026-06-13.01-foundation.md), [2026-06-14.03-reorder-habits](../planning/changes/2026-06-14.03-reorder-habits.md), [2026-06-15.01-architecture-refactor](../planning/changes/2026-06-15.01-architecture-refactor.md). User-chosen habit color on create/edit (swatch picker + `setColor`/`editHabit`) added in [2026-06-15.07-dark-theme-and-color-picker](../planning/changes/2026-06-15.07-dark-theme-and-color-picker.md). The detail view model stopped deriving from the home list — it now watches its own habit via `HabitRepository.watchHabit` — in [2026-06-24.03-detail-independent-load](../planning/changes/2026-06-24.03-detail-independent-load.md).
