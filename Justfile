@@ -27,7 +27,7 @@ coverage:
 index:
     python3 planning/index.py
 
-# Validate planning bundles + decisions; CI runs this via lint-ci.
+# Validate planning changes + decisions; CI runs this via lint-ci.
 check-planning:
     python3 planning/index.py --check
 
@@ -41,7 +41,7 @@ schema-dump:
 #
 # WHEN schemaVersion FIRST REACHES 2, this recipe must also gain the steps
 # generator, and database.dart must wire the stepByStep helper + onUpgrade
-# (see planning/changes/2026-07-05.01-schema-verifier-harness/design.md §5):
+# (see planning/changes/2026-07-05.01-schema-verifier-harness.md §5):
 #     dart run drift_dev schema steps drift_schemas/ lib/data/services/database/database.steps.dart
 # and add `**/database.steps.dart` to coverde.yaml (it lands in lib/, so it IS
 # coverage-instrumented, unlike the test/ helpers).

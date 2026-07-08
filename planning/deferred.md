@@ -1,7 +1,7 @@
 # Deferred
 
 Real-but-unscheduled items. Each has a revisit trigger. Promote one into a
-change bundle when its trigger fires.
+change file when its trigger fires.
 
 - **`share_plus` iPad popover anchor** — `backup_repository.dart`'s
   `SharePlus...share` passes no `sharePositionOrigin`, which crashes on iPad.
