@@ -37,9 +37,9 @@ Capability → truth-home file:
 
 Design + plan for every non-trivial change live in `planning/`. Read
 [`planning/README.md`](planning/README.md)'s Quick path to choose a lane (Full /
-Lightweight / Tiny), create a bundle, and ship — that file is the authoritative
+Lightweight / Tiny), create a change file, and ship — that file is the authoritative
 convention. Run `just index` for the generated change listing and
-`just check-planning` to validate bundles (CI runs it via `just lint-ci`).
+`just check-planning` to validate changes (CI runs it via `just lint-ci`).
 
 Decisions taken without code (esp. options rejected with a load-bearing reason)
 go in `planning/decisions/`. Real-but-unscheduled items live in
