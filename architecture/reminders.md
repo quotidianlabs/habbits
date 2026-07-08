@@ -96,4 +96,4 @@ the habit is not yet completed that day.
 
 ## History
 
-Defined by: [2026-06-14.02-reminders](../planning/changes/archive/2026-06-14.02-reminders/design.md). The scheduling policy was lifted out of the coordinator widget into a plain-Dart `ReminderSync` controller in [2026-06-24.04-reminder-sync-controller](../planning/changes/2026-06-24.04-reminder-sync-controller.md).
+Defined by: [2026-06-14.02-reminders](../planning/changes/2026-06-14.02-reminders.md). The scheduling policy was lifted out of the coordinator widget into a plain-Dart `ReminderSync` controller in [2026-06-24.04-reminder-sync-controller](../planning/changes/2026-06-24.04-reminder-sync-controller.md).

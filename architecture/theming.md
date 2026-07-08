@@ -71,14 +71,14 @@ persists across launches.
 
 - None currently. The prior "no dark theme" and "activity cells not
   dark-surface adaptive" edges were resolved in
-  [2026-06-15.07-dark-theme-and-color-picker](../planning/changes/archive/2026-06-15.07-dark-theme-and-color-picker/design.md).
+  [2026-06-15.07-dark-theme-and-color-picker](../planning/changes/2026-06-15.07-dark-theme-and-color-picker.md).
 
 ## History
 
 Seed color and the single `habbitsTheme()` established by the foundation slice;
 the activity-grid app icon adopted the same teal in:
-[2026-06-13.03-usability-v2](../planning/changes/archive/2026-06-13.03-usability-v2/design.md),
-[2026-06-15.02-app-icon-branding](../planning/changes/archive/2026-06-15.02-app-icon-branding/design.md).
+[2026-06-13.03-usability-v2](../planning/changes/2026-06-13.03-usability-v2.md),
+[2026-06-15.02-app-icon-branding](../planning/changes/2026-06-15.02-app-icon-branding.md).
 Light/dark themes, the persisted theme-mode selector, and dark-adaptive activity
 cells added in
-[2026-06-15.07-dark-theme-and-color-picker](../planning/changes/archive/2026-06-15.07-dark-theme-and-color-picker/design.md).
+[2026-06-15.07-dark-theme-and-color-picker](../planning/changes/2026-06-15.07-dark-theme-and-color-picker.md).
