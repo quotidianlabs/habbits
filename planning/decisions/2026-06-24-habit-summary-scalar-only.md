@@ -20,7 +20,7 @@ recommended a single projection module owning the whole "completions + today →
 display shape" derivation — streak, completion %, done-today **and** the heatmap
 and recent-days grids — so both screens cross one interface.
 
-[habit-summary-factory](../changes/2026-06-24.01-habit-summary-factory/design.md)
+[habit-summary-factory](../changes/2026-06-24.01-habit-summary-factory.md)
 (#21) shipped the scalar half as `HabitSummary.from` and deliberately stopped
 there, leaving the calendar builders where they were. This records why, so a
 later explorer doesn't "finish the job" by absorbing them.
