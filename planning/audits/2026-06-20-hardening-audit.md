@@ -8,7 +8,7 @@
 (1 of 2 votes), **16 rejected**.
 
 This audit spawns fix changes. The first is
-[`changes/2026-06-20.01-harden-toggle-and-import`](../changes/2026-06-20.01-harden-toggle-and-import/)
+[`changes/2026-06-20.01-harden-toggle-and-import`](../changes/2026-06-20.01-harden-toggle-and-import.md)
 (confirmed items 1, 2, 6). Remaining items are tracked below and in
 [`deferred.md`](../deferred.md).
 
