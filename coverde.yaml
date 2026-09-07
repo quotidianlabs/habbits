@@ -1,4 +1,4 @@
-# coverde.yaml — single home for coverage exclusions (see planning/changes/2026-06-25.02-coverage-100).
+# coverde.yaml — single home for coverage exclusions.
 # Generated Dart is machine-written; the database connection/providers are the
 # production file-open glue, unrunnable under `flutter test` and covered instead
 # by the emulator integration test (integration_test/).

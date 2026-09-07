@@ -123,17 +123,16 @@ never silently fall back to debug-signing.
 ## Cutting a release
 
 1. Bump `pubspec.yaml` `version: X.Y.Z+N` and merge to `main`.
-2. (Optional) Write user-facing notes to `planning/releases/X.Y.Z.md`. If
-   present, they become the release body; GitHub's auto-generated "What's
-   Changed" PR list is appended either way.
-3. Tag and push — the tag `X.Y.Z` **must** match `pubspec.yaml` `X.Y.Z`:
+2. Tag and push — the tag `X.Y.Z` **must** match `pubspec.yaml` `X.Y.Z`:
 
    ```bash
    git tag 1.0.0
    git push origin 1.0.0
    ```
 
-4. The workflow builds `habbits-X.Y.Z.apk` and publishes the GitHub Release.
+3. The workflow builds `habbits-X.Y.Z.apk` and publishes the GitHub Release,
+   with notes generated from the commits in the tag range. Curated notes are not
+   required and are not read: edit the Release afterwards if it wants prose.
 
 ### Pre-releases (alpha / beta / rc)
 
@@ -146,8 +145,7 @@ git push origin 1.0.0-beta.1
 
 The workflow accepts `X.Y.Z-<suffix>` tags, matches the **core** `X.Y.Z`
 against `pubspec.yaml` (the pubspec carries no `-suffix`), and flags the GitHub
-Release as a **pre-release** so it is not marked "Latest". Notes resolve from
-`planning/releases/<tag>.md` (e.g. `planning/releases/1.0.0-beta.1.md`).
+Release as a **pre-release** so it is not marked "Latest".
 
 > The APK's internal `versionName` comes from `pubspec.yaml` (`X.Y.Z`), so a
 > beta and its final share a `versionName`; the differing `versionCode` (`+N`)

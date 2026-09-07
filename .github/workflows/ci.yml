@@ -1,9 +1,19 @@
 name: main
 
+# Docs-only changes skip CI entirely: a run is skipped only when every changed
+# file matches paths-ignore, so a PR mixing prose with any code still runs. The
+# Markdown gate lives in links.yml, which has no paths-ignore, so docs are never
+# unchecked. Safe because `main` has no required status checks today — if branch
+# protection ever requires these jobs, add an always-running gate job, or a
+# skipped check stays "pending" and blocks merge.
 on:
   push:
     branches: [main]
-  pull_request: {}
+    paths-ignore: &docs-only
+      - '**/*.md'
+      - 'docs/**'
+  pull_request:
+    paths-ignore: *docs-only
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}

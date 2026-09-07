@@ -40,10 +40,9 @@ Layered MVVM with Riverpod: **UI** (views + per-feature view models) →
 **domain** (pure functions + models) → **data** (repositories over a Drift
 SQLite database, notifications, preferences). Generated code is committed.
 
-The design and implementation history for every change lives in
-[`planning/`](planning/) — see, e.g., the
-[layered-architecture refactor](planning/changes/2026-06-15.01-architecture-refactor.md)
-and [Russian-language support](planning/changes/2026-06-14.04-russian-language.md).
+[`CONTEXT.md`](CONTEXT.md) defines the vocabulary; the decisions behind the
+design, and the alternatives rejected along the way, are recorded in
+[`docs/adr/`](docs/adr/).
 
 ## Getting started
 
