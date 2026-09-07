@@ -18,7 +18,7 @@ the other side of the pipeline.
 The plugin's one real cost is that it couples publishing into the Gradle build. That is mitigated
 by how it is applied: it registers only **inert** `publishRustore*` tasks and changes no build
 output, and the upload runs solely in the guarded stable-tag release step. Applying it
-conditionally behind a Gradle property was considered and rejected — configuring its extension
+conditionally behind a Gradle property was considered and rejected - configuring its extension
 that way requires naming the plugin's extension class, which is undocumented. Neither
 `flutter analyze` nor `flutter test` touches Gradle at all, so the plugin is resolved only by an
 actual `flutter build`.

@@ -1,7 +1,7 @@
 # Platform glue is mocked, not coverage-excluded
 
-**Decision:** The notification and backup boundaries — the code that calls method-channel
-plugins for local notifications, timezones, sharing, file picking and paths — are covered by
+**Decision:** The notification and backup boundaries - the code that calls method-channel
+plugins for local notifications, timezones, sharing, file picking and paths - are covered by
 tests that inject doubles through the seams those plugins already expose. They are not excluded
 from the coverage report as irreducible glue. This costs one dev-only dependency, `mocktail`.
 

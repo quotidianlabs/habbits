@@ -25,7 +25,7 @@ actually get resolved.
 ```
 
 There is no `CONTEXT-MAP.md` and no per-package `CONTEXT.md`: one repo, one context. There is
-also no `architecture/` and no `planning/` — the present is the source, and what must stay true
+also no `architecture/` and no `planning/` - the present is the source, and what must stay true
 is a test whose name is the claim and whose comment opens `INVARIANT:`.
 
 ## Use the glossary's vocabulary
@@ -33,7 +33,7 @@ is a test whose name is the claim and whose comment opens `INVARIANT:`.
 When your output names a domain concept (in an issue title, a proposal, a hypothesis, a test
 name), use the term as defined in `CONTEXT.md`. Don't drift to synonyms the glossary explicitly
 avoids: write `Habbits` for the app and `habit` for the thing it tracks, and reserve `sync` for
-recomputing scheduled reminders — this app moves no data off the device.
+recomputing scheduled reminders - this app moves no data off the device.
 
 If the concept you need isn't in the glossary yet, that's a signal: either you're inventing
 language the project doesn't use (reconsider) or there's a real gap (note it for
@@ -41,7 +41,7 @@ language the project doesn't use (reconsider) or there's a real gap (note it for
 
 ## Link style inside `docs/`
 
-`docs/` is read on GitHub. Between files inside `docs/`, use a plain relative `.md` link — from
+`docs/` is read on GitHub. Between files inside `docs/`, use a plain relative `.md` link - from
 one ADR to another, that is `[ADR-NNNN](NNNN-slug.md)`. Paths outside `docs/` are cited as
 inline code rather than linked, so a file move cannot silently break a rendered link.
 

@@ -1,7 +1,7 @@
 # A curated habit palette, not a colour picker
 
 **Decision:** A habit's colour is chosen from a fixed, curated swatch list. There is no
-arbitrary colour picker — no hue wheel, no RGB sliders, no hex entry.
+arbitrary colour picker - no hue wheel, no RGB sliders, no hex entry.
 
 The app renders each habit's colour on two surfaces it does not control the pairing of: at full
 strength for completed cells, and composited over the current surface colour at low alpha for
@@ -17,10 +17,10 @@ brand colour cannot have it, and adding one means editing the palette rather tha
 setting.
 
 Two related refusals sit with this one. A habit keeps its single stored colour across theme
-modes — only the surrounding chrome and the inactive-cell tint adapt to brightness — because a
+modes - only the surrounding chrome and the inactive-cell tint adapt to brightness - because a
 habit's colour is its identity and should not change when the sun goes down. And existing habits
 were not migrated when the palette was introduced; they keep whatever value they had stored.
 
-**Revisit trigger:** the palette stops covering real demand — repeated requests for a specific
+**Revisit trigger:** the palette stops covering real demand - repeated requests for a specific
 colour, or enough habits that users run out of distinguishable swatches. The answer then is a
 larger vetted palette first, and a picker with an enforced contrast floor only if that fails.
