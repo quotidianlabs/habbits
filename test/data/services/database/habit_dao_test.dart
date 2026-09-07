@@ -43,14 +43,19 @@ void main() {
   });
 
   test(
-    'toggleCompletion tolerates concurrent double-toggle without throwing',
+    'concurrent toggles of one day never collide on the completion key',
     () async {
+      // INVARIANT: a completion is keyed (habit, local date), and no sequence of
+      // taps can produce two of them or surface the constraint to the user.
+      //
+      // Broken by reading whether the day is completed outside the transaction
+      // that writes it: the check-then-insert of two near-simultaneous taps
+      // interleaves, both decide to insert, and the loser hits the UNIQUE
+      // constraint as an unhandled SqliteException - on a double-tap, which is
+      // exactly how people check a habit off in a hurry.
       final id = await dao.createHabit(name: 'Read', color: 1);
       final date = DateTime(2026, 6, 20);
 
-      // Two near-simultaneous taps on the same day must not collide on the
-      // {habitId, localDate} unique key. Two toggles net to empty; the key
-      // invariant is that neither throws a UNIQUE-constraint SqliteException.
       await Future.wait([
         dao.toggleCompletion(id, date),
         dao.toggleCompletion(id, date),
@@ -157,7 +162,13 @@ void main() {
     expect(rows.single.habit.reminderTime, isNull);
   });
 
-  test('reorderHabits rewrites sortOrder to the new order', () async {
+  test('a reorder renumbers every habit to its index in the new order', () async {
+    // INVARIANT: after a reorder the sort orders are exactly 0..n-1, matching the
+    // order the user dropped the cards in.
+    //
+    // Broken by writing the new positions one row at a time outside a single
+    // transaction - a failure partway leaves half the list renumbered and half
+    // not, which reads as the drag having silently scrambled the list.
     final a = await dao.createHabit(name: 'A', color: 1);
     final b = await dao.createHabit(name: 'B', color: 1);
     final c = await dao.createHabit(name: 'C', color: 1);
@@ -169,28 +180,32 @@ void main() {
     expect(rows.map((r) => r.habit.sortOrder), [0, 1, 2]);
   });
 
-  test(
-    'createHabit gives a unique trailing sortOrder after a delete',
-    () async {
-      await dao.createHabit(name: 'A', color: 1); // sortOrder 0
-      final b = await dao.createHabit(name: 'B', color: 1); // 1
-      await dao.createHabit(name: 'C', color: 1); // 2
+  test('sort orders stay distinct when a delete leaves a gap', () async {
+    // INVARIANT: sort orders are always distinct. They are contiguous only
+    // immediately after a reorder - a delete leaves its number unused, and that
+    // gap is normal rather than corruption.
+    //
+    // Broken by numbering a new habit from the row count instead of from the
+    // highest existing number: after one delete the count collides with a
+    // position still in use, and two habits share a slot with no error anywhere.
+    await dao.createHabit(name: 'A', color: 1); // sortOrder 0
+    final b = await dao.createHabit(name: 'B', color: 1); // 1
+    await dao.createHabit(name: 'C', color: 1); // 2
 
-      await dao.deleteHabit(b);
-      final d = await dao.createHabit(
-        name: 'D',
-        color: 1,
-      ); // must NOT collide with C(2)
+    await dao.deleteHabit(b);
+    final d = await dao.createHabit(
+      name: 'D',
+      color: 1,
+    ); // must NOT collide with C(2)
 
-      final rows = await dao.getHabitsWithDates();
-      expect(rows.map((r) => r.habit.name), ['A', 'C', 'D']);
-      final dRow = rows.firstWhere((r) => r.habit.id == d);
-      expect(dRow.habit.sortOrder, 3); // max(0,2)+1
-      // sort orders are all distinct
-      final orders = rows.map((r) => r.habit.sortOrder).toList();
-      expect(orders.toSet().length, orders.length);
-    },
-  );
+    final rows = await dao.getHabitsWithDates();
+    expect(rows.map((r) => r.habit.name), ['A', 'C', 'D']);
+    final dRow = rows.firstWhere((r) => r.habit.id == d);
+    expect(dRow.habit.sortOrder, 3); // max(0,2)+1
+    // sort orders are all distinct
+    final orders = rows.map((r) => r.habit.sortOrder).toList();
+    expect(orders.toSet().length, orders.length);
+  });
 
   test('setColor updates only the color', () async {
     final db = AppDatabase(NativeDatabase.memory());

@@ -99,4 +99,5 @@ xcrun simctl io habbits_ios screenshot /tmp/shot.png   # the debug first frame t
 - **Bundle id** is `io.github.quotidianlabs.habbits` (matches Android's
   `applicationId`).
 - The `share_plus` iPad popover anchor (`sharePositionOrigin`) is a known gap —
-  tracked in [`planning/deferred.md`](../planning/deferred.md).
+  tracked in
+  [issue #46](https://github.com/quotidianlabs/habbits/issues/46).

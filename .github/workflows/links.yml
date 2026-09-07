@@ -1,0 +1,32 @@
+name: links
+
+# Runs on every change, with no paths-ignore: this is the only gate on Markdown,
+# and the changes it exists to catch are exactly the ones ci.yml skips.
+on:
+  push:
+    branches: [main]
+  pull_request: {}
+
+concurrency:
+  group: links-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      # --offline blocks network requests and excludes every external URL, so this
+      # gate is deterministic: it fails only on a relative link or file path a diff
+      # broke. The --remap rewrites absolute links to this repo's own main branch
+      # into local paths so they are checked too — without it they would count as
+      # external and be skipped silently.
+      - name: Check local links
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >-
+            --offline
+            --no-progress
+            --remap
+            'https://github\.com/${{ github.repository }}/(?:blob|tree)/main/(.*) file://${{ github.workspace }}/$1'
+            '**/*.md'

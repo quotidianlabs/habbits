@@ -12,7 +12,6 @@ lint:
 lint-ci:
     dart format --output=none --set-exit-if-changed .
     flutter analyze
-    python3 planning/index.py --check
 
 test *args:
     flutter test {{ args }}
@@ -23,14 +22,6 @@ coverage:
     dart pub global run coverde transform --input coverage/lcov.info --output coverage/lcov.info --mode w --transformations preset=exclude-untestable
     dart pub global run coverde check --input coverage/lcov.info 100
 
-# Print the planning change index (flat, newest-first) to stdout.
-index:
-    python3 planning/index.py
-
-# Validate planning changes + decisions; CI runs this via lint-ci.
-check-planning:
-    python3 planning/index.py --check
-
 # Dump the current Drift schema snapshot into drift_schemas/ (run after every
 # schemaVersion bump, before schema-gen).
 schema-dump:
@@ -39,9 +30,8 @@ schema-dump:
 # Regenerate the SchemaVerifier test helpers from the snapshots in
 # drift_schemas/.
 #
-# WHEN schemaVersion FIRST REACHES 2, this recipe must also gain the steps
-# generator, and database.dart must wire the stepByStep helper + onUpgrade
-# (see planning/changes/2026-07-05.01-schema-verifier-harness.md §5):
+# WHEN schemaVersion FIRST REACHES 2, this recipe must also gain the
+# steps generator, and database.dart must wire stepByStep + onUpgrade:
 #     dart run drift_dev schema steps drift_schemas/ lib/data/services/database/database.steps.dart
 # and add `**/database.steps.dart` to coverde.yaml (it lands in lib/, so it IS
 # coverage-instrumented, unlike the test/ helpers).
