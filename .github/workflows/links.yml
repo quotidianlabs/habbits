@@ -19,7 +19,7 @@ jobs:
       # --offline blocks network requests and excludes every external URL, so this
       # gate is deterministic: it fails only on a relative link or file path a diff
       # broke. The --remap rewrites absolute links to this repo's own main branch
-      # into local paths so they are checked too — without it they would count as
+      # into local paths so they are checked too, and without the remap they would count as
       # external and be skipped silently.
       - name: Check local links
         uses: lycheeverse/lychee-action@v2
